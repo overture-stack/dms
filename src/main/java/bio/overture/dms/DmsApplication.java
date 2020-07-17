@@ -105,8 +105,9 @@ public class DmsApplication {
     val resource =
         DmsApplication.readResourcePath("/assets/ego-init/init.sql");
     val postgresMountSrc = scratchPath.resolve("ego-init/").toAbsolutePath();
+    val initFile = postgresMountSrc.resolve("init.sql");
     Files.createDirectories(postgresMountSrc);
-    Files.copy(resource.getInputStream(), postgresMountSrc.resolve("init.sql"), REPLACE_EXISTING);
+    Files.copy(resource.getInputStream(), initFile, REPLACE_EXISTING);
 
     String thisContainerId = null;
     if (dockerMode != null){
@@ -114,40 +115,30 @@ public class DmsApplication {
       log.info("LiNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeEEEEEEEEEEEEEEEEEEEE:  containerId  "+thisContainerId);
     }
 
-    /**
-     * Issue: created containers also mount docker socket which is no good
-     */
-    val postgresContainerConfig =
-        dockerClient
+    val postgresContainer= dockerClient
             .createContainerCmd(resolveRepoTag(postgreRepo, postgresTag))
             .withName("ego-db")
             .withEnv("POSTGRES_DB=ego", "POSTGRES_PASSWORD=password")
-            .withExposedPorts(ExposedPort.tcp(5432));
-    if (thisContainerId != null){
-      postgresContainerConfig
-          .withHostConfig(HostConfig.newHostConfig()
-              .withPortBindings(
-                  new PortBinding(Ports.Binding.bindPort(8432), ExposedPort.tcp(5432))));
-    } else {
-      postgresContainerConfig
-            .withHostConfig(
-          HostConfig.newHostConfig()
-              .withMounts(
-                  List.of(
-                      new Mount()
-                          .withType(MountType.BIND)
-                          .withReadOnly(true)
-                          .withSource(postgresMountSrc.toString())
-                          .withTarget("/docker-entrypoint-initdb.d")))
-              .withPortBindings(
-                  new PortBinding(Ports.Binding.bindPort(8432), ExposedPort.tcp(5432))));
-    }
-    val postgresContainer = postgresContainerConfig.exec();
+            .withExposedPorts(ExposedPort.tcp(5432))
+            .withHostConfig(HostConfig.newHostConfig()
+                .withPortBindings(
+                    new PortBinding(Ports.Binding.bindPort(8432), ExposedPort.tcp(5432))))
+            .exec();
 
     dockerClient
         .connectToNetworkCmd()
         .withContainerId(postgresContainer.getId())
         .withNetworkId(network.getId())
+        .exec();
+
+    /**
+     * Instead of mounting a docker continer, just create the container and copy the files that are needed on itital boot.
+     * In this case, its the init.sql file. You could alternatively just exec  execute the script,
+     * but that means you have to check if it was already initialized, which the previous method already does.
+     */
+    dockerClient.copyArchiveToContainerCmd(postgresContainer.getId())
+        .withHostResource(initFile.toAbsolutePath().toString())
+        .withRemotePath("/docker-entrypoint-initdb.d")
         .exec();
 
     dockerClient.startContainerCmd(postgresContainer.getId()).exec();
