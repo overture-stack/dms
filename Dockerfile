@@ -7,9 +7,9 @@ ADD . .
 RUN ./mvnw clean package -DskipTests
 
 #############################
-#   Server
+#   Client
 #############################
-FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine as client
 
 ENV APP_HOME /srv
 ENV APP_USER dmsadmin
