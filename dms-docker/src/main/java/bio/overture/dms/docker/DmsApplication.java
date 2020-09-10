@@ -1,27 +1,17 @@
-package bio.overture.dms;
+package bio.overture.dms.docker;
 
-import static bio.overture.dms.DmsApplication.DockerService.resolveRepoTag;
+import static bio.overture.dms.docker.DmsApplication.DockerService.resolveRepoTag;
 import static java.lang.String.format;
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Arrays.stream;
 
-import bio.overture.dms.cli.Main;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.model.BindOptions;
-import com.github.dockerjava.api.model.BindPropagation;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.Mount;
-import com.github.dockerjava.api.model.MountType;
 import com.github.dockerjava.api.model.Network;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
-import com.github.dockerjava.api.model.TmpfsOptions;
-import com.github.dockerjava.api.model.Volume;
-import com.github.dockerjava.api.model.VolumeOptions;
-import com.github.dockerjava.api.model.VolumesFrom;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
@@ -29,29 +19,21 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.file.CopyOption;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.UrlResource;
 
 @Slf4j
 @SpringBootApplication
@@ -104,7 +86,7 @@ public class DmsApplication {
     docker.pullImage(postgreRepo, postgresTag);
     val resource =
         DmsApplication.readResourcePath("/assets/ego-init/init.sql");
-    val postgresMountSrc = scratchPath.resolve("ego-init/").toAbsolutePath();
+    val postgresMountSrc = scratchPath.resolve("assets/ego-init/").toAbsolutePath();
     val initFile = postgresMountSrc.resolve("init.sql");
     Files.createDirectories(postgresMountSrc);
     Files.copy(resource.getInputStream(), initFile, REPLACE_EXISTING);
