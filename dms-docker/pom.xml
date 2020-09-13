@@ -12,6 +12,13 @@
     <artifactId>dms-docker</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>bio.overture</groupId>
+            <artifactId>dms-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,6 +113,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
 

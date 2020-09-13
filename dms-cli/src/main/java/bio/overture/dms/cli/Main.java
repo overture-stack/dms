@@ -1,59 +1,57 @@
 package bio.overture.dms.cli;
 
-import java.lang.reflect.Method;
-import lombok.Builder;
+import bio.overture.dms.cli.command.DmsCommand;
+import bio.overture.dms.cli.util.ProjectBanner;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ExitCodeGenerator;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import picocli.CommandLine;
+import picocli.CommandLine.IFactory;
 
-@Slf4j
-public class Main {
+import java.io.IOException;
 
-  @SneakyThrows
-  public static void main(String[] args) {
-    val ex = Config.builder().firstName("Robert").lastName("Tisma").age(5).build();
-    for (val field : Config.class.getDeclaredFields()) {
-      if (field.isAnnotationPresent(Question.class)) {
-        val question = field.getDeclaredAnnotation(Question.class).value();
-        val getterName =
-            "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-        val methodRef = Config.class.getDeclaredMethod(getterName);
-        val value = methodRef.invoke(ex);
-        log.info(question + " ----  " + value);
-      }
-    }
-    log.info("sdf");
+import static bio.overture.dms.cli.config.CliConfig.APPLICATION_NAME;
+import static org.springframework.boot.SpringApplication.exit;
+
+@SpringBootApplication
+public class Main implements CommandLineRunner, ExitCodeGenerator {
+
+  /**
+   * Dependencies
+   */
+  private final CommandLine commandLine;
+
+  /**
+   * State
+   */
+  private int exitCode;
+
+  @Autowired
+  public Main(@NonNull CommandLine commandLine) {
+    this.commandLine = commandLine;
   }
 
-  public static class QuestionDTO<A, T> {
+  @Override
+  public void run(String... args) throws Exception {
+    exitCode = commandLine.execute(args);
+  }
 
-    @NonNull private final String text;
-    @NonNull private final Class<T> fieldType;
-    @NonNull private final Method getterMethod;
-    @NonNull private final Method setterMethod;
+  @Override
+  public int getExitCode() {
+    return exitCode;
+  }
 
-    @Builder
-    public QuestionDTO(
-        @NonNull String text,
-        @NonNull Class<T> fieldType,
-        @NonNull Method getterMethod,
-        @NonNull Method setterMethod) {
-      this.text = text;
-      this.fieldType = fieldType;
-      this.getterMethod = getterMethod;
-      this.setterMethod = setterMethod;
-    }
-
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    public T getValue(A object) {
-      return (T) getterMethod.invoke(object);
-    }
-
-    @SneakyThrows
-    public void setValue(A object, T value) {
-      setterMethod.invoke(object, value);
-    }
+  public static void main(String[] args) {
+    // let Spring instantiate and inject dependencies
+    val app = new SpringApplication(Main.class);
+    app.setBanner(new ProjectBanner(APPLICATION_NAME));
+    app.setBannerMode(Banner.Mode.CONSOLE);
+    System.exit(exit(app.run(args)));
   }
 }

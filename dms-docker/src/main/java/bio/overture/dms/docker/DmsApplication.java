@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -44,13 +43,14 @@ public class DmsApplication {
 
     Path scratchPath = Paths.get("scratch");
     String networkName;
-    if (args.length>1){
+    if (args.length > 1) {
       scratchPath = Paths.get(args[0]);
       networkName = args[1];
-    } else if (args.length > 0){
+    } else if (args.length > 0) {
       networkName = args[0];
     } else {
-      throw new IllegalArgumentException("must have either 2 (scratch dir and networkname) or 1 arg (just networkname)");
+      throw new IllegalArgumentException(
+          "must have either 2 (scratch dir and networkname) or 1 arg (just networkname)");
     }
 
     val dockerMode = System.getenv("DOCKER_MODE");
@@ -84,27 +84,31 @@ public class DmsApplication {
     val postgreRepo = "postgres";
     val postgresTag = "11.1";
     docker.pullImage(postgreRepo, postgresTag);
-    val resource =
-        DmsApplication.readResourcePath("/assets/ego-init/init.sql");
+    val resource = DmsApplication.readResourcePath("/assets/ego-init/init.sql");
     val postgresMountSrc = scratchPath.resolve("assets/ego-init/").toAbsolutePath();
     val initFile = postgresMountSrc.resolve("init.sql");
     Files.createDirectories(postgresMountSrc);
     Files.copy(resource.getInputStream(), initFile, REPLACE_EXISTING);
 
     String thisContainerId = null;
-    if (dockerMode != null){
-      thisContainerId = Files.readAllLines(Paths.get("/proc/self/cgroup")).get(0).replaceAll(".*\\/", "");
-      log.info("LiNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeEEEEEEEEEEEEEEEEEEEE:  containerId  "+thisContainerId);
+    if (dockerMode != null) {
+      thisContainerId =
+          Files.readAllLines(Paths.get("/proc/self/cgroup")).get(0).replaceAll(".*\\/", "");
+      log.info(
+          "LiNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeEEEEEEEEEEEEEEEEEEEE:  containerId  "
+              + thisContainerId);
     }
 
-    val postgresContainer= dockerClient
+    val postgresContainer =
+        dockerClient
             .createContainerCmd(resolveRepoTag(postgreRepo, postgresTag))
             .withName("ego-db")
             .withEnv("POSTGRES_DB=ego", "POSTGRES_PASSWORD=password")
             .withExposedPorts(ExposedPort.tcp(5432))
-            .withHostConfig(HostConfig.newHostConfig()
-                .withPortBindings(
-                    new PortBinding(Ports.Binding.bindPort(8432), ExposedPort.tcp(5432))))
+            .withHostConfig(
+                HostConfig.newHostConfig()
+                    .withPortBindings(
+                        new PortBinding(Ports.Binding.bindPort(8432), ExposedPort.tcp(5432))))
             .exec();
 
     dockerClient
@@ -114,11 +118,13 @@ public class DmsApplication {
         .exec();
 
     /**
-     * Instead of mounting a docker continer, just create the container and copy the files that are needed on itital boot.
-     * In this case, its the init.sql file. You could alternatively just exec  execute the script,
-     * but that means you have to check if it was already initialized, which the previous method already does.
+     * Instead of mounting a docker continer, just create the container and copy the files that are
+     * needed on itital boot. In this case, its the init.sql file. You could alternatively just exec
+     * execute the script, but that means you have to check if it was already initialized, which the
+     * previous method already does.
      */
-    dockerClient.copyArchiveToContainerCmd(postgresContainer.getId())
+    dockerClient
+        .copyArchiveToContainerCmd(postgresContainer.getId())
         .withHostResource(initFile.toAbsolutePath().toString())
         .withRemotePath("/docker-entrypoint-initdb.d")
         .exec();
