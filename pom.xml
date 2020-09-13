@@ -147,10 +147,35 @@
 			<!-- Testing -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${junit-jupiter.version}</version>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit.jupiter.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit.jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-commons</artifactId>
+				<version>${junit.common.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.vintage</groupId>
+				<artifactId>junit-vintage-engine</artifactId>
+				<version>${junit.vintage.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-test</artifactId>
@@ -302,9 +327,12 @@
         <jackson.version>2.10.0</jackson.version>
         <unirest.version>3.1.00</unirest.version>
 		<docker-java.version>3.2.5</docker-java.version>
-		<junit-jupiter.version>5.6.2</junit-jupiter.version>
+		<junit.jupiter.version>5.6.2</junit.jupiter.version>
+		<junit.vintage.version>5.6.2</junit.vintage.version>
+		<junit.common.version>1.6.2</junit.common.version>
 		<picocli.version>4.5.1</picocli.version>
 		<figlet.version>0.0.8</figlet.version>
+		<mockito.version>3.5.10</mockito.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>
