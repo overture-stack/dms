@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 @Command(
     name = "get",
+    aliases = {"g"},
     mixinStandardHelpOptions = true,
     description = "Get the currently staged configuration" )
 public class ConfigGetCommand implements Callable<Integer> {

@@ -1,18 +1,20 @@
 package bio.overture.dms.cli;
 
-import bio.overture.dms.cli.command.DmsCommand;
-import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import picocli.CommandLine;
 
-import java.util.List;
-
+@SpringBootTest
 public class ContextTest {
+
+  @Autowired
+  private CommandLine commandLine;
 
   @Test
   public void testRob(){
-    String[] args = {"config", "-h"};
-    new CommandLine(DmsCommand.class).execute(args);
+    String[] args = {"config", "setup" , "--help"};
+    commandLine.execute(args);
   }
 
 }

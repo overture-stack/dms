@@ -8,12 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@CommandLine.Command(
+@Command(
     name = "dms",
     mixinStandardHelpOptions = true,
     subcommands = {
@@ -23,11 +24,4 @@ import picocli.CommandLine.Option;
         AutoCompleteCommand.class
     },
     description = "DMS command")
-public class DmsCommand implements Callable<Integer> {
-
-  @Override
-  public Integer call() {
-    CommandLine.usage(this, System.out);
-    return 0;
-  }
-}
+public class DmsCommand { }

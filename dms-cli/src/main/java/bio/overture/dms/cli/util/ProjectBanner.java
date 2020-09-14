@@ -39,22 +39,24 @@ public class ProjectBanner implements Banner {
   private static final String BANNER_FONT_LOC = "/banner-fonts/slant.flf";
 
   @NonNull private final String applicationName;
+  // Example: "${Ansi.GREEN} "
+  @NonNull private final String linePrefix;
+  @NonNull private final String linePostfix;
 
   @Override
   @SneakyThrows
   public void printBanner(Environment environment, Class<?> sourceClass, PrintStream out) {
-    val text = generateBannerText(environment);
+    val text = generateBannerText();
     val resource = new ByteArrayResource(text.getBytes());
     val resourceBanner = new ResourceBanner(resource);
     resourceBanner.printBanner(environment, sourceClass, out);
   }
 
   @SneakyThrows
-  private String generateBannerText(Environment env) {
+  public String generateBannerText() {
     val text = convertOneLine("classpath:" + BANNER_FONT_LOC, applicationName);
     val sb = new StringBuilder();
-    stream(text.split("\n")).forEach(t -> sb.append("${Ansi.GREEN} ").append(t).append("\n"));
-//    sb.append("${Ansi.RED}  :: Spring Boot${spring-boot.formatted-version} :: ${Ansi.DEFAULT}\n");
+    stream(text.split("\n")).forEach(t -> sb.append(linePrefix).append(t).append(linePostfix).append("\n"));
     return sb.toString();
   }
 }

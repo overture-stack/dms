@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 @Command(
     name = "upgrade",
+    aliases = {"up"},
     mixinStandardHelpOptions = true,
     description = "Upgrade the version of the software" )
 public class ConfigUpgradeCommand implements Callable<Integer> {

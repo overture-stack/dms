@@ -11,6 +11,8 @@ import picocli.CommandLine.Option;
 import java.io.File;
 import java.util.concurrent.Callable;
 
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static picocli.AutoComplete.bash;
 
 @Component
@@ -35,7 +37,7 @@ public class AutoCompleteCommand implements Callable<Integer> {
   private String scriptName;
 
   @Option(names = { "-o", "--output-file" },
-      required = true,
+      required = false,
       paramLabel = "FILE",
       description = "Path of output auto-complete script")
   private File outFile;
@@ -47,7 +49,13 @@ public class AutoCompleteCommand implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    bash(scriptName,outFile, null, commandLine);
+    if (isNull(outFile)){
+      System.out.println(bash(scriptName,commandLine));
+    } else {
+      //TODO check parent dir exists
+      bash(scriptName,outFile, null, commandLine);
+      System.out.println(format("Wrote bash completion for script \"%s\" to \"%s\"", scriptName, outFile.getName()));
+    }
     return 0;
   }
 }

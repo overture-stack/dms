@@ -5,7 +5,8 @@ import picocli.CommandLine;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
-    name = "rm",
+    name = "delete",
+    aliases = {"del", "rm"},
     mixinStandardHelpOptions = true,
     description = "Delete the currently staged configuration" )
 public class ConfigDeleteCommand implements Callable<Integer> {

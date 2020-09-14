@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 @Command(
     name = "version",
+    aliases = {"v"},
     mixinStandardHelpOptions = true,
     description = "Display the configured dms version" )
 public class ConfigVersionCommand implements Callable<Integer> {

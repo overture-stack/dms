@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 @Command(
     name = "set",
+    aliases = {"s"},
     mixinStandardHelpOptions = true,
     description = "Set a configuration" )
 public class ConfigSetCommand implements Callable<Integer> {

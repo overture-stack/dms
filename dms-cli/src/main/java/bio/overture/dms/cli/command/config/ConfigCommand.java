@@ -1,10 +1,11 @@
 package bio.overture.dms.cli.command.config;
 
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(
+@Command(
     name = "config",
     mixinStandardHelpOptions = true,
     subcommands = {
@@ -17,11 +18,4 @@ import java.util.concurrent.Callable;
         ConfigUpgradeCommand.class,
         ConfigVersionCommand.class
     })
-public class ConfigCommand implements Callable<Integer> {
-
-    @Override
-    public Integer call() throws Exception {
-        CommandLine.usage(this, System.out);
-        return 0;
-    }
-}
+public class ConfigCommand { }

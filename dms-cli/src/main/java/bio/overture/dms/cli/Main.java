@@ -50,8 +50,7 @@ public class Main implements CommandLineRunner, ExitCodeGenerator {
   public static void main(String[] args) {
     // let Spring instantiate and inject dependencies
     val app = new SpringApplication(Main.class);
-    app.setBanner(new ProjectBanner(APPLICATION_NAME));
-    app.setBannerMode(Banner.Mode.CONSOLE);
+    app.setBannerMode(Banner.Mode.OFF);
     System.exit(exit(app.run(args)));
   }
 }

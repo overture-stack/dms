@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 @Command(
     name = "check",
+    aliases = {"ch"},
     mixinStandardHelpOptions = true,
     description = "Check if the staged configuration is ok to deploy" )
 public class ConfigCheckCommand implements Callable<Integer> {
