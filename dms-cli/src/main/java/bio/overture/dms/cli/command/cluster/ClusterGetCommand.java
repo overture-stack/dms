@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.command.cluster;
 
 import bio.overture.dms.cli.model.enums.OutputFormats;
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -12,6 +12,7 @@ import static picocli.CommandLine.Help.Visibility.ALWAYS;
 @Command(
     name = "get",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Get currently deployed configuration" )
 public class ClusterGetCommand implements Callable<Integer> {
 

@@ -1,13 +1,12 @@
 package bio.overture.dms.cli.command.config;
 
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
-
-import java.util.concurrent.Callable;
 
 @Command(
     name = "config",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     subcommands = {
         ConfigCheckCommand.class,
         ConfigSetupCommand.class,

@@ -13,7 +13,7 @@ public class ContextTest {
 
   @Test
   public void testRob(){
-    String[] args = {"config", "setup" , "--help"};
+    String[] args = {"config","status", "--help"};
     commandLine.execute(args);
   }
 

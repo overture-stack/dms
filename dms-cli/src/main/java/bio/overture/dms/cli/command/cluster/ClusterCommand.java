@@ -1,10 +1,12 @@
 package bio.overture.dms.cli.command.cluster;
 
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 
 @Command(
     name = "cluster",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     subcommands = {
         ClusterApplyCommand.class,
         ClusterDestroyCommand.class,

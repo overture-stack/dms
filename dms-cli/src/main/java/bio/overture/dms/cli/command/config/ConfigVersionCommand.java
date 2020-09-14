@@ -1,8 +1,7 @@
 package bio.overture.dms.cli.command.config;
 
-import picocli.CommandLine.ArgGroup;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import java.util.concurrent.Callable;
 
@@ -10,6 +9,7 @@ import java.util.concurrent.Callable;
     name = "version",
     aliases = {"v"},
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Display the configured dms version" )
 public class ConfigVersionCommand implements Callable<Integer> {
 

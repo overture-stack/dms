@@ -1,6 +1,6 @@
 package bio.overture.dms.cli.command.cluster;
 
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -11,6 +11,7 @@ import static picocli.CommandLine.Help.Visibility.ALWAYS;
 @Command(
     name = "destroy",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Destroy the cluster" )
 public class ClusterDestroyCommand implements Callable<Integer> {
 

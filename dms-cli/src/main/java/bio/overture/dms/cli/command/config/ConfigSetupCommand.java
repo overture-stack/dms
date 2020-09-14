@@ -1,6 +1,6 @@
 package bio.overture.dms.cli.command.config;
 
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 @Command(
     name = "setup",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Interactively create a configuration" )
 public class ConfigSetupCommand implements Callable<Integer> {
 

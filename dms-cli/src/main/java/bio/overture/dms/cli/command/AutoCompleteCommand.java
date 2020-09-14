@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.command;
 
+import bio.overture.dms.cli.util.VersionProvider;
 import lombok.NonNull;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
@@ -19,6 +19,7 @@ import static picocli.AutoComplete.bash;
 @Command(
     name = "auto-complete",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Dump the auto-complete script to a file")
 public class AutoCompleteCommand implements Callable<Integer> {
 

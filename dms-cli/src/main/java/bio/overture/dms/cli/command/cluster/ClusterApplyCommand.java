@@ -1,16 +1,14 @@
 package bio.overture.dms.cli.command.cluster;
 
-import bio.overture.dms.cli.model.enums.OutputFormats;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import java.util.concurrent.Callable;
-
-import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
 @Command(
     name = "apply",
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Deploy the staged configuration to the cluster" )
 public class ClusterApplyCommand implements Callable<Integer> {
 

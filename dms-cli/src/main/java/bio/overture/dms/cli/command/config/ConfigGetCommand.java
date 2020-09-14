@@ -1,6 +1,7 @@
 package bio.overture.dms.cli.command.config;
 
 import bio.overture.dms.cli.model.enums.OutputFormats;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -11,6 +12,7 @@ import java.util.concurrent.Callable;
     name = "get",
     aliases = {"g"},
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Get the currently staged configuration" )
 public class ConfigGetCommand implements Callable<Integer> {
 

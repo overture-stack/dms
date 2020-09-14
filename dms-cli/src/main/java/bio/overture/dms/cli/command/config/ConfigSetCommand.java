@@ -1,6 +1,6 @@
 package bio.overture.dms.cli.command.config;
 
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
     name = "set",
     aliases = {"s"},
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Set a configuration" )
 public class ConfigSetCommand implements Callable<Integer> {
 

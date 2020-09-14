@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import picocli.CommandLine;
+import picocli.CommandLine.IVersionProvider;
 
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEADING;
@@ -18,17 +20,13 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEAD
 public class CliConfig {
 
   public static final String APPLICATION_NAME = "DMS";
-//  private static final String SECTION_KEY_ENV_HEADING = "environmentVariablesHeading";
 
-  private final BuildProperties buildProperties;
   private final CommandLine.IFactory factory;    // auto-configured to inject PicocliSpringFactory
   private final DmsCommand dmsCommand;
 
   @Autowired
-  public CliConfig(@NonNull BuildProperties buildProperties,
-      @NonNull CommandLine.IFactory factory,
+  public CliConfig( @NonNull CommandLine.IFactory factory,
       @NonNull DmsCommand dmsCommand) {
-    this.buildProperties = buildProperties;
     this.factory = factory;
     this.dmsCommand = dmsCommand;
   }

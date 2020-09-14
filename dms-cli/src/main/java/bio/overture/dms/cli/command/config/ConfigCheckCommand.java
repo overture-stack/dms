@@ -1,6 +1,6 @@
 package bio.overture.dms.cli.command.config;
 
-import picocli.CommandLine;
+import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
 
 import java.util.concurrent.Callable;
@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
     name = "check",
     aliases = {"ch"},
     mixinStandardHelpOptions = true,
+    versionProvider = VersionProvider.class,
     description = "Check if the staged configuration is ok to deploy" )
 public class ConfigCheckCommand implements Callable<Integer> {
 
