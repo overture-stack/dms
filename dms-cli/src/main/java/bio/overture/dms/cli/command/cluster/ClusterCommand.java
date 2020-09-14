@@ -5,6 +5,7 @@ import picocli.CommandLine.Command;
 
 @Command(
     name = "cluster",
+    aliases = {"cl"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     subcommands = {

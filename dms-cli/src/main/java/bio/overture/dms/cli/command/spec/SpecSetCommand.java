@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.command.config;
+package bio.overture.dms.cli.command.spec;
 
 import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
@@ -12,13 +12,13 @@ import java.util.concurrent.Callable;
     aliases = {"s"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Set a configuration" )
-public class ConfigSetCommand implements Callable<Integer> {
+    description = "Set a specification" )
+public class SpecSetCommand implements Callable<Integer> {
 
     @Option(names = { "-f", "--file" },
         required = true,
-        description = "Configuration file to set")
-    private File configFile;
+        description = "Spec file to set")
+    private File specFile;
 
     @Override
     public Integer call() throws Exception {

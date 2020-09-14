@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.command.config;
+package bio.overture.dms.cli.command.spec;
 
 import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.Command;
@@ -10,8 +10,8 @@ import java.util.concurrent.Callable;
     aliases = {"v"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Display the configured dms version" )
-public class ConfigVersionCommand implements Callable<Integer> {
+    description = "Display the spec version" )
+public class SpecVersionCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {

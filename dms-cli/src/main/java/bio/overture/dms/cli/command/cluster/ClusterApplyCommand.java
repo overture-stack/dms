@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
     name = "apply",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Deploy the staged configuration to the cluster" )
+    description = "Deploy a spec to the cluster" )
 public class ClusterApplyCommand implements Callable<Integer> {
 
     @Override

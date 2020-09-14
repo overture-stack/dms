@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.command.config;
+package bio.overture.dms.cli.command.spec;
 
 import bio.overture.dms.cli.model.enums.OutputFormats;
 import bio.overture.dms.cli.util.VersionProvider;
@@ -8,13 +8,15 @@ import picocli.CommandLine.Option;
 
 import java.util.concurrent.Callable;
 
+import static picocli.CommandLine.Help.Visibility.ALWAYS;
+
 @Command(
     name = "get",
     aliases = {"g"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Get the currently staged configuration" )
-public class ConfigGetCommand implements Callable<Integer> {
+    description = "Get the current specification" )
+public class SpecGetCommand implements Callable<Integer> {
 
     @Option(names = { "--show-secrets" },
         required = false,
@@ -23,7 +25,7 @@ public class ConfigGetCommand implements Callable<Integer> {
 
     @Option(names = { "-o", "--output-format" },
         required = false,
-        showDefaultValue = CommandLine.Help.Visibility.ALWAYS,
+        showDefaultValue = ALWAYS,
         description = "Specify output format: ${COMPLETION-CANDIDATES}")
     private OutputFormats outputFormat = OutputFormats.yaml;
 

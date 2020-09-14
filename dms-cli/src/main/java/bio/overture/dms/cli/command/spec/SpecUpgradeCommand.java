@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.command.config;
+package bio.overture.dms.cli.command.spec;
 
 import bio.overture.dms.cli.util.VersionProvider;
 import picocli.CommandLine.ArgGroup;
@@ -12,12 +12,12 @@ import java.util.concurrent.Callable;
     aliases = {"up"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Upgrade the version of the software" )
-public class ConfigUpgradeCommand implements Callable<Integer> {
+    description = "Upgrade the spec version" )
+public class SpecUpgradeCommand implements Callable<Integer> {
 
     @Option(names = { "--skip-interactive" },
         required = false,
-        description = "Skip the interactive questionaire and instead follow up with `dms config setup` to complete the configuration")
+        description = "Skip the interactive questionaire and instead follow up with `dms spec config` to complete the spec configuration")
     private boolean skipInteractive= false;
 
     @ArgGroup(exclusive = true, multiplicity = "1")

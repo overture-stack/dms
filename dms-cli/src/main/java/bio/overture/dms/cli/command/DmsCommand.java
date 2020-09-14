@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.command;
 
 import bio.overture.dms.cli.command.cluster.ClusterCommand;
-import bio.overture.dms.cli.command.config.ConfigCommand;
+import bio.overture.dms.cli.command.spec.SpecCommand;
 import bio.overture.dms.cli.util.VersionProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import picocli.CommandLine.Command;
     versionProvider = VersionProvider.class,
     subcommands = {
         SummaryCommand.class,
-        ConfigCommand.class,
+        SpecCommand.class,
         ClusterCommand.class,
         AutoCompleteCommand.class
     },
