@@ -1,0 +1,13 @@
+#!/bin/bash
+
+arg1=$1
+
+if [ "$arg1" == "bash-completion" ];then
+	# This is done so that unix line endings are output. Otherwise, with the -t option, 
+	# dos line endings are present and the script cannot be sourced
+	docker_opts="--rm -i"
+else
+	docker_opts="--rm -it"
+fi
+
+docker run $docker_opts overture/dms:test dms $@

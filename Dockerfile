@@ -64,8 +64,4 @@ ENV PATH $PATH:$APP_HOME/bin
 
 WORKDIR $APP_HOME/bin
 
-RUN dms auto-complete -n dms -o /tmp/setup-completion.sh \
-	&& chmod +x /tmp/setup-completion.sh
-
-
 # CMD ["java", "-ea", "-jar", "/srv/dms.jar", "/var/scratch"]

@@ -28,7 +28,6 @@
       <outputDirectory>bin</outputDirectory>
       <includes>
         <include>${artifactId}</include>
-        <include>dms</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -57,6 +56,12 @@
       <source>${project.build.directory}/${artifactId}-${version}-exec.jar</source>
       <outputDirectory>lib</outputDirectory>
       <destName>${artifactId}.jar</destName>
+    </file>
+    <file>
+		<source>src/main/bin/dms-java</source>
+		<outputDirectory>bin</outputDirectory>
+		<destName>dms</destName>
+		<fileMode>0755</fileMode>
     </file>
   </files>
 </assembly>
