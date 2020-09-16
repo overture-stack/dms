@@ -17,11 +17,11 @@ import static picocli.AutoComplete.bash;
 
 @Component
 @Command(
-    name = "auto-complete",
+    name = "bash-completion",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Dump the auto-complete script to a file")
-public class AutoCompleteCommand implements Callable<Integer> {
+    description = "Dump the bash-completion script")
+public class BashCompletionCommand implements Callable<Integer> {
 
   /**
    * Dependencies
@@ -44,19 +44,16 @@ public class AutoCompleteCommand implements Callable<Integer> {
   private File outFile;
 
   @Autowired
-  public AutoCompleteCommand(@NonNull CommandLine commandLine) {
+  public BashCompletionCommand(@NonNull CommandLine commandLine) {
     this.commandLine = commandLine;
   }
 
   @Override
   public Integer call() throws Exception {
-    if (isNull(outFile)){
-      System.out.println(bash(scriptName,commandLine));
-    } else {
-      //TODO check parent dir exists
-      bash(scriptName,outFile, null, commandLine);
-      System.out.println(format("Wrote bash completion for script \"%s\" to \"%s\"", scriptName, outFile.getName()));
-    }
+    /**
+     * Note: removed output to file, since this can cause confusion with docker paths
+     */
+    System.out.println(bash(scriptName,commandLine));
     return 0;
   }
 }

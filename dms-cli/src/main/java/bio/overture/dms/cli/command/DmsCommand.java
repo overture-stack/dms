@@ -19,7 +19,7 @@ import picocli.CommandLine.Command;
         SummaryCommand.class,
         SpecCommand.class,
         ClusterCommand.class,
-        AutoCompleteCommand.class
+        BashCompletionCommand.class
     },
     description = "DMS command")
 public class DmsCommand { }

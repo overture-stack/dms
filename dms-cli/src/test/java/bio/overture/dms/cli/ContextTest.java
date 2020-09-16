@@ -13,7 +13,8 @@ public class ContextTest {
 
   @Test
   public void testRob(){
-    String[] args = {"config","status", "--help"};
+//    String[] args = {"config","status", "--help"};
+    String[] args = {"bash-completion", "-n", "dms"};
     commandLine.execute(args);
   }
 
