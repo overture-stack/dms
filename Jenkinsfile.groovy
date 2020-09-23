@@ -95,7 +95,7 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker build --network=host -f Dockerfile . -t overture/dms:edge -t overture/dms:${commit}"
+                    sh "docker build --network=host -f Dockerfile . -t overture/dms:edge -t overture/dms:${version}-${commit}"
                     sh "docker push overture/dms:${version}-${commit}"
                     sh "docker push overture/dms:edge"
                 }
