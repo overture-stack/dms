@@ -84,6 +84,8 @@ function setupDockerExecutable {
 
 function getLatestVersion {
 	echo "latest"
+	#docker_arch=$($DOCKER_EXE version -f '{{ .Server.Arch }}' 2>&1)
+	#curl 
 }
 
 function genLatestSpec {
