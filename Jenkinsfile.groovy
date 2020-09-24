@@ -96,8 +96,10 @@ spec:
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
                     sh "docker build --network=host -f Dockerfile . -t overture/dms:edge -t overture/dms:${version}-${commit}"
+                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t overture/dms-version-helper:edge"
                     sh "docker push overture/dms:${version}-${commit}"
                     sh "docker push overture/dms:edge"
+                    sh "docker push overture/dms-version-helper:edge"
                 }
             }
         }
@@ -115,8 +117,10 @@ spec:
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
                     sh "docker build --network=host  -f Dockerfile . -t overture/dms:latest -t overture/dms:${version}"
+                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t overture/dms-version-helper:latest"
                     sh "docker push overture/dms:${version}"
                     sh "docker push overture/dms:latest"
+                    sh "docker push overture/dms-version-helper:latest"
                 }
             }
         }
