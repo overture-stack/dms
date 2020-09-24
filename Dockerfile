@@ -1,4 +1,13 @@
 #############################
+#   LATEST-VERSION-HELPER
+#############################
+FROM ubuntu:20.04 as latest-version-helper
+RUN apt update && apt install -y jq curl
+COPY ./dms-cli/src/main/bin/getLatestDockerTag.sh /tmp/run.sh
+RUN chmod +x /tmp/run.sh
+CMD ["/tmp/run.sh"]
+
+#############################
 #   Builder
 #############################
 FROM adoptopenjdk/openjdk11:jdk-11.0.6_10-alpine-slim as builder
