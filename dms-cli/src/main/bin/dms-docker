@@ -57,7 +57,7 @@ function checkDocker {
 		echo "Could not execute the docker command. Message: $result_output"
 		exit 1
 	else
-		version_result=$(isVersionGTE $result_output $MIN_VERSION)
+		version_result=$(isVersionGTE $result_output $MIN_VERSION 2>&1)
 		if [ "$version_result" == "false" ]; then
 			echo "[ERROR]: The installed docker version $result_output is not >= $MIN_VERSION"
 			exit 1
@@ -72,6 +72,7 @@ function setupDockerExecutable {
 	if [ ! -f $DEFAULT_DOCKER_EXE ]; then
 		result=$(whick docker)
 		if [ $? -ne 0 ]; then
+			#TODO: rtisma -- add instructions
 			echo "Docker is not installed. Please refer to ...."
 			exit 1
 		else
@@ -83,12 +84,22 @@ function setupDockerExecutable {
 }
 
 function getLatestVersion {
-	$DOCKER_EXE run --rm -it overture/dms-version-helper:latest /tmp/run.sh amd64
+	docker_engine_arch=$($DOCKER_EXE version -f '{{ .Server.Arch }}' 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: Could not find the docker engine server architecture. Message: $docker_engine_arch"
+		exit 1
+	fi
+	$DOCKER_EXE run --rm -it overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
 }
 
 function genLatestSpec {
 	output_path=$1
-	version=$(getLatestVersion)
+	version=$(getLatestVersion 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: Could not find the latest dms version. Try again later."
+		echo "$version"
+		exit 1
+	fi
 	echo "version: $version" > $output_path
 }
 
@@ -103,7 +114,11 @@ function provisionSpec {
 		genLatestSpec $DMS_SPEC_FILE
 	fi
 
-	dms_version=$(cat $DMS_SPEC_FILE | grep version | sed 's/.*:\s\+//')
+	if [ ! -f $DMS_SPEC_FILE ];then
+		echo "[ERROR]:  The spec file \"$DMS_SPEC_FILE\" was not created"
+		exit 1
+	fi
+	dms_version=$(cat $DMS_SPEC_FILE | grep version | sed 's/.*:\s\+//' 2>&1)
 
 	# Return the version
 	echo $dms_version
@@ -123,7 +138,12 @@ function main {
 	checkDocker
 
 	# Get dms version from spec
-	dms_version=$(provisionSpec $spec_filename)
+	dms_version=$(provisionSpec $spec_filename 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: There was an error obtaining the dms version"
+		echo "$dms_version"
+		exit 1
+	fi
 
 	#################################
 	# Define the docker options
