@@ -63,8 +63,6 @@ function checkDocker {
 			exit 1
 		fi
 	fi
-	# check its executable and has user has permissions :  docker ps -q | head -1
-	# check docker version
 }
 
 
