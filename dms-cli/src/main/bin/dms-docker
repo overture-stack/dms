@@ -123,6 +123,7 @@ function provisionSpec {
 }
 
 function main {
+	# If DMS_DEBUG is true, dump the command that is run
 	# Arguments
 	command_name=$1
 	all_dms_params=$@
@@ -148,13 +149,22 @@ function main {
 	#################################
 	# This is done so that unix line endings are output. Otherwise, with the -t option, 
 	# dos line endings are present and the script cannot be sourced
-	docker_opts='--rm -i -e "DOCKER_MODE=true"'
+	if [ "${DMS_DEBUG}" != "true" ]; then
+		docker_opts='--rm'
+	fi
+	docker_opts="$docker_opts -i -e \"DOCKER_MODE=true\""
 	if [ "$arg1" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
 	fi
+	docker_opts="$docker_opts -v /var/run/docker.sock:/var/run/docker.sock:ro"
+	docker_opts="$docker_opts -v /usr/bin/docker:/usr/bin/docker:ro"
 
+	if [ "${DMS_DEBUG}" == "true" ]; then
+		set -x
+	fi
 	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
+	set +x
 }
 
 main $@
