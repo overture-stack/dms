@@ -87,7 +87,7 @@ function getLatestVersion {
 		echo "[ERROR]: Could not find the docker engine server architecture. Message: $docker_engine_arch"
 		exit 1
 	fi
-	$DOCKER_EXE run --rm -it overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
+	$DOCKER_EXE run --rm -i overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
 }
 
 function genLatestSpec {
@@ -98,7 +98,7 @@ function genLatestSpec {
 		echo "$version"
 		exit 1
 	fi
-	echo "version: $version" > $output_path
+	echo -n "version: $version" > $output_path
 }
 
 function provisionSpec {
