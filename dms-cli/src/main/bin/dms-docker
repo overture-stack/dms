@@ -83,9 +83,7 @@ function setupDockerExecutable {
 }
 
 function getLatestVersion {
-	echo "latest"
-	#docker_arch=$($DOCKER_EXE version -f '{{ .Server.Arch }}' 2>&1)
-	#curl 
+	$DOCKER_EXE run --rm -it overture/dms-version-helper:latest /tmp/run.sh amd64
 }
 
 function genLatestSpec {
@@ -138,7 +136,7 @@ function main {
 		docker_opts="$docker_opts -t"
 	fi
 
-	docker run $docker_opts $repo_name:$dms_version dms $all_dms_params
+	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
 }
 
 main $@
