@@ -155,7 +155,7 @@ function main {
 		docker_opts='--rm'
 	fi
 	docker_opts="$docker_opts -i -e \"DOCKER_MODE=true\""
-	if [ "$arg1" != "bash-completion" ];then
+	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
 	fi
