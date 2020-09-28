@@ -92,13 +92,15 @@ function getLatestVersion {
 
 function genLatestSpec {
 	output_path=$1
-	version=$(getLatestVersion 2>&1)
+
+	$DOCKER_EXE pull overture/dms-version-helper:latest > /dev/null
+	result=$(getLatestVersion 2>&1)
 	if [ $? -ne 0 ]; then
 		echo "[ERROR]: Could not find the latest dms version. Try again later."
-		echo "$version"
+		echo "$result"
 		exit 1
 	fi
-	echo -n "version: $version" > $output_path
+	echo -n "version: $result" > $output_path
 }
 
 function provisionSpec {
