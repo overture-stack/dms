@@ -119,7 +119,7 @@ function provisionSpec {
 		echo "[ERROR]:  The spec file \"$DMS_SPEC_FILE\" was not created"
 		exit 1
 	fi
-	dms_version=$(cat $DMS_SPEC_FILE | grep version | sed 's/.*:\s\+//' 2>&1)
+	dms_version=$(cat $DMS_SPEC_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' 2>&1)
 
 	# Return the version
 	echo $dms_version
