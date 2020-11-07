@@ -1,4 +1,4 @@
-package bio.overture.dms.core.properties.service.env;
+package bio.overture.dms.core.properties.env;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

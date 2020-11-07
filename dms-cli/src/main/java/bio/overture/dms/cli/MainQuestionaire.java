@@ -1,15 +1,15 @@
 package bio.overture.dms.cli;
 
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.BOOLEAN;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.BYTE;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.CHAR;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.DOUBLE;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.FLOAT;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.INT;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.LONG;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.SHORT;
-import static bio.overture.dms.core.properties.service.env.EnvVars.FieldTypes.STRING;
-import static bio.overture.dms.core.properties.service.env.EnvVars.setFieldValueSafely;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.BOOLEAN;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.BYTE;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.CHAR;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.DOUBLE;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.FLOAT;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.INT;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.LONG;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.SHORT;
+import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.STRING;
+import static bio.overture.dms.core.properties.env.EnvVars.setFieldValueSafely;
 import static java.lang.String.format;
 
 import java.lang.reflect.Method;

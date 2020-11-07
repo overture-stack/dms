@@ -1,8 +1,10 @@
-package bio.overture.dms.core.properties.service.song;
+package bio.overture.dms.core.properties.song;
 
-import bio.overture.dms.core.properties.service.ServiceProperties;
-import bio.overture.dms.core.properties.service.env.EnvObject;
-import bio.overture.dms.core.properties.service.env.EnvVariable;
+import bio.overture.dms.core.properties.DatabaseProperties;
+import bio.overture.dms.core.properties.FlywayProperties;
+import bio.overture.dms.core.properties.ServiceProperties;
+import bio.overture.dms.core.properties.env.EnvObject;
+import bio.overture.dms.core.properties.env.EnvVariable;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -10,8 +12,6 @@ import lombok.Value;
 @Value
 @Builder
 public class SongServiceProperties implements ServiceProperties {
-
-  @NonNull private final String name;
 
   @EnvVariable("SERVER_PORT")
   private final int serverPort;
@@ -50,33 +50,6 @@ public class SongServiceProperties implements ServiceProperties {
     @EnvVariable("SPRING_KAFKA_BOOTSTRAPSERVERS")
     @NonNull
     private final String bootstrapServers;
-  }
-
-  @Value
-  @Builder
-  public static class FlywayProperties {
-    @EnvVariable("SPRING_FLYWAY_ENABLED")
-    private final boolean enabled;
-
-    @EnvVariable("SPRING_FLYWAY_LOCATIONS")
-    @NonNull
-    private final String locations;
-  }
-
-  @Value
-  @Builder
-  public static class DatabaseProperties {
-    @EnvVariable("SPRING_DATASOURCE_URL")
-    @NonNull
-    private final String url;
-
-    @EnvVariable("SPRING_DATASOURCE_USERNAME")
-    @NonNull
-    private final String username;
-
-    @EnvVariable("SPRING_DATASOURCE_PASSWORD")
-    @NonNull
-    private final String password;
   }
 
   @Value

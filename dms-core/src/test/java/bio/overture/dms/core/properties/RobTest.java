@@ -1,6 +1,7 @@
-package bio.overture.dms.core.properties.service;
+package bio.overture.dms.core.properties;
 
-import bio.overture.dms.core.properties.service.song.SongServiceProperties;
+import bio.overture.dms.core.properties.FlywayProperties;
+import bio.overture.dms.core.properties.song.SongServiceProperties;
 import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +15,6 @@ public class RobTest {
       throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     val prop =
         SongServiceProperties.builder()
-            .name("myname")
             .authServerProperties(
                 SongServiceProperties.AuthServerProperties.builder()
                     .clientId("myclientId")
@@ -29,13 +29,13 @@ public class RobTest {
                             .build())
                     .build())
             .databaseProperties(
-                SongServiceProperties.DatabaseProperties.builder()
+                DatabaseProperties.builder()
                     .password("mydbpassword1")
                     .url("mydburl")
                     .username("mydbusername1")
                     .build())
             .flywayProperties(
-                SongServiceProperties.FlywayProperties.builder()
+                FlywayProperties.builder()
                     .enabled(true)
                     .locations("somelocation")
                     .build())
