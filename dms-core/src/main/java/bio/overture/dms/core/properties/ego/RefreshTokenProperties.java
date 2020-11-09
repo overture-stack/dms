@@ -10,15 +10,15 @@ import lombok.Value;
 public class RefreshTokenProperties {
 
   @NonNull
-  @EnvVariable("REFRESHTOKEN_DURATIONMS")
+  @EnvVariable("DURATIONMS")
   private final int durationMs;
 
   @NonNull
-  @EnvVariable("REFRESHTOKEN_COOKIEISSECURE")
+  @EnvVariable("COOKIEISSECURE")
   private final boolean cookieIsSecure;
 
   @NonNull
-  @EnvVariable("REFRESHTOKEN_DOMAIN")
+  @EnvVariable("DOMAIN")
   private final String domain;
 
 }

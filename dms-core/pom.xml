@@ -33,6 +33,16 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <!--Testing-->
         <dependency>
@@ -41,6 +51,34 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+	                        new org.reflections.Reflections("bio.overture.dms.core",
+	                        new org.reflections.scanners.FieldAnnotationsScanner(),
+	                        new org.reflections.scanners.MethodAnnotationsScanner(),
+	                        new org.reflections.scanners.MemberUsageScanner()
+	                        ).save("${project.build.outputDirectory}/META-INF/reflections/${project.artifactId}-reflections.xml")
+                            ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

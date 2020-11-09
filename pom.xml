@@ -70,6 +70,19 @@
 				<artifactId>reflections</artifactId>
                 <version>${reflections.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-all</artifactId>
+				<version>${groovy.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>${dom4j.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
 
 			<!--Retry-->
 			<dependency>
@@ -126,7 +139,6 @@
 				<artifactId>picocli-spring-boot-starter</artifactId>
 				<version>${picocli.version}</version>
 			</dependency>
-
 
 
 			<!--Logging-->
@@ -345,6 +357,8 @@
 		<figlet.version>0.0.8</figlet.version>
 		<mockito.version>3.5.10</mockito.version>
 		<reflections.version>0.9.12</reflections.version>
+		<groovy.version>2.4.3</groovy.version>
+		<dom4j.version>1.6.1</dom4j.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>
@@ -353,6 +367,7 @@
 		<plugin.maven.assembly.version>3.3.0</plugin.maven.assembly.version>
 		<plugin.maven.enforcer.version>3.0.0-M3</plugin.maven.enforcer.version>
 	</properties>
+
 
 
 </project>

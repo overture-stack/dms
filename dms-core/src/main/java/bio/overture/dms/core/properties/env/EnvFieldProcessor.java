@@ -1,7 +1,7 @@
 package bio.overture.dms.core.properties.env;
 
 import bio.overture.dms.core.properties.util.Nullable;
-import bio.overture.dms.core.properties.util.Reflections;
+import bio.overture.dms.core.properties.util.Reflections2;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,9 +21,9 @@ import static bio.overture.dms.core.properties.exceptions.EnvProcessingException
 import static bio.overture.dms.core.properties.exceptions.EnvProcessingException.checkEnvProcessing;
 import static bio.overture.dms.core.properties.util.CollectionUtils.intersection;
 import static bio.overture.dms.core.properties.util.Joiner.COMMA;
-import static bio.overture.dms.core.properties.util.Reflections.invokeMethod;
-import static bio.overture.dms.core.properties.util.Reflections.isCollection;
-import static bio.overture.dms.core.properties.util.Reflections.isIterable;
+import static bio.overture.dms.core.properties.util.Reflections2.invokeMethod;
+import static bio.overture.dms.core.properties.util.Reflections2.isCollection;
+import static bio.overture.dms.core.properties.util.Reflections2.isIterable;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 import static java.util.function.Function.identity;
@@ -64,7 +64,7 @@ public class EnvFieldProcessor {
    * @throws IllegalAccessException
    */
   public Map<String, String> generateEnvVarMap(@NonNull Object obj, @Nullable String prefix){
-    checkEnvProcessing(Reflections.isClassPublic(obj),
+    checkEnvProcessing(Reflections2.isClassPublic(obj),
         "Cannot process input object of type '%s' since the class is not publicly accessible", obj.getClass().getSimpleName());
 
     val map = processEnvVariables(prefix, obj);
@@ -159,7 +159,7 @@ public class EnvFieldProcessor {
   private Optional<Method> findGetterMethod(Field f) {
     checkValidFieldType(f);
     val rootName = capitalizeFirstChar(f.getName());
-    if (Reflections.isBooleanType(f)) {
+    if (Reflections2.isBooleanType(f)) {
       val result = findMethod("is"+rootName, f.getType());
       if (result.isPresent()){
         return result;

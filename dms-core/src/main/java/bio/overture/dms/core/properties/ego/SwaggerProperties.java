@@ -10,11 +10,11 @@ import lombok.Value;
 public class SwaggerProperties {
 
   @NonNull
-  @EnvVariable("SWAGGER_HOST")
+  @EnvVariable("HOST")
   private final String host;
 
   @NonNull
-  @EnvVariable("SWAGGER_BASEURL")
+  @EnvVariable("BASEURL")
   private final String baseUrl;
 
 }

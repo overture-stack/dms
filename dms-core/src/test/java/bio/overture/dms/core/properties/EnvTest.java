@@ -1,7 +1,7 @@
 package bio.overture.dms.core.properties;
 
-import bio.overture.dms.core.properties.env.EnvFieldProcessor;
 import bio.overture.dms.core.properties.env.EnvObject;
+import bio.overture.dms.core.properties.env.EnvProcessor;
 import bio.overture.dms.core.properties.env.EnvVariable;
 import bio.overture.dms.core.properties.exceptions.EnvProcessingException;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
+import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.MemberUsageScanner;
+import org.reflections.scanners.MethodAnnotationsScanner;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 import static bio.overture.dms.core.properties.env.EnvFieldProcessor.createFieldProcessor;
@@ -26,12 +32,14 @@ public class EnvTest {
   private static final String TEST_AGE = "TEST_AGE";
   private static final String TEST_IS_MALE = "TEST_IS_MALE";
   private static final String TEST_HEIGHT= "TEST_HEIGHT";
-  private static final String TEST_WEIGHT = "TEST_WEIGHT";
+  private static final String TEST_WEIGHT = "WEIGHT";
   private static final String TEST_MY_CHAR = "TEST_MY_CHAR";
   private static final String TEST_NUM_CHILDREN = "TEST_NUM_CHILDREN";
   private static final String TEST_HAS_HOUSE= "TEST_HAS_HOUSE";
   private static final String TEST_INCOME = "TEST_INCOME";
   private static final String TEST_COMPANY =  "TEST_COMPANY";
+
+  private static final EnvProcessor ENV_PROCESSOR = Factory.buildEnvProcessor();
 
   @Test
   public void renderVariables_Private_EnvProcessingException(){
@@ -52,16 +60,52 @@ public class EnvTest {
         .income(50000L)
         .build();
 
+    val person2= Person.builder()
+        .lastName("Doe2")
+        .age(92)
+        .male(false)
+        .height(182L)
+        .weight(202.0)
+        .myChar('r')
+        .numChildren(5)
+        .hasHouse(false)
+        .income(50002L)
+        .build();
+
+    val testPerson = Person.builder()
+        .lastName("DoeTest")
+        .age(93)
+        .male(true)
+        .height(183L)
+        .weight(203.0)
+        .myChar('y')
+        .numChildren(6)
+        .hasHouse(false)
+        .income(50003L)
+        .build();
+
     val employee = Employee.builder()
         .person(person)
+        .person2(person2)
+        .testPerson(testPerson)
         .company("OICR")
         .build();
 
     val map = createFieldProcessor(Employee.class).generateEnvVarMap(employee);
+
+//    val r = new Reflections(getClass().getPackageName(), new FieldAnnotationsScanner(), new MethodAnnotationsScanner(), new MemberUsageScanner());
+//    r.save("hi.xml");
+//
+//    val r2 = new Reflections().collect(new File("hi.xml"));
+//
+    val proc = Factory.buildEnvProcessor();
+    val newmap = proc.generateEnvMap(employee);
     log.info("sdf");
 
   }
 
+  // TODO: test undefined (null) none custom object
+  // TODO: test undefined (null) custom object
   @Test
   public void renderVariables_Person_Success(){
     val person= Person.builder()
@@ -75,6 +119,7 @@ public class EnvTest {
         .hasHouse(true)
         .income(50000L)
         .build();
+
 
     val map = createFieldProcessor(Person.class).generateEnvVarMap(person);
 
@@ -109,11 +154,16 @@ public class EnvTest {
   @AllArgsConstructor
   public static class Employee{
 
-    @EnvVariable(TEST_COMPANY)
     private String company;
 
-    @EnvObject
     private Person person;
+
+    private Person person2;
+
+    private Person person3;
+
+    @EnvVariable("TEST_PERSON2")
+    private Person testPerson;
 
   }
 
@@ -123,31 +173,27 @@ public class EnvTest {
   @AllArgsConstructor
   public static class Person{
 
-    @EnvVariable(TEST_LASTNAME)
+    private static final String NUM_CHILDREN = "NUM_CHILDREN";
+    private static final String HAS_HOUSE = "HAS_HOUSE";
+
     private String lastName;
 
-    @EnvVariable(TEST_AGE)
     private int age;
 
-    @EnvVariable(TEST_IS_MALE)
     private boolean male;
 
-    @EnvVariable(TEST_HEIGHT)
     private long height;
 
-    @EnvVariable(TEST_WEIGHT)
     private double weight;
 
-    @EnvVariable(TEST_MY_CHAR)
     private char myChar;
 
-    @EnvVariable(TEST_NUM_CHILDREN)
+    @EnvVariable(NUM_CHILDREN)
     private Integer numChildren;
 
-    @EnvVariable(TEST_HAS_HOUSE)
+    @EnvVariable(HAS_HOUSE)
     private Boolean hasHouse;
 
-    @EnvVariable(TEST_INCOME)
     private Long income;
 
   }

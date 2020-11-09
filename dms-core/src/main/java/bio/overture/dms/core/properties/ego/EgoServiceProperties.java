@@ -32,24 +32,19 @@ public class EgoServiceProperties implements ServiceProperties {
   private final Integer jwtDurationMs;
 
   @NonNull
-  @EnvObject
   private final DatabaseProperties databaseProperties;
 
   @NonNull
-  @EnvObject
   private final FlywayProperties flywayProperties;
 
   @NonNull
-  @EnvObject
-  private final SwaggerProperties swaggerProperties;
+  private final SwaggerProperties swagger;
 
   @NonNull
-  @EnvObject
-  private final RefreshTokenProperties refreshTokenProperties;
+  private final RefreshTokenProperties refreshToken;
 
   @NonNull
-  @EnvObject
-  @EnvPrefix("GOOGLE_CLIENT")
-  private final SSOProperties googleSSOProperties;
+  @EnvVariable("GOOGLE_CLIENT")
+  private final SSOProperties googleClient;
 
 }
