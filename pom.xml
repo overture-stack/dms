@@ -64,7 +64,12 @@
 				<version>${docker-java.version}</version>
 			</dependency>
 
-
+			<!-- Reflection -->
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+			</dependency>
 
 			<!--Retry-->
 			<dependency>
@@ -339,6 +344,7 @@
 		<picocli.version>4.5.1</picocli.version>
 		<figlet.version>0.0.8</figlet.version>
 		<mockito.version>3.5.10</mockito.version>
+		<reflections.version>0.9.12</reflections.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>

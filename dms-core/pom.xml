@@ -28,6 +28,12 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!-- Reflection -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+
         <!--Testing-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

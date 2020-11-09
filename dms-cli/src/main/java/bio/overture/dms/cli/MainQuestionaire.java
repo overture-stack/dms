@@ -1,15 +1,5 @@
 package bio.overture.dms.cli;
 
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.BOOLEAN;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.BYTE;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.CHAR;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.DOUBLE;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.FLOAT;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.INT;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.LONG;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.SHORT;
-import static bio.overture.dms.core.properties.env.EnvVars.FieldTypes.STRING;
-import static bio.overture.dms.core.properties.env.EnvVars.setFieldValueSafely;
 import static java.lang.String.format;
 
 import java.lang.reflect.Method;
@@ -24,45 +14,45 @@ import lombok.val;
 public class MainQuestionaire {
   @SneakyThrows
   public static void main(String[] args) {
-    val s = new SongQuestionaire();
-    for (val field : SongQuestionaire.class.getDeclaredFields()) {
-      if (field.isAnnotationPresent(Question.class)) {
-        val question = field.getDeclaredAnnotation(Question.class);
-        val questionString = question.value();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(question);
-        val userInput = scanner.nextLine();
-        Object value = userInput;
-        if (BOOLEAN.matchesField(field)) {
-          value = Boolean.valueOf(userInput);
-        } else if (BYTE.matchesField(field)) {
-          value = Byte.valueOf(userInput);
-        } else if (SHORT.matchesField(field)) {
-          value = Short.valueOf(userInput);
-        } else if (CHAR.matchesField(field)) {
-          if (userInput.length() > 1) {
-            throw new IllegalAccessException(format("The input \"%s\" is not a character"));
-          }
-          value = userInput.charAt(0);
-        } else if (INT.matchesField(field)) {
-          value = Integer.valueOf(userInput);
-        } else if (LONG.matchesField(field)) {
-          value = Long.valueOf(userInput);
-        } else if (FLOAT.matchesField(field)) {
-          value = Float.valueOf(userInput);
-        } else if (DOUBLE.matchesField(field)) {
-          value = Double.valueOf(userInput);
-        } else if (STRING.matchesField(field)) {
-          value = userInput;
-        } else {
-          throw new IllegalStateException(
-              format(
-                  "Could not process field \"%s\" of type \"%s\"",
-                  field.getName(), field.getType().getSimpleName()));
-        }
-        setFieldValueSafely(field, s, value);
-      }
-    }
+//    val s = new SongQuestionaire();
+//    for (val field : SongQuestionaire.class.getDeclaredFields()) {
+//      if (field.isAnnotationPresent(Question.class)) {
+//        val question = field.getDeclaredAnnotation(Question.class);
+//        val questionString = question.value();
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println(question);
+//        val userInput = scanner.nextLine();
+//        Object value = userInput;
+//        if (BOOLEAN.matchesField(field)) {
+//          value = Boolean.valueOf(userInput);
+//        } else if (BYTE.matchesField(field)) {
+//          value = Byte.valueOf(userInput);
+//        } else if (SHORT.matchesField(field)) {
+//          value = Short.valueOf(userInput);
+//        } else if (CHAR.matchesField(field)) {
+//          if (userInput.length() > 1) {
+//            throw new IllegalAccessException(format("The input \"%s\" is not a character"));
+//          }
+//          value = userInput.charAt(0);
+//        } else if (INT.matchesField(field)) {
+//          value = Integer.valueOf(userInput);
+//        } else if (LONG.matchesField(field)) {
+//          value = Long.valueOf(userInput);
+//        } else if (FLOAT.matchesField(field)) {
+//          value = Float.valueOf(userInput);
+//        } else if (DOUBLE.matchesField(field)) {
+//          value = Double.valueOf(userInput);
+//        } else if (STRING.matchesField(field)) {
+//          value = userInput;
+//        } else {
+//          throw new IllegalStateException(
+//              format(
+//                  "Could not process field \"%s\" of type \"%s\"",
+//                  field.getName(), field.getType().getSimpleName()));
+//        }
+//        setFieldValueSafely(field, s, value);
+//      }
+//    }
     log.info("Sdf");
   }
 
