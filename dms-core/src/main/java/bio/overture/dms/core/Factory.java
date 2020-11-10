@@ -1,23 +1,26 @@
 package bio.overture.dms.core;
 
 import bio.overture.dms.core.env.EnvProcessor;
+import bio.overture.dms.core.reflection.Reflector;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
 import org.reflections.scanners.MemberUsageScanner;
 import org.reflections.scanners.MethodAnnotationsScanner;
 
+import static bio.overture.dms.core.env.EnvProcessor.createEnvProcessor;
+import static bio.overture.dms.core.reflection.Reflector.createReflector;
 import static java.util.Objects.isNull;
 
 @Slf4j
 public class Factory {
 
   public static EnvProcessor buildEnvProcessor(){
-    return new EnvProcessor(buildReflections());
+    return createEnvProcessor(buildReflector());
   }
 
-  private static boolean isInProductionMode(){
-    return !isNull(System.getProperty("prod"));
+  public static Reflector buildReflector(){
+    return createReflector(buildReflections());
   }
 
   private static Reflections buildReflections(){
@@ -31,6 +34,10 @@ public class Factory {
           new FieldAnnotationsScanner(),
           new MethodAnnotationsScanner());
     }
+  }
+
+  private static boolean isInProductionMode(){
+    return !isNull(System.getProperty("prod"));
   }
 
 }

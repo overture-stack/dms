@@ -1,4 +1,4 @@
-package bio.overture.dms.core.properties;
+package bio.overture.dms.core.env;
 
 import bio.overture.dms.core.Factory;
 import bio.overture.dms.core.env.EnvProcessor;
@@ -9,10 +9,8 @@ import bio.overture.dms.core.util.Tester;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -99,14 +97,6 @@ public class EnvTest {
     assertEquals("0.0", map.get(PERSON2_WEIGHT));
   }
 
-  @Test
-  public void generateEnvMap_MissingGetter_EnvProcessingException(){
-    val example = new MissingGetterClass();
-    example.setAge(100);
-    example.setHeight(200);
-    example.setName("John");
-    assertEnvProcessingException(example, "Could not find getter method");
-  }
 
   @Test
   public void dumpEnvs_NonNested_Success(){
@@ -370,12 +360,6 @@ public class EnvTest {
 
   }
 
-
-  public static class MissingGetterClass {
-    @Getter @Setter private String name;
-    @Setter private Integer age;
-    @Setter private int height;
-  }
 
   @Data
   @Builder

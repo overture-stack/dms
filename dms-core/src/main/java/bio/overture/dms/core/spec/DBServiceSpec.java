@@ -1,4 +1,4 @@
-package bio.overture.dms.core.properties;
+package bio.overture.dms.core.spec;
 
 import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class DBServiceProperties implements ServiceProperties {
+public class DBServiceSpec implements ServiceSpec {
 
   @NonNull
   @EnvVariable("POSTGRES_DB")

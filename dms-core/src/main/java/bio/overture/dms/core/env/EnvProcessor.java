@@ -1,22 +1,20 @@
 package bio.overture.dms.core.env;
 
+import bio.overture.dms.core.reflection.Reflector;
 import bio.overture.dms.core.util.Nullable;
-import bio.overture.dms.core.util.Reflections2.FieldTypes;
+import bio.overture.dms.core.reflection.FieldTypes;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static bio.overture.dms.core.env.EnvProcessingException.checkEnvProcessing;
-import static bio.overture.dms.core.util.Reflections2.invokeMethod;
-import static bio.overture.dms.core.util.Reflections2.isClassPublic;
+import static bio.overture.dms.core.reflection.Reflector.isClassPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
@@ -24,13 +22,14 @@ import static java.util.Objects.isNull;
 /**
  * Processor used for converting objects to an environment variable map
  */
+@Slf4j
 @RequiredArgsConstructor
 public class EnvProcessor {
 
   private static final EnvFieldVisitor PROCESS_FIELD_VISITOR = new ProcessEnvFieldVisitor();
   private static final EnvFieldVisitor DUMP_FIELD_VISITOR = new DumpEnvFieldVisitor();
 
-  @NonNull private final Reflections reflections;
+  @NonNull private final Reflector reflector;
 
   /**
    * Generates an environment variable hashmap by recursively processing field names.
@@ -91,7 +90,7 @@ public class EnvProcessor {
    * @throws EnvProcessingException when a env variable collision occurs or when a getter method is not found
    */
   public Map<String, String> generateEnvMap(@NonNull Object obj){
-    return internalGenerateEnvMap(obj, PROCESS_FIELD_VISITOR);
+    return internalGenerateEnvMap(obj.getClass(), obj, PROCESS_FIELD_VISITOR);
   }
 
   /**
@@ -113,39 +112,43 @@ public class EnvProcessor {
    * @return set containing all possible environment variable names
    */
   public Set<String> dumpAllEnvVariables(@NonNull Object obj){
-    val envMap = internalGenerateEnvMap(obj, DUMP_FIELD_VISITOR);
+    val envMap = internalGenerateEnvMap(obj.getClass(), obj, DUMP_FIELD_VISITOR);
     return Set.copyOf(envMap.keySet());
   }
 
-  private Map<String, String> internalGenerateEnvMap(@NonNull Object obj, EnvFieldVisitor envFieldVisitor){
-    checkEnvProcessing(isClassPublic(obj),
+  public static EnvProcessor createEnvProcessor(@NonNull Reflector reflector) {
+    return new EnvProcessor(reflector);
+  }
+
+  private Map<String, String> internalGenerateEnvMap(@NonNull Class<?> objClass, @Nullable Object obj,
+      EnvFieldVisitor envFieldVisitor){
+    checkEnvProcessing(isClassPublic(objClass),
         "Cannot process input object of type '%s' since the class is not publicly accessible",
         obj.getClass().getSimpleName());
     val envMap = new HashMap<String, String>();
-    processObject(envMap, obj,null, envFieldVisitor);
+    processObject(envMap, null, envFieldVisitor, objClass, obj);
     return envMap;
   }
 
-  private void processObject(@NonNull Map<String, String> envMap, @Nullable Object obj, @Nullable String inputPrefix,
-  EnvFieldVisitor envFieldVisitor){
-    if (!isNull(obj)){
-      stream(obj.getClass().getDeclaredFields())
-          .filter(x -> !isStatic(x.getModifiers()))
-          .forEachOrdered(field -> processField(envMap, obj, inputPrefix, field, envFieldVisitor));
-    }
+  private void processObject(@NonNull Map<String, String> envMap, @Nullable String inputPrefix,
+      @NonNull EnvFieldVisitor envFieldVisitor, @NonNull Class<?> objClass, @Nullable Object obj){
+    stream(objClass.getDeclaredFields())
+        .filter(x -> !isStatic(x.getModifiers()))
+        .forEachOrdered(field -> processField(envMap, objClass, obj, inputPrefix, field, envFieldVisitor));
   }
 
   // Note: This is a Depth-First approach
-  private void processField(Map<String, String> envMap, @Nullable Object obj, @Nullable String inputPrefix,
+  private void processField(Map<String, String> envMap, @NonNull Class<?> objClass, @Nullable Object obj, @Nullable String inputPrefix,
       Field f, EnvFieldVisitor envFieldVisitor){
     val envName = resolveEnvName(inputPrefix, f);
     checkEnvProcessing(!envMap.containsKey(envName),
         "Cannot process object of type '%s' with field '%s' since a collision was detected with the env variable '%s'",
-        obj.getClass().getName(), f.getName(), envName);
-    val fieldValue = getFieldValueForObject(f, obj);
+        objClass.getName(), f.getName(), envName);
+    log.debug("Processing field '{}' for object type '{}'", f.getName(), objClass.getName());
+    val fieldValue = isNull(obj) ? null : reflector.getFieldValue(objClass, obj, f);
     if (isCustomField(f)){
       // Current envName is the prefix for the sub env variables
-      processObject(envMap, fieldValue, envName, envFieldVisitor);
+      processObject(envMap, envName, envFieldVisitor, f.getType(), fieldValue);
     } else {
       envFieldVisitor.visit(envMap, envName, fieldValue);
     }
@@ -156,17 +159,6 @@ public class EnvProcessor {
     return !FieldTypes.matchesAny(f);
   }
 
-  private Object getFieldValueForObject(Field f, Object obj){
-    val result =  reflections.getFieldUsage(f).stream()
-        .filter(x -> x.getModifiers() == Modifier.PUBLIC)
-        .filter(x -> x instanceof Method)
-        .map(x -> (Method)x)
-        .filter(x -> x.getParameterCount() == 0) //Getter
-        .findFirst();
-    checkEnvProcessing(result.isPresent(),"Could not find getter method for field '%s' for object type '%s'",
-        f.getName(), obj.getClass().getName());
-    return invokeMethod(obj, result.get());
-  }
 
   private static String resolveEnvName(@Nullable String inputPrefix, Field f){
     val baseName = f.isAnnotationPresent(EnvVariable.class) ?

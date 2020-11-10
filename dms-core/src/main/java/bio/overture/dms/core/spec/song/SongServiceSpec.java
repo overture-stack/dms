@@ -1,8 +1,8 @@
-package bio.overture.dms.core.properties.song;
+package bio.overture.dms.core.spec.song;
 
-import bio.overture.dms.core.properties.DatabaseSpec;
-import bio.overture.dms.core.properties.FlywaySpec;
-import bio.overture.dms.core.properties.ServiceProperties;
+import bio.overture.dms.core.spec.DatabaseSpec;
+import bio.overture.dms.core.spec.FlywaySpec;
+import bio.overture.dms.core.spec.ServiceSpec;
 import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
 import lombok.NonNull;
@@ -10,7 +10,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class SongServiceProperties implements ServiceProperties {
+public class SongServiceSpec implements ServiceSpec {
 
   @EnvVariable("SERVER_PORT")
   private final int serverPort;

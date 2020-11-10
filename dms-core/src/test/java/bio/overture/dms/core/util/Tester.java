@@ -41,8 +41,12 @@ public class Tester {
     Assertions.assertFalse(exp, format(formattedMessage, args));
   }
 
-  public static <T> void assertEquals(T expected,  T actual, String formattedMessage, Object ...args){
+  public static void assertEquals(Object expected,  Object actual, String formattedMessage, Object ...args){
     Assertions.assertEquals(expected, actual, format(formattedMessage, args));
+  }
+
+  public static void assertEquals(Object expected,  Object actual){
+    assertEquals(expected, actual, "Expected: %s, Actual: %s", expected, actual);
   }
 
 }
