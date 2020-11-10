@@ -12,12 +12,15 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static bio.overture.dms.core.env.EnvProcessingException.checkEnvProcessing;
 import static bio.overture.dms.core.reflection.Reflector.isClassPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 /**
  * Processor used for converting objects to an environment variable map
@@ -113,7 +116,9 @@ public class EnvProcessor {
    */
   public Set<String> dumpAllEnvVariables(@NonNull Object obj){
     val envMap = internalGenerateEnvMap(obj.getClass(), obj, DUMP_FIELD_VISITOR);
-    return Set.copyOf(envMap.keySet());
+    val orderSet = new TreeSet<String>();
+    envMap.keySet().forEach(x -> orderSet.add(x));
+    return orderSet;
   }
 
   public static EnvProcessor createEnvProcessor(@NonNull Reflector reflector) {

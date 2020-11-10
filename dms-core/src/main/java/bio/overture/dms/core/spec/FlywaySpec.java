@@ -1,15 +1,19 @@
 package bio.overture.dms.core.spec;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.Value;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Value
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(force = true, access = PRIVATE)
 public class FlywaySpec {
 
   private final boolean enabled;
 
-  @NonNull
   private final String locations;
 }
