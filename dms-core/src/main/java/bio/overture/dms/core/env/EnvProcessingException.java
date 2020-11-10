@@ -1,4 +1,4 @@
-package bio.overture.dms.core.properties.exceptions;
+package bio.overture.dms.core.env;
 
 import lombok.NonNull;
 

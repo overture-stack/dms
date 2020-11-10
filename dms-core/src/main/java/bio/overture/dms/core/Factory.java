@@ -1,13 +1,11 @@
-package bio.overture.dms.core.properties;
+package bio.overture.dms.core;
 
-import bio.overture.dms.core.properties.env.EnvProcessor;
+import bio.overture.dms.core.env.EnvProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
 import org.reflections.scanners.MemberUsageScanner;
 import org.reflections.scanners.MethodAnnotationsScanner;
-
-import java.io.File;
 
 import static java.util.Objects.isNull;
 

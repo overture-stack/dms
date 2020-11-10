@@ -1,6 +1,6 @@
 package bio.overture.dms.core.properties;
 
-import bio.overture.dms.core.properties.env.EnvVariable;
+import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

@@ -1,11 +1,9 @@
-package bio.overture.dms.core.properties.util;
+package bio.overture.dms.core.util;
 
-import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;

@@ -1,44 +1,115 @@
 package bio.overture.dms.core.properties;
 
-import bio.overture.dms.core.properties.env.EnvProcessor;
-import bio.overture.dms.core.properties.env.EnvVariable;
-import bio.overture.dms.core.properties.exceptions.EnvProcessingException;
+import bio.overture.dms.core.Factory;
+import bio.overture.dms.core.env.EnvProcessor;
+import bio.overture.dms.core.env.EnvVariable;
+import bio.overture.dms.core.env.EnvProcessingException;
+import bio.overture.dms.core.util.Nullable;
+import bio.overture.dms.core.util.Tester;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.core.properties.env.EnvVars.generateEnvVarMap;
 import static bio.overture.dms.core.util.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class EnvTest {
-  private static final String TEST_LASTNAME = "TEST_LASTNAME";
-  private static final String TEST_AGE = "TEST_AGE";
-  private static final String TEST_IS_MALE = "TEST_IS_MALE";
-  private static final String TEST_HEIGHT= "TEST_HEIGHT";
-  private static final String TEST_WEIGHT = "WEIGHT";
-  private static final String TEST_MY_CHAR = "TEST_MY_CHAR";
-  private static final String TEST_NUM_CHILDREN = "TEST_NUM_CHILDREN";
-  private static final String TEST_HAS_HOUSE= "TEST_HAS_HOUSE";
-  private static final String TEST_INCOME = "TEST_INCOME";
+  private static final String LASTNAME = "LASTNAME";
+  private static final String AGE = "AGE";
+  private static final String MALE = "MALE";
+  private static final String HEIGHT= "HEIGHT";
+  private static final String WEIGHT = "WEIGHT";
+  private static final String MYCHAR = "MYCHAR";
+  private static final String NUM_CHILDREN = "NUM_CHILDREN";
+  private static final String HAS_HOUSE = "HAS_HOUSE";
+  private static final String INCOME = "INCOME";
+  private static final String COMPANY = "COMPANY";
+
+  private static final String PERSON2_LASTNAME = "PERSON2_LASTNAME";
+  private static final String PERSON2_HEIGHT= "PERSON2_HEIGHT";
+  private static final String PERSON2_AGE= "PERSON2_AGE";
+  private static final String PERSON2_MALE= "PERSON2_MALE";
+  private static final String PERSON2_MYCHAR= "PERSON2_MYCHAR";
+  private static final String PERSON2_WEIGHT= "PERSON2_WEIGHT";
+
+  private static final String PERSON_LASTNAME = "PERSON_LASTNAME";
+  private static final String PERSON_HEIGHT= "PERSON_HEIGHT";
+  private static final String PERSON_AGE= "PERSON_AGE";
+  private static final String PERSON_MALE= "PERSON_MALE";
+  private static final String PERSON_MYCHAR= "PERSON_MYCHAR";
+  private static final String PERSON_WEIGHT= "PERSON_WEIGHT";
+
+  private static final String PERSON_NUM_CHILDREN = "PERSON_NUM_CHILDREN";
+  private static final String PERSON_HAS_HOUSE = "PERSON_HAS_HOUSE";
+  private static final String PERSON_INCOME = "PERSON_INCOME";
+  private static final String PERSON2_NUM_CHILDREN = "PERSON2_NUM_CHILDREN";
+  private static final String PERSON2_HAS_HOUSE = "PERSON2_HAS_HOUSE";
+  private static final String PERSON2_INCOME = "PERSON2_INCOME";
+  private static final String TEST_PERSON2_LASTNAME = "TEST_PERSON2_LASTNAME";
+  private static final String TEST_PERSON2_AGE = "TEST_PERSON2_AGE";
+  private static final String TEST_PERSON2_MALE = "TEST_PERSON2_MALE";
+  private static final String TEST_PERSON2_HEIGHT = "TEST_PERSON2_HEIGHT";
+  private static final String TEST_PERSON2_WEIGHT = "TEST_PERSON2_WEIGHT";
+  private static final String TEST_PERSON2_MYCHAR = "TEST_PERSON2_MYCHAR";
+  private static final String TEST_PERSON2_NUM_CHILDREN = "TEST_PERSON2_NUM_CHILDREN";
+  private static final String TEST_PERSON2_HAS_HOUSE = "TEST_PERSON2_HAS_HOUSE";
+  private static final String TEST_PERSON2_INCOME = "TEST_PERSON2_INCOME";
 
   private static final EnvProcessor ENV_PROCESSOR = Factory.buildEnvProcessor();
 
   @Test
-  public void renderVariables_Private_EnvProcessingException(){
-    assertExceptionThrown(() -> generateEnvVarMap(new PrivateClass()), EnvProcessingException.class);
+  public void generateEnvMap_Private_EnvProcessingException(){
+    assertEnvProcessingException(new PrivateClass(),"class is not publicly accessible");
   }
 
   @Test
-  public void renderVariables_Employee_Success(){
+  public void generateEnvMap_NullCustomChildren_Success(){
+    val person2 = Person.builder()
+        .lastName("Doe")
+        .build();
+    val employee = Employee.builder()
+        .person(null)
+        .person2(person2)
+        .person3(null)
+        .testPerson(null)
+        .company("OICR")
+        .build();
+    val map= ENV_PROCESSOR.generateEnvMap(employee);
+    assertTrue(map.containsKey(COMPANY));
+    assertTrue(map.containsKey(PERSON2_LASTNAME));
+    assertEquals(7, map.size());
+    assertEquals("OICR", map.get(COMPANY));
+    assertEquals("Doe", map.get(PERSON2_LASTNAME));
+    assertEquals("0", map.get(PERSON2_HEIGHT));
+    assertEquals("0", map.get(PERSON2_AGE));
+    assertEquals("false", map.get(PERSON2_MALE));
+    assertEquals(Character.toString(0), map.get(PERSON2_MYCHAR));
+    assertEquals("0.0", map.get(PERSON2_WEIGHT));
+  }
+
+  @Test
+  public void generateEnvMap_MissingGetter_EnvProcessingException(){
+    val example = new MissingGetterClass();
+    example.setAge(100);
+    example.setHeight(200);
+    example.setName("John");
+    assertEnvProcessingException(example, "Could not find getter method");
+  }
+
+  @Test
+  public void generateEnvMap_Employee_Success(){
     val person= Person.builder()
         .lastName("Doe")
         .age(90)
@@ -79,23 +150,64 @@ public class EnvTest {
         .person(person)
         .person2(person2)
         .testPerson(testPerson)
+        .person3(null)
         .company("OICR")
         .build();
 
-//    val r = new Reflections(getClass().getPackageName(), new FieldAnnotationsScanner(), new MethodAnnotationsScanner(), new MemberUsageScanner());
-//    r.save("hi.xml");
-//
-//    val r2 = new Reflections().collect(new File("hi.xml"));
-//
-    val newmap = ENV_PROCESSOR.generateEnvMap(employee);
-    log.info("sdf");
+    val map = ENV_PROCESSOR.generateEnvMap(employee);
+    val expectedEnvVariables = List.of(
+        PERSON_LASTNAME,
+        PERSON_AGE,
+        PERSON_MALE,
+        PERSON_HEIGHT,
+        PERSON_WEIGHT,
+        PERSON_MYCHAR,
+        PERSON_NUM_CHILDREN,
+        PERSON_HAS_HOUSE,
+        PERSON_INCOME,
+
+        PERSON2_LASTNAME,
+        PERSON2_AGE,
+        PERSON2_MALE,
+        PERSON2_HEIGHT,
+        PERSON2_WEIGHT,
+        PERSON2_MYCHAR,
+        PERSON2_NUM_CHILDREN,
+        PERSON2_HAS_HOUSE,
+        PERSON2_INCOME,
+
+        TEST_PERSON2_LASTNAME,
+        TEST_PERSON2_AGE,
+        TEST_PERSON2_MALE,
+        TEST_PERSON2_HEIGHT,
+        TEST_PERSON2_WEIGHT,
+        TEST_PERSON2_MYCHAR,
+        TEST_PERSON2_NUM_CHILDREN,
+        TEST_PERSON2_HAS_HOUSE,
+        TEST_PERSON2_INCOME,
+
+        COMPANY);
+    val fieldsPerPerson = 9;
+    val numPersonFieldsPerEmployee = 3;
+    val numEmployeeFields = 1;
+    val totalExpectedEnvVariables = numPersonFieldsPerEmployee*fieldsPerPerson + numEmployeeFields;
+    assertEquals(totalExpectedEnvVariables, expectedEnvVariables.size());
+
+    expectedEnvVariables
+        .forEach(x -> Tester.assertTrue(map.containsKey(x),
+            "Expected env variable '%s' does not exist in the generated map", x ));
+
+    assertEquals(totalExpectedEnvVariables, map.size());
+
+    assertEquals("Doe", map.get(PERSON_LASTNAME));
+    assertEquals("Doe2", map.get(PERSON2_LASTNAME));
+    assertEquals("DoeTest", map.get(TEST_PERSON2_LASTNAME));
+    assertEquals("OICR", map.get(COMPANY));
 
   }
 
-  // TODO: test undefined (null) none custom object
-  // TODO: test undefined (null) custom object
   @Test
-  public void renderVariables_Person_Success(){
+  public void generateEnvMap_Person_Success(){
     val person= Person.builder()
         .lastName("Doe")
         .age(90)
@@ -108,32 +220,56 @@ public class EnvTest {
         .income(50000L)
         .build();
 
-
     val map = ENV_PROCESSOR.generateEnvMap(person);
-
 
     assertEquals(9, map.size());
     Stream.of(
-        TEST_LASTNAME,
-        TEST_AGE,
-        TEST_IS_MALE,
-        TEST_HEIGHT,
-        TEST_WEIGHT,
-        TEST_MY_CHAR,
-        TEST_NUM_CHILDREN,
-        TEST_HAS_HOUSE,
-        TEST_INCOME )
-        .forEach(x -> assertTrue(map.containsKey(x)));
+        LASTNAME,
+        AGE, MALE,
+        HEIGHT,
+        WEIGHT,
+        MYCHAR,
+        NUM_CHILDREN,
+        HAS_HOUSE,
+        INCOME )
+        .forEach(x -> Tester.assertTrue(map.containsKey(x),
+            "Expected env variable '%s' does not exist in the generated map", x ));
 
-    assertEquals("Doe", map.get(TEST_LASTNAME));
-    assertEquals("90", map.get(TEST_AGE));
-    assertEquals("true", map.get(TEST_IS_MALE));
-    assertEquals("180", map.get(TEST_HEIGHT));
-    assertEquals(Double.toString(200.0), map.get(TEST_WEIGHT));
-    assertEquals("q", map.get(TEST_MY_CHAR));
-    assertEquals("4", map.get(TEST_NUM_CHILDREN));
-    assertEquals("true", map.get(TEST_HAS_HOUSE));
-    assertEquals("50000", map.get(TEST_INCOME));
+    assertEquals("Doe", map.get(LASTNAME));
+    assertEquals("90", map.get(AGE));
+    assertEquals("true", map.get(MALE));
+    assertEquals("180", map.get(HEIGHT));
+    assertEquals(Double.toString(200.0), map.get(WEIGHT));
+    assertEquals("q", map.get(MYCHAR));
+    assertEquals("4", map.get(NUM_CHILDREN));
+    assertEquals("true", map.get(HAS_HOUSE));
+    assertEquals("50000", map.get(INCOME));
+  }
+
+  @Test
+  public void generateEnvMap_EnvCollisions_EnvProcessingException(){
+    val exp1 = CollisionClass1.builder()
+        .name("John")
+        .nameClone("SomethingElse")
+        .build();
+    assertEnvProcessingException(exp1, "a collision was detected with the env variable" );
+
+    val exp2 = CollisionClass2.builder()
+        .name1("J1")
+        .name2("J2")
+        .build();
+    assertEnvProcessingException(exp2, "a collision was detected with the env variable" );
+
+    val exp3 = CollisionClass3.builder()
+        .subClass1(CollisionClass3.MySubClass.builder().name("John").build())
+        .subClass2(CollisionClass3.MySubClass.builder().name("Mike").build())
+        .build();
+    assertEnvProcessingException(exp3, "a collision was detected with the env variable" );
+  }
+
+  private static void assertEnvProcessingException(@Nullable Object obj, @NonNull String containingTextInMessage){
+    assertExceptionThrown(() -> ENV_PROCESSOR.generateEnvMap(obj),
+        EnvProcessingException.class,containingTextInMessage );
   }
 
   @Data
@@ -194,6 +330,59 @@ public class EnvTest {
     @EnvVariable("TEST_PRIVATE_CLASS_NAME")
     private String name;
 
+  }
+
+
+  public static class MissingGetterClass {
+    @Getter @Setter private String name;
+    @Setter private Integer age;
+    @Setter private int height;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CollisionClass1 {
+
+    private String name;
+
+    @EnvVariable("NAME")
+    private String nameClone;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CollisionClass2 {
+
+    @EnvVariable("NAME")
+    private String name1;
+
+    @EnvVariable("NAME")
+    private String name2;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CollisionClass3 {
+
+    @EnvVariable("MY")
+    private MySubClass subClass1;
+
+    @EnvVariable("MY")
+    private MySubClass subClass2;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MySubClass {
+      private String name;
+    }
   }
 
 

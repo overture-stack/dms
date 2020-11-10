@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 
+import static bio.overture.dms.core.util.Strings.isBlank;
 import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -14,12 +15,21 @@ import static lombok.AccessLevel.PRIVATE;
 public class Tester {
 
   public static void assertExceptionThrown(Runnable runnable, Class<? extends Exception> exceptionClass){
+    assertExceptionThrown(runnable, exceptionClass, null);
+  }
+
+  public static void assertExceptionThrown(Runnable runnable, Class<? extends Exception> exceptionClass, @Nullable String containingTextInMessage){
     try{
       runnable.run();
     } catch (Exception e){
       assertTrue(exceptionClass.isInstance(e),
           "Expected exception of type: '%s' but got '%s'. Error was: %s",
           exceptionClass.getName(), e.getClass().getName(), e.getMessage() );
+      if (!isBlank(containingTextInMessage)){
+        assertTrue(e.getMessage().contains(containingTextInMessage),
+            "Expected the following error message to contain the text '%s' but did not: %s",
+            containingTextInMessage, e.getMessage());
+      }
     }
   }
 

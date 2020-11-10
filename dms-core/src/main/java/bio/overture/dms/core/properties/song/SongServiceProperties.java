@@ -3,8 +3,7 @@ package bio.overture.dms.core.properties.song;
 import bio.overture.dms.core.properties.DatabaseProperties;
 import bio.overture.dms.core.properties.FlywayProperties;
 import bio.overture.dms.core.properties.ServiceProperties;
-import bio.overture.dms.core.properties.env.EnvObject;
-import bio.overture.dms.core.properties.env.EnvVariable;
+import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -19,19 +18,19 @@ public class SongServiceProperties implements ServiceProperties {
   @EnvVariable("MANAGEMENT_SERVER_PORT")
   private final int managementServerPort;
 
-  @EnvVariable("SPRING_PROFILES_ACTIVE")
   @NonNull
+  @EnvVariable("SPRING_PROFILES_ACTIVE")
   private final String springProfilesActive;
 
-  @EnvObject @NonNull private final AuthServerProperties authServerProperties;
+  @NonNull private final AuthServerProperties authServerProperties;
 
-  @EnvObject @NonNull private final DatabaseProperties databaseProperties;
+  @NonNull private final DatabaseProperties databaseProperties;
 
-  @EnvObject @NonNull private final FlywayProperties flywayProperties;
+  @NonNull private final FlywayProperties flywayProperties;
 
-  @EnvObject @NonNull private final KafkaProperties kafkaProperties;
+  @NonNull private final KafkaProperties kafkaProperties;
 
-  @EnvObject @NonNull private final IdProperties idProperties;
+  @NonNull private final IdProperties idProperties;
 
   @Value
   @Builder
@@ -67,37 +66,37 @@ public class SongServiceProperties implements ServiceProperties {
   @Value
   @Builder
   public static class AuthServerProperties {
-    @EnvVariable("AUTH_SERVER_URL")
     @NonNull
+    @EnvVariable("AUTH_SERVER_URL")
     private final String url;
 
-    @EnvVariable("AUTH_SERVER_TOKENNAME")
     @NonNull
+    @EnvVariable("AUTH_SERVER_TOKENNAME")
     private final String tokenName;
 
-    @EnvVariable("AUTH_SERVER_CLIENTID")
     @NonNull
+    @EnvVariable("AUTH_SERVER_CLIENTID")
     private final String clientId;
 
-    @EnvVariable("AUTH_SERVER_CLIENTSECRET")
     @NonNull
+    @EnvVariable("AUTH_SERVER_CLIENTSECRET")
     private final String clientSecret;
 
-    @EnvObject @NonNull private final AuthScopeProperties authScopeProperties;
+    @NonNull private final AuthScopeProperties authScopeProperties;
 
     @Value
     @Builder
     public static class AuthScopeProperties {
-      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_PREFIX")
       @NonNull
+      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_PREFIX")
       private final String studyPrefix;
 
-      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_SUFFIX")
       @NonNull
+      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_SUFFIX")
       private final String studySuffix;
 
-      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_SYSTEM")
       @NonNull
+      @EnvVariable("AUTH_SERVER_SCOPE_STUDY_SYSTEM")
       private final String system;
     }
   }

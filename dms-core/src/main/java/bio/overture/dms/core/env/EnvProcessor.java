@@ -1,15 +1,11 @@
-package bio.overture.dms.core.properties.env;
+package bio.overture.dms.core.env;
 
-import bio.overture.dms.core.properties.exceptions.EnvProcessingException;
-import bio.overture.dms.core.properties.util.Nullable;
-import bio.overture.dms.core.properties.util.Reflections2.FieldTypes;
+import bio.overture.dms.core.util.Nullable;
+import bio.overture.dms.core.util.Reflections2.FieldTypes;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.val;
 import org.reflections.Reflections;
-import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.scanners.MemberUsageScanner;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,9 +13,9 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import static bio.overture.dms.core.properties.exceptions.EnvProcessingException.buildEnvProcessingException;
-import static bio.overture.dms.core.properties.exceptions.EnvProcessingException.checkEnvProcessing;
-import static bio.overture.dms.core.properties.util.Reflections2.invokeMethod;
+import static bio.overture.dms.core.env.EnvProcessingException.checkEnvProcessing;
+import static bio.overture.dms.core.util.Reflections2.invokeMethod;
+import static bio.overture.dms.core.util.Reflections2.isClassPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
@@ -79,9 +75,9 @@ public class EnvProcessor {
    *  Rules for generating an environment variable map from an object successfully:
    *  <pre>
    *    - All rendered environment variables must be unique.
-   *      With the use of &#64;EnvVariable it is possible for a collision to occur,
+   *      With the use of &#64;EnvVariable it is possible for a collision to occur.
    *    - All fields must have a public parameter-less getter method defined
-   *    - Fields must be not be static
+   *    - Fields must not be static
    *
    *  </pre>
    *
@@ -91,6 +87,9 @@ public class EnvProcessor {
    * @throws EnvProcessingException when a env variable collision occurs or when a getter method is not found
    */
   public Map<String, String> generateEnvMap(@NonNull Object obj){
+    checkEnvProcessing(isClassPublic(obj),
+        "Cannot process input object of type '%s' since the class is not publicly accessible",
+        obj.getClass().getSimpleName());
     val envMap = new HashMap<String, String>();
     processObject(envMap, obj,null);
     return Map.copyOf(envMap);
@@ -108,14 +107,16 @@ public class EnvProcessor {
   private void processField(Map<String, String> envMap, @Nullable Object obj, @Nullable String inputPrefix, Field f){
     val envName = resolveEnvName(inputPrefix, f);
     checkEnvProcessing(!envMap.containsKey(envName),
-        "Cannot process object of type '%s' with field '%s' since the env variable '%s' was already defined somewhere",
+        "Cannot process object of type '%s' with field '%s' since a collision was detected with the env variable '%s'",
         obj.getClass().getName(), f.getName(), envName);
     val fieldValue = getFieldValueForObject(f, obj);
     if (isCustomField(f)){
       // Current envName is the prefix for the sub env variables
       processObject(envMap, fieldValue, envName);
     } else {
-      envMap.put(envName, fieldValue.toString());
+      if(!isNull(fieldValue)){
+        envMap.put(envName, fieldValue.toString());
+      }
     }
   }
 
