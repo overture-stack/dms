@@ -9,15 +9,15 @@ import lombok.Value;
 @Builder
 public class DatabaseProperties {
 
-  @EnvVariable("SPRING_DATASOURCE_URL")
   @NonNull
+  @EnvVariable("SPRING_DATASOURCE_URL")
   private final String url;
 
-  @EnvVariable("SPRING_DATASOURCE_USERNAME")
   @NonNull
+  @EnvVariable("SPRING_DATASOURCE_USERNAME")
   private final String username;
 
-  @EnvVariable("SPRING_DATASOURCE_PASSWORD")
   @NonNull
+  @EnvVariable("SPRING_DATASOURCE_PASSWORD")
   private final String password;
 }

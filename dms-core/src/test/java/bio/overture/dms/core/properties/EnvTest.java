@@ -1,6 +1,5 @@
 package bio.overture.dms.core.properties;
 
-import bio.overture.dms.core.properties.env.EnvObject;
 import bio.overture.dms.core.properties.env.EnvProcessor;
 import bio.overture.dms.core.properties.env.EnvVariable;
 import bio.overture.dms.core.properties.exceptions.EnvProcessingException;
@@ -11,16 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.reflections.Reflections;
-import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.scanners.MemberUsageScanner;
-import org.reflections.scanners.MethodAnnotationsScanner;
 
-import java.io.File;
-import java.util.HashMap;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.core.properties.env.EnvFieldProcessor.createFieldProcessor;
 import static bio.overture.dms.core.properties.env.EnvVars.generateEnvVarMap;
 import static bio.overture.dms.core.util.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +29,6 @@ public class EnvTest {
   private static final String TEST_NUM_CHILDREN = "TEST_NUM_CHILDREN";
   private static final String TEST_HAS_HOUSE= "TEST_HAS_HOUSE";
   private static final String TEST_INCOME = "TEST_INCOME";
-  private static final String TEST_COMPANY =  "TEST_COMPANY";
 
   private static final EnvProcessor ENV_PROCESSOR = Factory.buildEnvProcessor();
 
@@ -91,15 +82,12 @@ public class EnvTest {
         .company("OICR")
         .build();
 
-    val map = createFieldProcessor(Employee.class).generateEnvVarMap(employee);
-
 //    val r = new Reflections(getClass().getPackageName(), new FieldAnnotationsScanner(), new MethodAnnotationsScanner(), new MemberUsageScanner());
 //    r.save("hi.xml");
 //
 //    val r2 = new Reflections().collect(new File("hi.xml"));
 //
-    val proc = Factory.buildEnvProcessor();
-    val newmap = proc.generateEnvMap(employee);
+    val newmap = ENV_PROCESSOR.generateEnvMap(employee);
     log.info("sdf");
 
   }
@@ -121,7 +109,7 @@ public class EnvTest {
         .build();
 
 
-    val map = createFieldProcessor(Person.class).generateEnvVarMap(person);
+    val map = ENV_PROCESSOR.generateEnvMap(person);
 
 
     assertEquals(9, map.size());

@@ -12,7 +12,7 @@ public class FlywayProperties {
   @EnvVariable("SPRING_FLYWAY_ENABLED")
   private final boolean enabled;
 
-  @EnvVariable("SPRING_FLYWAY_LOCATIONS")
   @NonNull
+  @EnvVariable("SPRING_FLYWAY_LOCATIONS")
   private final String locations;
 }
