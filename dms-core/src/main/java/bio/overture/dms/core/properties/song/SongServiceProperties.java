@@ -1,7 +1,7 @@
 package bio.overture.dms.core.properties.song;
 
-import bio.overture.dms.core.properties.DatabaseProperties;
-import bio.overture.dms.core.properties.FlywayProperties;
+import bio.overture.dms.core.properties.DatabaseSpec;
+import bio.overture.dms.core.properties.FlywaySpec;
 import bio.overture.dms.core.properties.ServiceProperties;
 import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
@@ -24,9 +24,9 @@ public class SongServiceProperties implements ServiceProperties {
 
   @NonNull private final AuthServerProperties authServerProperties;
 
-  @NonNull private final DatabaseProperties databaseProperties;
+  @NonNull private final DatabaseSpec databaseSpec;
 
-  @NonNull private final FlywayProperties flywayProperties;
+  @NonNull private final FlywaySpec flywaySpec;
 
   @NonNull private final KafkaProperties kafkaProperties;
 

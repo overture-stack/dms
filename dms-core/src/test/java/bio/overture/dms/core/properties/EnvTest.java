@@ -109,6 +109,44 @@ public class EnvTest {
   }
 
   @Test
+  public void dumpEnvs_NonNested_Success(){
+    val person= new Person();
+    val envVars =  ENV_PROCESSOR.dumpAllEnvVariables(person);
+
+    Stream.of(
+        LASTNAME,
+        AGE, MALE,
+        HEIGHT,
+        WEIGHT,
+        MYCHAR,
+        NUM_CHILDREN,
+        HAS_HOUSE,
+        INCOME )
+        .forEach(x -> Tester.assertTrue(envVars.contains(x),
+            "Expected env variable '%s' does not exist in the env vars dump", x ));
+  }
+
+  @Test
+  public void dumpEnvs_Nested_Success(){
+    val employee = Employee.builder()
+        .person(new Person())
+        .person2(new Person())
+        .testPerson(new Person())
+        .person3(new Person())
+        .build();
+
+    val envVars =  ENV_PROCESSOR.dumpAllEnvVariables(employee);
+    val fieldsPerPerson = 9;
+    val numPersonFieldsPerEmployee = 4;
+    val numEmployeeFields = 1;
+    val totalExpectedEnvVariables = numPersonFieldsPerEmployee*fieldsPerPerson + numEmployeeFields;
+    assertEquals(totalExpectedEnvVariables, envVars.size());
+    assertTrue(envVars.contains(TEST_PERSON2_AGE));
+    assertTrue(envVars.contains(TEST_PERSON2_HAS_HOUSE));
+    assertTrue(envVars.contains(TEST_PERSON2_WEIGHT));
+  }
+
+  @Test
   public void generateEnvMap_Employee_Success(){
     val person= Person.builder()
         .lastName("Doe")

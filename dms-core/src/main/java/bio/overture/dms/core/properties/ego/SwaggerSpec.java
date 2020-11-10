@@ -7,14 +7,12 @@ import lombok.Value;
 
 @Value
 @Builder
-public class SwaggerProperties {
+public class SwaggerSpec {
 
   @NonNull
-  @EnvVariable("HOST")
   private final String host;
 
   @NonNull
-  @EnvVariable("BASEURL")
   private final String baseUrl;
 
 }

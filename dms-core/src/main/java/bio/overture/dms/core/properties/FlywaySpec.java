@@ -7,12 +7,10 @@ import lombok.Value;
 
 @Value
 @Builder
-public class FlywayProperties {
+public class FlywaySpec {
 
-  @EnvVariable("SPRING_FLYWAY_ENABLED")
   private final boolean enabled;
 
   @NonNull
-  @EnvVariable("SPRING_FLYWAY_LOCATIONS")
   private final String locations;
 }

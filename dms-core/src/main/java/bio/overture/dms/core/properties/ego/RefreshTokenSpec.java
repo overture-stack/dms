@@ -7,18 +7,15 @@ import lombok.Value;
 
 @Value
 @Builder
-public class RefreshTokenProperties {
+public class RefreshTokenSpec {
 
   @NonNull
-  @EnvVariable("DURATIONMS")
   private final int durationMs;
 
   @NonNull
-  @EnvVariable("COOKIEISSECURE")
   private final boolean cookieIsSecure;
 
   @NonNull
-  @EnvVariable("DOMAIN")
   private final String domain;
 
 }

@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class SSOProperties {
+public class SSOSpec {
 
   @NonNull
   @EnvVariable("CLIENT_ID")
@@ -18,7 +18,6 @@ public class SSOProperties {
   private final String clientSecret;
 
   @NonNull
-  @EnvVariable("PREESTABLISHEDREDIRECTURI")
   private final String preEstablishedRedirectUri;
 
 }

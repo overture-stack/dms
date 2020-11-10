@@ -1,7 +1,7 @@
 package bio.overture.dms.core.properties.ego;
 
-import bio.overture.dms.core.properties.DatabaseProperties;
-import bio.overture.dms.core.properties.FlywayProperties;
+import bio.overture.dms.core.properties.DatabaseSpec;
+import bio.overture.dms.core.properties.FlywaySpec;
 import bio.overture.dms.core.properties.ServiceProperties;
 import bio.overture.dms.core.env.EnvVariable;
 import lombok.Builder;
@@ -30,19 +30,33 @@ public class EgoServiceProperties implements ServiceProperties {
   private final Integer jwtDurationMs;
 
   @NonNull
-  private final DatabaseProperties databaseProperties;
+  @EnvVariable("SPRING_DATASOURCE")
+  private final DatabaseSpec databaseSpec;
 
   @NonNull
-  private final FlywayProperties flywayProperties;
+  @EnvVariable("SPRING_FLYWAY")
+  private final FlywaySpec flywaySpec;
 
   @NonNull
-  private final SwaggerProperties swagger;
+  private final SwaggerSpec swagger;
 
   @NonNull
-  private final RefreshTokenProperties refreshToken;
+  private final RefreshTokenSpec refreshToken;
 
   @NonNull
   @EnvVariable("GOOGLE_CLIENT")
-  private final SSOProperties googleClient;
+  private final SSOSpec googleClient;
+
+  @NonNull
+  @EnvVariable("LINKEDIN_CLIENT")
+  private final SSOSpec linkedinClient;
+
+  @NonNull
+  @EnvVariable("GITHUB_CLIENT")
+  private final SSOSpec githubClient;
+
+  @NonNull
+  @EnvVariable("FACEBOOK_CLIENT")
+  private final SSOSpec facebookClient;
 
 }
