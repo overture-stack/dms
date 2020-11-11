@@ -3,7 +3,7 @@ package bio.overture.dms.docker;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
 
-import bio.overture.dms.core.spec.song.SongServiceSpec;
+import bio.overture.dms.spec.model.song.SongServiceSpec;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
