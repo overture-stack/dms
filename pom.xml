@@ -6,7 +6,6 @@
 	<modules>
 		<module>dms-core</module>
 		<module>dms-test</module>
-		<module>dms-spec</module>
 		<module>dms-docker</module>
 		<module>dms-cli</module>
 	</modules>
