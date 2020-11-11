@@ -1,4 +1,4 @@
-package bio.overture.dms.spec.util;
+package bio.overture.dms.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;

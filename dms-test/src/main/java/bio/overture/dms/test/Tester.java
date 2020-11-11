@@ -1,9 +1,10 @@
-package bio.overture.dms.spec.util;
+package bio.overture.dms.test;
 
+import bio.overture.dms.core.Nullable;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 
-import static bio.overture.dms.spec.util.Strings.isBlank;
+import static bio.overture.dms.core.Strings.isBlank;
 import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -42,10 +43,6 @@ public class Tester {
 
   public static void assertEquals(Object expected,  Object actual, String formattedMessage, Object ...args){
     Assertions.assertEquals(expected, actual, format(formattedMessage, args));
-  }
-
-  public static void assertEquals(Object expected,  Object actual){
-    assertEquals(expected, actual, "Expected: %s, Actual: %s", expected, actual);
   }
 
 }

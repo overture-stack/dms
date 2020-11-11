@@ -7,9 +7,9 @@ import bio.overture.dms.spec.model.ego.SwaggerSpec;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static bio.overture.dms.spec.util.JsonUtils.readFromString;
-import static bio.overture.dms.spec.util.JsonUtils.writeToString;
-import static bio.overture.dms.spec.util.Tester.assertEquals;
+import static bio.overture.dms.test.JsonUtils.readFromString;
+import static bio.overture.dms.test.JsonUtils.writeToString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeserializationTest {
 

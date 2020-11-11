@@ -1,4 +1,4 @@
-package bio.overture.dms.spec.util;
+package bio.overture.dms.core;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

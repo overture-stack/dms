@@ -12,6 +12,7 @@
     <artifactId>dms-docker</artifactId>
 
     <dependencies>
+        <!-- Module Dependencies -->
         <dependency>
             <groupId>bio.overture</groupId>
             <artifactId>dms-core</artifactId>

@@ -10,8 +10,8 @@ import lombok.experimental.FieldNameConstants;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static bio.overture.dms.spec.util.Tester.assertEquals;
-import static bio.overture.dms.spec.util.Tester.assertExceptionThrown;
+import static bio.overture.dms.test.Tester.assertEquals;
+import static bio.overture.dms.test.Tester.assertExceptionThrown;
 
 public class ReflectorTest {
 

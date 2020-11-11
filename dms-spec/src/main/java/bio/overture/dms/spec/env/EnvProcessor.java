@@ -1,8 +1,8 @@
 package bio.overture.dms.spec.env;
 
-import bio.overture.dms.spec.reflection.Reflector;
-import bio.overture.dms.spec.util.Nullable;
+import bio.overture.dms.core.Nullable;
 import bio.overture.dms.spec.reflection.FieldTypes;
+import bio.overture.dms.spec.reflection.Reflector;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

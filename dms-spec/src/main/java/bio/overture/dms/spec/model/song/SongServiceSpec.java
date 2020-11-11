@@ -1,9 +1,9 @@
 package bio.overture.dms.spec.model.song;
 
+import bio.overture.dms.spec.env.EnvVariable;
 import bio.overture.dms.spec.model.DatabaseSpec;
 import bio.overture.dms.spec.model.FlywaySpec;
 import bio.overture.dms.spec.model.ServiceSpec;
-import bio.overture.dms.spec.env.EnvVariable;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

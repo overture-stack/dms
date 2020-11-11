@@ -1,8 +1,8 @@
 package bio.overture.dms.spec.env;
 
 import bio.overture.dms.spec.Factory;
-import bio.overture.dms.spec.util.Nullable;
-import bio.overture.dms.spec.util.Tester;
+import bio.overture.dms.core.Nullable;
+import bio.overture.dms.test.Tester;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.spec.util.Tester.assertExceptionThrown;
+import static bio.overture.dms.test.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
