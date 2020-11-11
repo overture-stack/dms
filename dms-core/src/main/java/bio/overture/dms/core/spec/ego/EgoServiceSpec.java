@@ -37,11 +37,11 @@ public class EgoServiceSpec implements ServiceSpec {
 
   @NonNull
   @EnvVariable("SPRING_DATASOURCE")
-  private final DatabaseSpec databaseSpec;
+  private final DatabaseSpec db;
 
   @NonNull
   @EnvVariable("SPRING_FLYWAY")
-  private final FlywaySpec flywaySpec;
+  private final FlywaySpec flyway;
 
   @NonNull
   private final SwaggerSpec swagger;
