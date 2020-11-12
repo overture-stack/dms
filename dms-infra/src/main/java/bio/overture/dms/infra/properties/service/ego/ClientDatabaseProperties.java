@@ -1,6 +1,5 @@
-package bio.overture.dms.infra.spec.ego;
+package bio.overture.dms.infra.properties.service.ego;
 
-import bio.overture.dms.infra.env.EnvVariable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -13,17 +12,14 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
-public class SSOSpec {
+public class ClientDatabaseProperties {
 
   @NonNull
-  @EnvVariable("CLIENT_ID")
-  private final String clientId;
+  private final String url;
 
   @NonNull
-  @EnvVariable("CLIENT_SECRET")
-  private final String clientSecret;
+  private final String username;
 
   @NonNull
-  private final String preEstablishedRedirectUri;
-
+  private final String password;
 }

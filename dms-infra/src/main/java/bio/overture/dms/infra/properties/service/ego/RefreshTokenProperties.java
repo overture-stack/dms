@@ -1,4 +1,4 @@
-package bio.overture.dms.infra.spec;
+package bio.overture.dms.infra.properties.service.ego;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +12,15 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
-public class DatabaseSpec {
+public class RefreshTokenProperties {
 
   @NonNull
-  private final String url;
+  private final Long durationMs;
 
   @NonNull
-  private final String username;
+  private final Boolean cookieIsSecure;
 
   @NonNull
-  private final String password;
+  private final String domain;
+
 }

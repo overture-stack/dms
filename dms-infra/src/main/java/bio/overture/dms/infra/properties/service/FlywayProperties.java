@@ -1,9 +1,8 @@
-package bio.overture.dms.infra.spec.ego;
+package bio.overture.dms.infra.properties.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Value;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -12,15 +11,9 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
-public class RefreshTokenSpec {
+public class FlywayProperties {
 
-  @NonNull
-  private final int durationMs;
+  private final Boolean enabled;
 
-  @NonNull
-  private final boolean cookieIsSecure;
-
-  @NonNull
-  private final String domain;
-
+  private final String locations;
 }

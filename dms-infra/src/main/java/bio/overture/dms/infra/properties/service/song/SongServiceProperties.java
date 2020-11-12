@@ -1,16 +1,16 @@
-package bio.overture.dms.infra.spec.song;
+package bio.overture.dms.infra.properties.service.song;
 
 import bio.overture.dms.infra.env.EnvVariable;
-import bio.overture.dms.infra.spec.DatabaseSpec;
-import bio.overture.dms.infra.spec.ServiceSpec;
-import bio.overture.dms.infra.spec.FlywaySpec;
+import bio.overture.dms.infra.properties.service.ego.ClientDatabaseProperties;
+import bio.overture.dms.infra.properties.service.ServiceProperties;
+import bio.overture.dms.infra.properties.service.FlywayProperties;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
 @Builder
-public class SongServiceSpec implements ServiceSpec {
+public class SongServiceProperties implements ServiceProperties {
 
   @EnvVariable("SERVER_PORT")
   private final int serverPort;
@@ -24,9 +24,9 @@ public class SongServiceSpec implements ServiceSpec {
 
   @NonNull private final AuthServerProperties authServerProperties;
 
-  @NonNull private final DatabaseSpec databaseSpec;
+  @NonNull private final ClientDatabaseProperties egoAppDBProperties;
 
-  @NonNull private final FlywaySpec flywaySpec;
+  @NonNull private final FlywayProperties flywayProperties;
 
   @NonNull private final KafkaProperties kafkaProperties;
 

@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableSet;
@@ -18,6 +20,10 @@ public class CollectionUtils {
     return right.stream()
         .filter(leftSet::contains)
         .collect(toUnmodifiableSet());
+  }
+
+  public static <T> List<T> newArrayList(@NonNull Collection<T> collection){
+    return new ArrayList<>(collection);
   }
 
 }

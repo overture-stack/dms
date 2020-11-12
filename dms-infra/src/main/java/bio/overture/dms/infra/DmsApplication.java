@@ -1,38 +1,37 @@
-package bio.overture.dms.infra.docker;
+package bio.overture.dms.infra;
 
-import static bio.overture.dms.infra.docker.DmsApplication.DockerService.resolveRepoTag;
+import static bio.overture.dms.infra.docker.DockerService.resolveRepoTag;
 import static java.lang.String.format;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Arrays.stream;
 
+import bio.overture.dms.infra.docker.DockerService;
+import bio.overture.dms.infra.docker.model.DockerImage;
+import bio.overture.dms.infra.env.EnvProcessor;
+import bio.overture.dms.infra.reflection.Reflector;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.Network;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import java.io.IOException;
-import java.net.URISyntaxException;
+
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 
 @Slf4j
 @SpringBootApplication
@@ -75,7 +74,8 @@ public class DmsApplication {
     }
 
     DockerClient dockerClient = DockerClientImpl.getInstance(config, httpClient);
-    val docker = new DmsApplication.DockerService(dockerClient);
+    val envProcessor = EnvProcessor.createEnvProcessor(Reflector.createReflector(Reflections.collect()));
+    val docker = new DockerService(dockerClient, envProcessor);
 
     // Network
     val network = docker.getNetwork(networkName);
@@ -83,8 +83,11 @@ public class DmsApplication {
     // Postgres
     val postgreRepo = "postgres";
     val postgresTag = "11.1";
-    docker.pullImage(postgreRepo, postgresTag);
-    val resource = DmsApplication.readResourcePath("/assets/ego-init/init.sql");
+    docker.pullImage(DockerImage.builder()
+        .repositoryName(postgreRepo)
+        .tag(postgresTag)
+        .build());
+    val resource = bio.overture.dms.infra.util.Files.readResourcePath("/assets/ego-init/init.sql");
     val postgresMountSrc = scratchPath.resolve("assets/ego-init/").toAbsolutePath();
     val initFile = postgresMountSrc.resolve("init.sql");
     Files.createDirectories(postgresMountSrc);
@@ -134,7 +137,10 @@ public class DmsApplication {
     // Ego
     val egoRepo = "overture/ego";
     val egoTag = "3.1.0";
-    docker.pullImage(egoRepo, egoTag);
+    docker.pullImage(DockerImage.builder()
+        .repositoryName(egoRepo)
+        .tag(egoTag)
+        .build());
     val egoContainer =
         dockerClient
             .createContainerCmd(resolveRepoTag(egoRepo, egoTag))
@@ -179,77 +185,4 @@ public class DmsApplication {
     SpringApplication.run(DmsApplication.class, args);
   }
 
-  public static Resource readResourcePath(String filename) throws IOException, URISyntaxException {
-    val resource = new DefaultResourceLoader().getResource(filename);
-    if (!resource.exists()) {
-      throw new IllegalArgumentException(format("The resource \"%s\" was not found", filename));
-    }
-    return resource;
-  }
-
-  @RequiredArgsConstructor
-  public static class DockerService {
-    @NonNull private final DockerClient client;
-
-    public void ping() {
-      client.pingCmd().exec();
-    }
-
-    private Optional<Network> findNetwork(String networkName) {
-      return client.listNetworksCmd().exec().stream()
-          .filter(x -> x.getName().equals(networkName))
-          .findFirst();
-    }
-
-    public Network getNetwork(String networkName) {
-      return findNetwork(networkName)
-          .orElseGet(
-              () -> {
-                client.createNetworkCmd().withName(networkName).exec();
-                return findNetwork(networkName)
-                    .orElseThrow(
-                        () ->
-                            new IllegalStateException(
-                                format("could not create network \"%s\"", networkName)));
-              });
-    }
-
-    @SneakyThrows
-    private void pullImage(String repo, String tag) {
-      client.pullImageCmd(repo).withTag(tag).start().awaitCompletion();
-    }
-
-    private Optional<Image> findImage(String repo, String tag) {
-      return client.listImagesCmd().exec().stream()
-          .filter(x -> matchTag(x.getRepoTags(), repo, tag))
-          .findFirst();
-    }
-
-    private Image readImage(String repo, String tag) {
-      return findImage(repo, tag)
-          .orElseThrow(
-              () ->
-                  new IllegalStateException(
-                      format("The repo \"%s\" with tag \"%s\" does not exist", repo, tag)));
-    }
-
-    public Image getImage(String repo, String tag) {
-      pullImage(repo, tag);
-      return readImage(repo, tag);
-    }
-
-    public void deleteImage(String repo, String tag) {
-      val image = readImage(repo, tag);
-      client.removeImageCmd(image.getId()).exec();
-    }
-
-    public static String resolveRepoTag(String repo, String tag) {
-      return repo + ":" + tag;
-    }
-
-    private static boolean matchTag(String[] repoTags, String inputRepo, String inputTag) {
-      return stream(repoTags)
-          .anyMatch(actualRepoTag -> actualRepoTag.equals(resolveRepoTag(inputRepo, inputTag)));
-    }
-  }
 }

@@ -1,4 +1,4 @@
-package bio.overture.dms.infra.spec;
+package bio.overture.dms.infra.properties.service;
 
 import bio.overture.dms.infra.env.EnvVariable;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class DBServiceSpec implements ServiceSpec {
+public class PostgresServiceProperties implements ServiceProperties {
 
   @NonNull
   @EnvVariable("POSTGRES_DB")
@@ -17,7 +17,8 @@ public class DBServiceSpec implements ServiceSpec {
   @EnvVariable("POSTGRES_USER")
   private final String username;
 
-  @EnvVariable("POSTGRES_PASS")
+  @NonNull
+  @EnvVariable("POSTGRES_PASSWORD")
   private final String password;
 
 }

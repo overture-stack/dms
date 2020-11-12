@@ -3,6 +3,9 @@ package bio.overture.dms.infra.docker.model;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.val;
+
+import static bio.overture.dms.core.Strings.isBlank;
 
 @Value
 @Builder
@@ -12,12 +15,29 @@ public class DockerImage {
   @Builder.Default
   private final String containerRegistryName = "";
 
-  @NonNull private final String accountName;
+  @NonNull
+  @Builder.Default
+  private final String accountName = "";
+
   @NonNull private final String repositoryName;
   @NonNull private final String tag;
 
-  public String getFullName() {
-    return getAccountName() + '/' + getRepositoryName() + ":" + getTag();
+  public String getName() {
+    val crsPrefix = isCRDefined() ? getContainerRegistryName()+"/" : "";
+    val accountNamePrefix = isAccountNameDefined() ? getAccountName() + "/" : "";
+    return crsPrefix+accountNamePrefix+getRepositoryName();
+  }
+
+  public String getFullName(){
+    return getName()+":"+getTag();
+  }
+
+  public boolean isCRDefined(){
+    return !isBlank(getContainerRegistryName());
+  }
+
+  public boolean isAccountNameDefined(){
+    return !isBlank(getAccountName());
   }
 
 

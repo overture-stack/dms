@@ -1,9 +1,8 @@
-package bio.overture.dms.infra.spec.ego;
+package bio.overture.dms.infra.properties.service.ego;
 
 import bio.overture.dms.infra.env.EnvVariable;
-import bio.overture.dms.infra.spec.DatabaseSpec;
-import bio.overture.dms.infra.spec.ServiceSpec;
-import bio.overture.dms.infra.spec.FlywaySpec;
+import bio.overture.dms.infra.properties.service.ServiceProperties;
+import bio.overture.dms.infra.properties.service.FlywayProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -16,11 +15,11 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
-public class EgoServiceSpec implements ServiceSpec {
+public class EgoApiServiceProperties implements ServiceProperties {
 
   @NonNull
   @EnvVariable("SERVER_PORT")
-  private final int serverPort;
+  private final Integer serverPort;
 
   @NonNull
   @EnvVariable("SPRING_PROFILES_ACTIVE")
@@ -33,32 +32,32 @@ public class EgoServiceSpec implements ServiceSpec {
   private final Integer apiTokenDurationDays;
 
   @EnvVariable("JWT_DURATIONMS")
-  private final Integer jwtDurationMs;
+  private final Long jwtDurationMs;
 
   @NonNull
   @EnvVariable("SPRING_DATASOURCE")
-  private final DatabaseSpec db;
+  private final ClientDatabaseProperties db;
 
   @NonNull
   @EnvVariable("SPRING_FLYWAY")
-  private final FlywaySpec flyway;
+  private final FlywayProperties flyway;
 
   @NonNull
-  private final SwaggerSpec swagger;
+  private final SwaggerProperties swagger;
 
   @NonNull
-  private final RefreshTokenSpec refreshToken;
+  private final RefreshTokenProperties refreshToken;
 
   @EnvVariable("GOOGLE_CLIENT")
-  private final SSOSpec googleClient;
+  private final SSOProperties googleClient;
 
   @EnvVariable("LINKEDIN_CLIENT")
-  private final SSOSpec linkedinClient;
+  private final SSOProperties linkedinClient;
 
   @EnvVariable("GITHUB_CLIENT")
-  private final SSOSpec githubClient;
+  private final SSOProperties githubClient;
 
   @EnvVariable("FACEBOOK_CLIENT")
-  private final SSOSpec facebookClient;
+  private final SSOProperties facebookClient;
 
 }

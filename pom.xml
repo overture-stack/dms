@@ -160,6 +160,12 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 			</dependency>
+			<dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${java-uuid-generator.version}</version>
+            </dependency>
+
 
 			<!-- Banner -->
 			<dependency>
@@ -360,6 +366,7 @@
 		<reflections.version>0.9.12</reflections.version>
 		<groovy.version>2.4.3</groovy.version>
 		<dom4j.version>1.6.1</dom4j.version>
+		<java-uuid-generator.version>3.1.5</java-uuid-generator.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>
