@@ -2,7 +2,10 @@ package bio.overture.dms.infra.graph;
 
 import bio.overture.dms.infra.docker.NotFoundException;
 import bio.overture.dms.infra.model.Nameable;
+import groovy.transform.NotYetImplemented;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
@@ -14,31 +17,11 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
+@RequiredArgsConstructor
 public class Graph<T extends Nameable> {
 
-  private final Map<String, Node<T>> nameMap = new HashMap<>();
-  private final Map<Node<T>, Set<Node<T>>> nodeMap = new HashMap<>();
-
-  public int numNodes() {
-    return nameMap.size();
-  }
-
-  private void initNode(Node<T> node) {
-    if (!nameMap.containsKey(node.getData().getName())) {
-      val emptySet = new HashSet<Node<T>>();
-      nameMap.put(node.getData().getName(), node);
-      nodeMap.put(node, emptySet);
-    }
-
-  }
-
-  public void addEdge(@NonNull Node<T> parent, @NonNull Node<T> child) {
-    initNode(parent);
-    initNode(child);
-
-    nodeMap.get(parent).add(child);
-    child.incrDeps();
-  }
+  @NonNull private final Map<String, Node<T>> nameMap;
+  @NonNull private final Map<Node<T>, Set<Node<T>>> nodeMap;
 
   public Set<Node<T>> getRoots() {
     val childSet = nodeMap.values().stream()
@@ -58,6 +41,14 @@ public class Graph<T extends Nameable> {
 
   public Optional<Node<T>> getNodeByName(@NonNull String name) {
     return Optional.ofNullable(nameMap.get(name));
+  }
+
+  public int numNodes() {
+    return nameMap.size();
+  }
+
+  public static <T extends Nameable> GraphBuilder<T> builder(){
+    return new GraphBuilder<>();
   }
 
 }
