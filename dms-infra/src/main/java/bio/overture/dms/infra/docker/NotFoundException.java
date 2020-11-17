@@ -3,6 +3,8 @@ package bio.overture.dms.infra.docker;
 import bio.overture.dms.infra.converter.InvalidSpecException;
 import lombok.NonNull;
 
+import java.util.Optional;
+
 import static java.lang.String.format;
 
 public class NotFoundException extends RuntimeException{
@@ -24,6 +26,7 @@ public class NotFoundException extends RuntimeException{
       throw buildNotFoundException(formattedMessage, args);
     }
   }
+
 
   public static NotFoundException buildNotFoundException(@NonNull String formattedMessage, Object ... args){
     return new NotFoundException(formattedMessage, args);

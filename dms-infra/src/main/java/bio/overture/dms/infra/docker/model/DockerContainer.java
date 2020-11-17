@@ -18,8 +18,9 @@ public class DockerContainer<T extends ServiceProperties> {
   @NonNull private final String network;
   @NonNull private final DockerImage dockerImage;
   @NonNull private final T serviceProperties;
+  @Builder.Default private final boolean restart = true;
   @Builder.Default private final Collection<DockerPortMapping> portMappings = new HashSet<>();
   @Builder.Default private final Collection<DockerVolume> volumes = new HashSet<>();
-  @NonNull @Singular private final Set<Integer> exposedPorts;
+  @NonNull@Singular private final Set<Integer> exposedPorts;
 
 }

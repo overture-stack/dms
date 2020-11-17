@@ -6,7 +6,6 @@ import bio.overture.dms.infra.properties.service.ego.ClientDatabaseProperties;
 import bio.overture.dms.infra.properties.service.ego.SSOProperties;
 import bio.overture.dms.infra.properties.service.ego.SwaggerProperties;
 import bio.overture.dms.infra.properties.service.ego.RefreshTokenProperties;
-import bio.overture.dms.infra.converter.EgoSpecConverter;
 import bio.overture.dms.infra.spec.EgoSpec;
 import bio.overture.dms.infra.spec.EgoSpec.SSOClientSpec;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +34,6 @@ public class DeserializationTest {
                 .build())
             .build())
         .build();
-
-    val f = new EgoSpecConverter("mynetwork");
-    val out = f.convertSpec(egoSpec);
-    log.info("sdfs");
-
-
 
   }
 

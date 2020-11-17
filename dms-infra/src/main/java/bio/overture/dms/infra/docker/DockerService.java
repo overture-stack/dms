@@ -148,6 +148,7 @@ public class DockerService {
         .build();
   }
 
+  //TODO: first do concurrent pulling of images. When EGO pulling is done, then continue with EGO deployement
   @SneakyThrows
   public void pullImage(@NonNull DockerImage dockerImage) {
     client.pullImageCmd(dockerImage.getName()).withTag(dockerImage.getTag())

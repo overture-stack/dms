@@ -18,7 +18,7 @@ public class Files {
   public static Resource readResourcePath(String filename) throws IOException, URISyntaxException {
     val resource = new DefaultResourceLoader().getResource(filename);
     if (!resource.exists()) {
-      throw new IllegalArgumentException(format("The resource \"%s\" was not found", filename));
+      throw new IllegalArgumentException(format("The resource \"%s\" was not found: %s", filename, resource.getFile().getAbsolutePath()));
     }
     return resource;
   }
