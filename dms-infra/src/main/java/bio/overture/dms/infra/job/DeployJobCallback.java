@@ -37,10 +37,10 @@ public class DeployJobCallback implements JobCallback, Runnable {
   @Override
   public void onDone(@NonNull DeployJob job) {
     countDownLatch.countDown();
-    graph.getNodeByName(job.getName()).ifPresent(this::processParentNode);
+    graph.getNodeByName(job.getName()).ifPresent(this::processCurrentNode);
   }
 
-  private void processParentNode(Node<DeployJob> parentNode){
+  private void processCurrentNode(Node<DeployJob> parentNode){
     for (val childNode : graph.getChildNodes(parentNode)) {
       val currentChildDepCount = childNode.decrementUnvisitedParents();
       if (currentChildDepCount == 0) {
