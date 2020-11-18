@@ -42,7 +42,7 @@ public class DeployJobCallback implements JobCallback, Runnable {
 
   private void processParentNode(Node<DeployJob> parentNode){
     for (val childNode : graph.getChildNodes(parentNode)) {
-      val currentChildDepCount = childNode.decrDeps();
+      val currentChildDepCount = childNode.decrementUnvisitedParents();
       if (currentChildDepCount == 0) {
         asyncProcessChildNode(childNode);
       }

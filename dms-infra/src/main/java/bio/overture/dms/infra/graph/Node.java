@@ -23,18 +23,18 @@ public class Node<T extends Nameable> {
   @NonNull private final T data;
 
   /**
-   * Stateful data representing the number of unproccessed/visited parent nodes, relative to this node.
+   * Stateful data representing the number of unproccessed/unvisited parent nodes, relative to this node.
    */
   @NonNull
   @Builder.Default
   @EqualsAndHashCode.Exclude
   private final AtomicInteger numUnvisitedParents = new AtomicInteger(0);
 
-  public Integer decrDeps() {
+  public Integer decrementUnvisitedParents() {
     return numUnvisitedParents.decrementAndGet();
   }
 
-  public Integer incrDeps() {
+  public Integer incrementUnvisitedParents() {
     return numUnvisitedParents.incrementAndGet();
   }
 

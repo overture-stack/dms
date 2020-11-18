@@ -1,20 +1,15 @@
 package bio.overture.dms.infra.graph;
 
-import bio.overture.dms.infra.docker.NotFoundException;
 import bio.overture.dms.infra.model.Nameable;
 import lombok.NonNull;
 import lombok.val;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import static java.util.stream.Collectors.toUnmodifiableSet;
 
 public class GraphBuilder<T extends Nameable> {
 
@@ -26,10 +21,11 @@ public class GraphBuilder<T extends Nameable> {
     initNode(child);
 
     nodeMap.get(parent).add(child);
-    child.incrDeps();
+    child.incrementUnvisitedParents();
     return this;
   }
 
+  // TODO: test immutability
   public Graph<T> build(){
     final Map<Node<T>, Set<Node<T>>> immutableMap = nodeMap.entrySet().stream()
         .collect(toUnmodifiableMap(Map.Entry::getKey,

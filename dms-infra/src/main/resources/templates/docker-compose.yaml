@@ -2,7 +2,6 @@ version: '3.7'
 services:
   ego-server:
     image: "overture/ego:3.1.0"
-    container_name: ego-server
     environment:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
@@ -15,13 +14,10 @@ services:
       - "8080"
     ports:
       - "9082:8080"
-    command: java -jar /srv/ego/install/ego.jar
     depends_on:
       - ego-db
-
   ego-db:
     image: postgres:11.1
-    container_name: ego-db
     environment:
       - POSTGRES_DB=ego
       - POSTGRES_PASSWORD=password

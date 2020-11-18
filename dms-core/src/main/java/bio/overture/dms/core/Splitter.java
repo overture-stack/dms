@@ -18,6 +18,8 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 public class Splitter {
 
   public static final Splitter WHITESPACE = Splitter.on("\\s+");
+  public static final Splitter EQUALS = Splitter.on("=");
+  public static final Splitter COLON = Splitter.on(":") ;
 
   @NonNull private final String regex;
 

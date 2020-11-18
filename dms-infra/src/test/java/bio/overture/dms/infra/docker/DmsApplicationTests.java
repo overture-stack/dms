@@ -1,10 +1,12 @@
 package bio.overture.dms.infra.docker;
 
+import bio.overture.dms.infra.config.JacksonConfig;
+import bio.overture.dms.infra.service.DCReader;
 import bio.overture.dms.infra.service.DmsDeploymentService;
 import bio.overture.dms.infra.service.DockerComposeClient;
 import bio.overture.dms.infra.spec.DmsSpec;
 import bio.overture.dms.infra.spec.EgoSpec;
-import bio.overture.dms.infra.util.Files;
+import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Mount;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static bio.overture.dms.infra.util.FileUtils.readResourcePath;
 import static com.github.dockerjava.api.model.MountType.BIND;
 
 @Slf4j
@@ -69,7 +72,7 @@ class DmsApplicationTests {
             new Mount().withSource("/usr/bin/docker").withType(BIND).withTarget("/usr/bin/docker").withReadOnly(true))
         ))
         .exec();
-    val file = Files.readResourcePath(dockerComposePath);
+    val file = readResourcePath(dockerComposePath);
     dockerClient
         .copyArchiveToContainerCmd(container.getId())
         .withHostResource(file.getFile().getAbsolutePath())
@@ -86,7 +89,7 @@ class DmsApplicationTests {
   @SneakyThrows
   public void testROb(){
     val dockerComposePath = "/templates/docker-compose.yaml";
-    val file = Files.readResourcePath(dockerComposePath).getFile();
+    val file = readResourcePath(dockerComposePath).getFile();
     val logOutput = dockerComposeClient.runCommand(file, "ps");
     val logOutput2 = dockerComposeClient.runCommand(file, "up -d");
     val logOutput4 = dockerComposeClient.runCommand(file, "ps");
@@ -94,6 +97,18 @@ class DmsApplicationTests {
     val logOutput234 = dockerComposeClient.runCommand(file, "up -d ego-server2");
     log.info("sdf");
 
+  }
+
+  @Test
+  @SneakyThrows
+  public void testParseDockerCompose(){
+    val dockerComposePath = "/templates/docker-compose.yaml";
+    val file = readResourcePath(dockerComposePath).getFile();
+    val yamlProcessor = new JacksonConfig().yamlProcessor();
+    val dcReader = new DCReader(yamlProcessor);
+
+    val dc = dcReader.readDockerCompose(file);
+    log.info("sdf");
   }
 
   @Test

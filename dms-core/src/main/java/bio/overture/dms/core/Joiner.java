@@ -13,6 +13,8 @@ import static lombok.AccessLevel.PRIVATE;
 public class Joiner {
   public static final Joiner COMMA = Joiner.on(",");
   public static final Joiner WHITESPACE = Joiner.on(" ");
+  public static final Joiner EQUALS =  Joiner.on("=");
+  public static final Joiner COLON = Joiner.on(":");
 
   @NonNull private final String delimiter;
 

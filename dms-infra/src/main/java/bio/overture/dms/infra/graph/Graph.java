@@ -1,20 +1,16 @@
 package bio.overture.dms.infra.graph;
 
-import bio.overture.dms.infra.docker.NotFoundException;
 import bio.overture.dms.infra.model.Nameable;
-import groovy.transform.NotYetImplemented;
-import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 @RequiredArgsConstructor
@@ -23,6 +19,7 @@ public class Graph<T extends Nameable> {
   @NonNull private final Map<String, Node<T>> nameMap;
   @NonNull private final Map<Node<T>, Set<Node<T>>> nodeMap;
 
+  // TODO: test getting root nodes
   public Set<Node<T>> getRoots() {
     val childSet = nodeMap.values().stream()
         .flatMap(Collection::stream)
@@ -33,7 +30,7 @@ public class Graph<T extends Nameable> {
   }
 
   public Set<Node<T>> getChildNodes(@NonNull Node<T> parent) {
-    NotFoundException.checkNotFound(nodeMap.containsKey(parent),
+    checkNotFound(nodeMap.containsKey(parent),
         "Could not find node with name: {}", parent.getData().getName());
     return nodeMap.get(parent).stream()
         .collect(toUnmodifiableSet());

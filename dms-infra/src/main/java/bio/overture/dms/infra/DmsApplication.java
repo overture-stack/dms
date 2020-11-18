@@ -1,6 +1,7 @@
 package bio.overture.dms.infra;
 
 import static bio.overture.dms.infra.docker.DockerService.resolveRepoTag;
+import static bio.overture.dms.infra.util.FileUtils.readResourcePath;
 import static java.lang.String.format;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Arrays.stream;
@@ -9,6 +10,7 @@ import bio.overture.dms.infra.docker.DockerService;
 import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.env.EnvProcessor;
 import bio.overture.dms.infra.reflection.Reflector;
+import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -29,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -87,7 +88,7 @@ public class DmsApplication {
         .repositoryName(postgreRepo)
         .tag(postgresTag)
         .build());
-    val resource = bio.overture.dms.infra.util.Files.readResourcePath("/assets/ego-init/init.sql");
+    val resource = readResourcePath("/assets/ego-init/init.sql");
     val postgresMountSrc = scratchPath.resolve("assets/ego-init/").toAbsolutePath();
     val initFile = postgresMountSrc.resolve("init.sql");
     Files.createDirectories(postgresMountSrc);
