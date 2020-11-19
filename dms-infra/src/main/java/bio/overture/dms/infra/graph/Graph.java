@@ -36,7 +36,7 @@ public class Graph<T extends Nameable> {
         .collect(toUnmodifiableSet());
   }
 
-  public Optional<Node<T>> getNodeByName(@NonNull String name) {
+  public Optional<Node<T>> findNodeByName(@NonNull String name) {
     return Optional.ofNullable(nameMap.get(name));
   }
 

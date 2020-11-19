@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.Arrays.stream;
@@ -16,18 +17,21 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class Concurrency {
 
-  public static void trySubmit(ExecutorService e, Runnable r){
+  public static void trySubmit(ExecutorService e, Runnable r, Runnable onError){
     e.submit(() -> {
       try{
         r.run();
       }catch (Throwable t){
-        val stackTrace = stream(t.getStackTrace())
-            .map(StackTraceElement::toString)
-            .collect(joining("\n"));
-        log.error("ERROR: [{}] {}: {}", t.getClass().getName(), t.getMessage(), stackTrace);
+        log.error("ERROR: [{}] {}: {}", t.getClass().getName(), t.getMessage(), Exceptions.joinStackTrace(t));
+        onError.run();
         throw t;
       }
     });
 
   }
+
+  public static void trySubmit(ExecutorService e, Runnable r){
+    trySubmit(e, r, () -> {});
+  }
+
 }

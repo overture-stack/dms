@@ -33,21 +33,29 @@ public class DeployJobCallback implements JobCallback, Runnable {
     Concurrency.trySubmit(executorService, r);
   }
 
+  private void asyncRunDeployJob(DeployJob j){
+    executorService.submit(() -> j.start(this));
+  }
+
   @Override
   @SneakyThrows
   public void run() {
     graph.getRoots().stream()
         .map(Node::getData)
-        .forEach(x -> trySubmit(() -> {
-          x.start(this);
-        }));
+        .forEach(this::asyncRunDeployJob);
     countDownLatch.await(1, TimeUnit.HOURS);
   }
 
   @Override
   public void onDone(@NonNull DeployJob job) {
     countDownLatch.countDown();
-    graph.getNodeByName(job.getName()).ifPresent(this::processCurrentNode);
+    graph.findNodeByName(job.getName()).ifPresent(this::processCurrentNode);
+  }
+
+  @Override
+  public void onError(DeployJob job) {
+    log.error("ERROR occurred, so counting down latch");
+    countDownLatch.countDown();
   }
 
   private void processCurrentNode(Node<DeployJob> parentNode){

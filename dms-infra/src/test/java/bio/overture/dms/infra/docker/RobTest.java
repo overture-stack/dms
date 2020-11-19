@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -63,14 +61,14 @@ public class RobTest {
     // Create JobCallback
     val deployJobCallback = new DeployJobCallback(executor, graph);
 
-    assertTrue(graph.getNodeByName("a").isPresent());
-    assertTrue(graph.getNodeByName("b").isPresent());
-    assertTrue(graph.getNodeByName("c").isPresent());
-    assertTrue(graph.getNodeByName("d").isPresent());
-    assertTrue(graph.getNodeByName("e").isPresent());
-    assertTrue(graph.getNodeByName("f").isPresent());
-    assertTrue(graph.getNodeByName("g").isPresent());
-    assertTrue(graph.getNodeByName("h").isPresent());
+    assertTrue(graph.findNodeByName("a").isPresent());
+    assertTrue(graph.findNodeByName("b").isPresent());
+    assertTrue(graph.findNodeByName("c").isPresent());
+    assertTrue(graph.findNodeByName("d").isPresent());
+    assertTrue(graph.findNodeByName("e").isPresent());
+    assertTrue(graph.findNodeByName("f").isPresent());
+    assertTrue(graph.findNodeByName("g").isPresent());
+    assertTrue(graph.findNodeByName("h").isPresent());
 
     assertTrue(graph.getChildNodes(a).containsAll(Set.of()));
     assertTrue(graph.getChildNodes(b).containsAll(Set.of(a)));

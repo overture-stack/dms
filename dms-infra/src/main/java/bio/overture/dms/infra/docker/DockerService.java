@@ -43,12 +43,14 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static bio.overture.dms.infra.docker.NotFoundException.buildNotFoundException;
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
@@ -321,12 +323,23 @@ public class DockerService {
     }
   }
 
+  private Stream<String> streamContainerNames(Container c){
+    return Arrays.stream(c.getNames())
+        // This transformation is needed, since the names array prefixes all container name with '/'
+        .map(x -> x.substring(1));
+  }
+
+  private boolean isContainerNameMatch(Container c, String name){
+    return streamContainerNames(c)
+        .anyMatch(x -> x.equals(name));
+  }
+
   public Optional<String> findContainerId(@NonNull String name){
     return client.listContainersCmd()
         .withNameFilter(List.of(name))
-        .withLimit(1)
         .exec()
         .stream()
+        .filter(x -> isContainerNameMatch(x, name))
         .map(Container::getId)
         .findFirst();
   }

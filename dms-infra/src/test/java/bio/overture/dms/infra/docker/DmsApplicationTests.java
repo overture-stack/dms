@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static bio.overture.dms.infra.util.FileUtils.readResourcePath;
 import static com.github.dockerjava.api.model.MountType.BIND;
@@ -119,7 +121,8 @@ class DmsApplicationTests {
     val dc = dcReader.readDockerCompose(file);
 
     val executor = Executors.newFixedThreadPool(4);
-    val deployer = new DCServiceDeployer(volumeName, networkName, executor, dockerService);
+    val retryTemplate = new RetryTemplate();
+    val deployer = new DCServiceDeployer(volumeName, networkName, executor, dockerService, retryTemplate);
     deployer.deployDC(dc);
     deployer.destroy(dc);
 

@@ -7,12 +7,12 @@ import bio.overture.dms.infra.job.DeployJob;
 import bio.overture.dms.infra.job.DeployJobCallback;
 import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.model.DockerCompose;
-import bio.overture.dms.infra.util.Concurrency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +30,7 @@ public class DCServiceDeployer {
   @NonNull private final String networkName;
   @NonNull private final ExecutorService executorService;
   @NonNull private final DockerService dockerService;
+  @NonNull private final RetryTemplate retryTemplate;
 
   public void deployDC(DockerCompose dc) {
     // Init
@@ -38,15 +39,12 @@ public class DCServiceDeployer {
     // Create network if it does not already exist
     val network = dockerService.getNetwork(networkName);
 
-    // Create memoization index for job ctx
-    val nodeIndex = dc.getServices().stream()
-        .collect(toUnmodifiableMap(DCService::getServiceName, x -> processService(networkName, assetVolumeName, x)));
-
     // Create graph builder
     val gb = Graph.<DeployJob>builder();
 
-    // Create ImagePull -> ContainerDeploy edge (i.e image pull before container deploy)
-    nodeIndex.values().forEach(e -> gb.addEdge(e.getImagePull(), e.getContainerDeploy()));
+    // Create memoization index for job ctx
+    val nodeIndex = dc.getServices().stream()
+        .collect(toUnmodifiableMap(DCService::getServiceName, x -> processService(networkName, assetVolumeName, x, gb)));
 
     // Create dependency edges
     dc.getServices().forEach(childService -> processDeps(childService, gb, nodeIndex));
@@ -67,14 +65,17 @@ public class DCServiceDeployer {
     trySubmit(executorService, () -> {
       syncDeleteService(s);
       latch.countDown();
-    });
+    }, latch::countDown);
   }
 
   private void syncDeleteService(DCService s){
     dockerService.findContainerId(s.getServiceName())
         .ifPresent(id -> {
           log.info("Deleting container '{}' forcefully: {}", s.getServiceName(), id);
-          dockerService.deleteContainer(id, true, false);
+          retryTemplate.execute(x -> {
+            dockerService.deleteContainer(id, true, false);
+            return null;
+          });
         });
   }
 
@@ -87,11 +88,14 @@ public class DCServiceDeployer {
     });
   }
 
-   TODO need to prevent the creation of new Nodes for the same task. This is why its not working for ego-db and ego-db1
+//   TODO need to prevent the creation of new Nodes for the same task. This is why its not working for ego-db and ego-db1
   private DCServiceJobContext processService(@NonNull String networkName, @NonNull String assetVolumeName,
-      @NonNull DCService s) {
-    val imagePullNode = Node.of(createImagePullJob(s));
-    val containerDeployNode = Node.of(createContainerDeployJob(networkName, s, assetVolumeName));
+      @NonNull DCService s, GraphBuilder<DeployJob> gb) {
+    val imagePullDeployJob = createImagePullJob(s);
+    val containerDeployJob = createContainerDeployJob(networkName, s, assetVolumeName);
+    val imagePullNode = gb.findNodeByName(imagePullDeployJob.getName()).orElse(Node.of(imagePullDeployJob));
+    val containerDeployNode = gb.findNodeByName(containerDeployJob.getName()).orElse(Node.of(containerDeployJob));
+    gb.addEdge(imagePullNode, containerDeployNode);
     return DCServiceJobContext.builder()
         .imagePull(imagePullNode)
         .containerDeploy(containerDeployNode)
@@ -119,6 +123,7 @@ public class DCServiceDeployer {
       } else {
         log.info("Container '{}' already running with id: {}",
             s.getServiceName(), containerId);
+        return;
       }
     }
 
