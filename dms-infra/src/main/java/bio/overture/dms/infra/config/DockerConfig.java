@@ -7,15 +7,26 @@ import bio.overture.dms.infra.service.DeploymentService;
 import bio.overture.dms.infra.service.DmsDeploymentService;
 import bio.overture.dms.infra.service.DockerComposeClient;
 import bio.overture.dms.infra.util.SpringExecutorService;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.AuthConfig;
+import com.github.dockerjava.api.model.AuthConfigurations;
 import com.github.dockerjava.core.DockerClientConfig;
+import com.github.dockerjava.core.RemoteApiVersion;
+import com.github.dockerjava.core.SSLConfig;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
 import static com.github.dockerjava.core.DefaultDockerClientConfig.createDefaultConfigBuilder;
@@ -25,6 +36,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 @Configuration
 public class DockerConfig {
   private static final String DOCKER_COMPOSE_TAG = "alpine-1.27.4";
+  private static final String DMS_VOLUME_NAME = "dms-assets";
 
   @Bean
   public ExecutorService executor(){
@@ -47,7 +59,7 @@ public class DockerConfig {
   @Autowired
   public DockerService dockerService(DockerClient dockerClient,
       @Autowired EnvProcessor envProcessor){
-    return new DockerService(dockerClient, envProcessor);
+    return new DockerService(DMS_VOLUME_NAME, dockerClient, envProcessor);
   }
 
   @Bean

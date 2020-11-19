@@ -3,47 +3,92 @@ package bio.overture.dms.infra.docker;
 import bio.overture.dms.core.Nullable;
 import bio.overture.dms.infra.docker.model.DockerContainer;
 import bio.overture.dms.infra.docker.model.DockerImage;
+import bio.overture.dms.infra.docker.model.DockerVolume;
 import bio.overture.dms.infra.env.EnvProcessor;
+import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.properties.service.ServiceProperties;
+import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.ContainerState;
+import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.api.model.Mount;
+import com.github.dockerjava.api.model.MountType;
 import com.github.dockerjava.api.model.Network;
+import com.github.dockerjava.api.model.PortBinding;
+import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import lombok.Builder;
+import lombok.Lombok;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static bio.overture.dms.infra.docker.NotFoundException.buildNotFoundException;
+import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
+import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static java.lang.String.format;
+import static java.nio.file.Files.copy;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isReadable;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static lombok.Lombok.preventNullAnalysis;
+import static lombok.Lombok.sneakyThrow;
 
+@Slf4j
 @RequiredArgsConstructor
 public class DockerService {
 
+  private static final String MAINTENANCE_IMAGE_NAME = "alpine:3.12";
+
+  @NonNull private final String dmsVolumeName;
   @NonNull private final DockerClient client;
   @NonNull private final EnvProcessor envProcessor;
 
+  public String createRandomLocalVolume(){
+    return client.createVolumeCmd().exec().getName();
+  }
+
+  public void createVolume(@NonNull String volumeName){
+    client.listVolumesCmd().withFilter("name",List.of(volumeName))
+        .exec().getVolumes().stream().findFirst()
+        .ifPresentOrElse(x -> {
+          log.info("The volume '{}' already exists, skipping creation", volumeName);
+        }, () -> client.createVolumeCmd()
+            .withName(volumeName)
+            .exec());
+  }
 
   public void ping() {
     client.pingCmd().exec();
@@ -56,18 +101,75 @@ public class DockerService {
   }
 
 
-  private List<String> extractContainerEnv(ServiceProperties serviceProperties){
-    return envProcessor.generateEnvMap(serviceProperties)
-        .entrySet()
+  private List<String> extractContainerEnv(Map<String, ?> envMap){
+    return envMap .entrySet()
         .stream()
-        .map(x -> x.getKey()+"="+x.getValue())
+        .map(x -> x.getKey()+"="+x.getValue().toString())
         .collect(toUnmodifiableList());
   }
 
-  private List<ExposedPort> extractExposedPorts(DockerContainer<?> dockerContainer){
-    return dockerContainer.getExposedPorts().stream()
+  private List<String> extractContainerEnv(ServiceProperties serviceProperties){
+    return extractContainerEnv(envProcessor.generateEnvMap(serviceProperties));
+  }
+
+  private <C extends Collection<Integer>> List<ExposedPort> extractExposedPorts(C exposedPorts){
+    return exposedPorts.stream()
         .map(ExposedPort::tcp)
         .collect(toUnmodifiableList());
+  }
+  private List<ExposedPort> extractExposedPorts(DockerContainer<?> dockerContainer){
+    return extractExposedPorts(dockerContainer.getExposedPorts());
+  }
+
+  private List<Mount> extractMounts(String assetVolumeName, Map<String, String> volumes){
+    return volumes.entrySet()
+        .stream()
+        .map(e -> new Mount().withType(MountType.BIND).withSource(e.getKey()).withTarget(e.getValue()))
+        .collect(toUnmodifiableList());
+  }
+
+  @SneakyThrows
+  public String createVolumeWithAssets(){
+    val volumeName = createRandomLocalVolume();
+
+    pullImage(MAINTENANCE_IMAGE_NAME);
+    val volumeMountPath = "/dms";
+
+    val containerId = client.createContainerCmd(MAINTENANCE_IMAGE_NAME)
+        .withHostConfig(
+            newHostConfig().withMounts(List.of(new Mount().withType(VOLUME).withSource(volumeName).withTarget(volumeMountPath))))
+        .exec().getId();
+    val rootAssetsPath= FileUtils.readResourcePath("/assets").getFile().toPath().toAbsolutePath().toString();
+   client
+        .copyArchiveToContainerCmd(containerId)
+        .withHostResource(rootAssetsPath)
+        .withRemotePath(volumeMountPath)
+        .exec();
+
+   client.removeContainerCmd(containerId).withForce(true).exec();
+   return volumeName;
+  }
+
+  @SneakyThrows
+  public static Path copyAssetsToDisk(){
+    val tempDirPath = Files.createTempDirectory("assets");
+    val rootAssetsPath= FileUtils.readResourcePath("/assets/").getFile().toPath();
+    walk(rootAssetsPath).skip(1).forEach(path -> copyPath(path, rootAssetsPath, tempDirPath));
+    return tempDirPath;
+  }
+
+  @SneakyThrows
+  private static void copyPath(Path path, Path sourceDir, Path targetDir){
+    log.info("file: {}",path.toString());
+    val relativePath = sourceDir.relativize(path);
+    val newPath = targetDir.resolve(relativePath);
+    if (isDirectory(path)){
+        createDirectories(newPath);
+    } else if (isRegularFile(path) && isReadable(path)){
+      copy(path, newPath);
+    } else {
+      throw new IllegalStateException("could not process assets");
+    }
   }
 
   private List<Volume> extractVolumes(DockerContainer<?> dockerContainer){
@@ -76,6 +178,39 @@ public class DockerService {
         .collect(toUnmodifiableList());
   }
 
+  public String createContainer(@NonNull String networkName, @NonNull String assetVolumeName, @NonNull DCService s){
+    val createContainerCmd = client.createContainerCmd(s.getImage())
+        .withName(s.getServiceName())
+        .withAttachStderr(true)
+        .withAttachStdout(true)
+        .withAliases(s.getServiceName());
+
+    val hostConfig = newHostConfig()
+        .withNetworkMode(networkName);
+
+    if (!s.getEnvironment().isEmpty()){
+        createContainerCmd.withEnv(extractContainerEnv(s.getEnvironment()));
+    }
+
+    if (!s.getExpose().isEmpty()){
+        createContainerCmd.withExposedPorts(extractExposedPorts(s.getExpose()));
+    }
+
+    if (!s.getPorts().isEmpty()){
+      val portBindings = s.getPorts().entrySet()
+          .stream()
+          .map(e -> new PortBinding(Ports.Binding.bindPort(e.getKey()), ExposedPort.tcp(e.getValue())))
+          .collect(toUnmodifiableList());
+      hostConfig.withPortBindings(portBindings);
+    }
+
+    if (!s.getVolumes().isEmpty()){
+        hostConfig.withMounts(extractMounts(assetVolumeName, s.getVolumes()));
+    }
+    createContainerCmd.withHostConfig(hostConfig);
+
+    return createContainerCmd.exec().getId();
+  }
 
   public String createContainer(@NonNull DockerContainer<?> dockerContainer){
     val containerId = client.createContainerCmd(dockerContainer.getDockerImage().getFullName())
@@ -155,6 +290,13 @@ public class DockerService {
         .start()
         .awaitCompletion();
   }
+
+  @SneakyThrows
+  public void pullImage(@NonNull String imageName) {
+    client.pullImageCmd(imageName)
+        .start()
+        .awaitCompletion();
+    }
 
   @Value
   @Builder

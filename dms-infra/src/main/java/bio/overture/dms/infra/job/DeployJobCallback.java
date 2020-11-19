@@ -2,14 +2,20 @@ package bio.overture.dms.infra.job;
 
 import bio.overture.dms.infra.graph.Graph;
 import bio.overture.dms.infra.graph.Node;
+import bio.overture.dms.infra.util.Concurrency;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
+
+@Slf4j
 public class DeployJobCallback implements JobCallback, Runnable {
 
   @NonNull private final ExecutorService executorService;
@@ -23,12 +29,16 @@ public class DeployJobCallback implements JobCallback, Runnable {
     this.countDownLatch = new CountDownLatch(graph.numNodes());
   }
 
+  private void trySubmit(Runnable r){
+    Concurrency.trySubmit(executorService, r);
+  }
+
   @Override
   @SneakyThrows
   public void run() {
     graph.getRoots().stream()
         .map(Node::getData)
-        .forEach(x -> executorService.submit(() -> {
+        .forEach(x -> trySubmit(() -> {
           x.start(this);
         }));
     countDownLatch.await(1, TimeUnit.HOURS);
@@ -50,7 +60,7 @@ public class DeployJobCallback implements JobCallback, Runnable {
   }
 
   private void asyncProcessChildNode(Node<DeployJob> childNode){
-    executorService.submit(() -> syncProcessChildNode(childNode));
+    trySubmit(() -> syncProcessChildNode(childNode));
   }
 
   private void syncProcessChildNode(Node<DeployJob> childNode){

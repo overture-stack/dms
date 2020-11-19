@@ -23,8 +23,58 @@ services:
       - POSTGRES_PASSWORD=password
     expose:
       - "5432"
-    volumes:
-      - "./ego-init:/docker-entrypoint-initdb.d"
     ports:
       - "9444:5432"
-
+#    volumes:
+#      - "/templates/ego-init:/docker-entrypoint-initdb.d"
+#  ego-server1:
+#    image: "overture/ego:3.1.0"
+#    environment:
+#      SERVER_PORT: 8080
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://ego-db1:5432/ego?stringtype=unspecified
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: password
+#      SPRING_FLYWAY_ENABLED: "true"
+#      SPRING_FLYWAY_LOCATIONS: "classpath:flyway/sql,classpath:db/migration"
+#      SPRING_PROFILES_ACTIVE: demo
+#    expose:
+#      - "8080"
+#    ports:
+#      - "9083:8080"
+#    depends_on:
+#      - ego-db1
+#  ego-db1:
+#    image: postgres:11.1
+#    environment:
+#      - POSTGRES_DB=ego
+#      - POSTGRES_PASSWORD=password
+#    expose:
+#      - "5432"
+#    ports:
+#      - "9445:5432"
+#  ego-server2:
+#    image: "overture/ego:3.1.0"
+#    environment:
+#      SERVER_PORT: 8080
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://ego-db2:5432/ego?stringtype=unspecified
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: password
+#      SPRING_FLYWAY_ENABLED: "true"
+#      SPRING_FLYWAY_LOCATIONS: "classpath:flyway/sql,classpath:db/migration"
+#      SPRING_PROFILES_ACTIVE: demo
+#    expose:
+#      - "8080"
+#    ports:
+#      - "9084:8080"
+#    depends_on:
+#      - ego-db2
+#  ego-db2:
+#    image: postgres:11.1
+#    environment:
+#      - POSTGRES_DB=ego
+#      - POSTGRES_PASSWORD=password
+#    expose:
+#      - "5432"
+#    ports:
+#      - "9446:5432"
+#

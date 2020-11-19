@@ -38,4 +38,8 @@ public class Node<T extends Nameable> {
     return numUnvisitedParents.incrementAndGet();
   }
 
+  public static <T extends Nameable> Node<T> of(T data){
+    return new Node<T>(data, new AtomicInteger(0));
+  }
+
 }

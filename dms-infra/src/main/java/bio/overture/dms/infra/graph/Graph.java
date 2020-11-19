@@ -16,8 +16,8 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 @RequiredArgsConstructor
 public class Graph<T extends Nameable> {
 
-  @NonNull private final Map<String, Node<T>> nameMap;
-  @NonNull private final Map<Node<T>, Set<Node<T>>> nodeMap;
+  @NonNull protected final Map<String, Node<T>> nameMap;
+  @NonNull protected final Map<Node<T>, Set<Node<T>>> nodeMap;
 
   // TODO: test getting root nodes
   public Set<Node<T>> getRoots() {

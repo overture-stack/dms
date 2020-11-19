@@ -17,6 +17,7 @@ import lombok.val;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -39,16 +40,16 @@ public class DCService {
   @JsonDeserialize(using = StringEqualsDCMapDeserializer.class)
   private Map<String, String> environment = new TreeMap<>();
 
-  private Set<String> expose;
+  private Set<Integer> expose = new HashSet<>();
 
   @JsonDeserialize(using = IntegerColonDCMapDeserializer.class)
-  private Map<Integer, Integer> ports;
+  private Map<Integer, Integer> ports = new HashMap<>();
 
   @JsonProperty("depends_on")
-  private Set<String> dependsOn;
+  private Set<String> dependsOn = new HashSet<>();
 
   @JsonDeserialize(using = StringColonDCMapDeserializer.class)
-  private Map<String, String> volumes;
+  private Map<String, String> volumes = new HashMap<>();
 
   /**
    * Deserializers

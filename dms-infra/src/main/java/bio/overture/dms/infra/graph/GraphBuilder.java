@@ -11,10 +11,11 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
-public class GraphBuilder<T extends Nameable> {
+public class GraphBuilder<T extends Nameable> extends Graph<T> {
 
-  private final Map<String, Node<T>> nameMap = new HashMap<>();
-  private final Map<Node<T>, Set<Node<T>>> nodeMap = new HashMap<>();
+  public GraphBuilder(){
+    super(new HashMap<>(), new HashMap<>());
+  }
 
   public GraphBuilder<T> addEdge(@NonNull Node<T> parent, @NonNull Node<T> child) {
     initNode(parent);

@@ -76,7 +76,8 @@ public class DmsApplication {
 
     DockerClient dockerClient = DockerClientImpl.getInstance(config, httpClient);
     val envProcessor = EnvProcessor.createEnvProcessor(Reflector.createReflector(Reflections.collect()));
-    val docker = new DockerService(dockerClient, envProcessor);
+    val volumeName = "myvolume";
+    val docker = new DockerService(volumeName, dockerClient, envProcessor);
 
     // Network
     val network = docker.getNetwork(networkName);
