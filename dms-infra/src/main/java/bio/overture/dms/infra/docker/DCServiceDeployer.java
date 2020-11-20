@@ -1,7 +1,9 @@
 package bio.overture.dms.infra.docker;
 
-import bio.overture.dms.infra.graph.Graph;
+import bio.overture.dms.core.Nullable;
+import bio.overture.dms.infra.graph.AbstractGraph;
 import bio.overture.dms.infra.graph.GraphBuilder;
+import bio.overture.dms.infra.graph.MemoryGraph;
 import bio.overture.dms.infra.graph.Node;
 import bio.overture.dms.infra.job.DeployJob;
 import bio.overture.dms.infra.job.DeployJobCallback;
@@ -33,6 +35,13 @@ public class DCServiceDeployer {
   @NonNull private final RetryTemplate retryTemplate;
 
   public void deployDC(DockerCompose dc) {
+    val graph = prepareGraph(dc);
+
+    val deployJobCallback = new DeployJobCallback(executorService, graph);
+    deployJobCallback.run();
+  }
+
+  public MemoryGraph<DeployJob> prepareGraph(DockerCompose dc){
     // Init
     val assetVolumeName = dockerService.createVolumeWithAssets();
 
@@ -40,8 +49,7 @@ public class DCServiceDeployer {
     val network = dockerService.getNetwork(networkName);
 
     // Create graph builder
-    val gb = Graph.<DeployJob>builder();
-
+    val gb = AbstractGraph.<DeployJob>builder();
     // Create memoization index for job ctx
     val nodeIndex = dc.getServices().stream()
         .collect(toUnmodifiableMap(DCService::getServiceName, x -> processService(networkName, assetVolumeName, x, gb)));
@@ -49,9 +57,7 @@ public class DCServiceDeployer {
     // Create dependency edges
     dc.getServices().forEach(childService -> processDeps(childService, gb, nodeIndex));
 
-    val graph = gb.build();
-    val deployJobCallback = new DeployJobCallback(executorService, graph);
-    deployJobCallback.run();
+    return gb.build();
   }
 
   @SneakyThrows
@@ -89,7 +95,7 @@ public class DCServiceDeployer {
   }
 
 //   TODO need to prevent the creation of new Nodes for the same task. This is why its not working for ego-db and ego-db1
-  private DCServiceJobContext processService(@NonNull String networkName, @NonNull String assetVolumeName,
+  private DCServiceJobContext processService(@NonNull String networkName, @Nullable String assetVolumeName,
       @NonNull DCService s, GraphBuilder<DeployJob> gb) {
     val imagePullDeployJob = createImagePullJob(s);
     val containerDeployJob = createContainerDeployJob(networkName, s, assetVolumeName);

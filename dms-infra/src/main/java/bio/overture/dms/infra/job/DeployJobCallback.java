@@ -1,6 +1,8 @@
 package bio.overture.dms.infra.job;
 
-import bio.overture.dms.infra.graph.Graph;
+import bio.overture.dms.infra.graph.AbstractGraph;
+import bio.overture.dms.infra.graph.ConcurrentGraphTraversal;
+import bio.overture.dms.infra.graph.MemoryGraph;
 import bio.overture.dms.infra.graph.Node;
 import bio.overture.dms.infra.util.Concurrency;
 import lombok.NonNull;
@@ -12,18 +14,19 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static bio.overture.dms.infra.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-
+//TODO: needs to be refactored...to messy
 @Slf4j
 public class DeployJobCallback implements JobCallback, Runnable {
 
   @NonNull private final ExecutorService executorService;
-  @NonNull private final Graph<DeployJob> graph;
+  @NonNull private final MemoryGraph<DeployJob> graph;
   @NonNull private final CountDownLatch countDownLatch;
 
   public DeployJobCallback(@NonNull ExecutorService executorService,
-      @NonNull Graph<DeployJob> graph) {
+      @NonNull MemoryGraph<DeployJob> graph) {
     this.executorService = executorService;
     this.graph = graph;
     this.countDownLatch = new CountDownLatch(graph.numNodes());
@@ -40,6 +43,7 @@ public class DeployJobCallback implements JobCallback, Runnable {
   @Override
   @SneakyThrows
   public void run() {
+//    createConcurrentGraphTraversal(executorService, graph).traverse(x -> x.getData().doit(), () -> {} );
     graph.getRoots().stream()
         .map(Node::getData)
         .forEach(this::asyncRunDeployJob);

@@ -3,7 +3,7 @@ package bio.overture.dms.infra.docker;
 import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.job.DeployJob;
 import bio.overture.dms.infra.job.DeployJobCallback;
-import bio.overture.dms.infra.graph.Graph;
+import bio.overture.dms.infra.graph.AbstractGraph;
 import bio.overture.dms.infra.graph.Node;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ public class RobTest {
     val h = createTestJob("h",  100);
 
     // Build graph
-    val graph= Graph.<DeployJob>builder()
+    val graph= AbstractGraph.<DeployJob>builder()
         .addEdge(c, a)
         .addEdge(d, c)
         .addEdge(h, e)

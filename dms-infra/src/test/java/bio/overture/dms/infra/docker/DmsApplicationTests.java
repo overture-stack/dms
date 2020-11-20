@@ -1,6 +1,10 @@
 package bio.overture.dms.infra.docker;
 
+import bio.overture.dms.core.CollectionUtils;
 import bio.overture.dms.infra.config.JacksonConfig;
+import bio.overture.dms.infra.graph.ConcurrentGraphTraversal;
+import bio.overture.dms.infra.job.DeployJob;
+import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.service.DCReader;
 import bio.overture.dms.infra.service.DmsDeploymentService;
 import bio.overture.dms.infra.service.DockerComposeClient;
@@ -21,8 +25,9 @@ import org.springframework.retry.support.RetryTemplate;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
+import static bio.overture.dms.core.CollectionUtils.mapToUnmodifiableList;
+import static bio.overture.dms.infra.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 import static bio.overture.dms.infra.util.FileUtils.readResourcePath;
 import static com.github.dockerjava.api.model.MountType.BIND;
 import static java.util.stream.Collectors.toUnmodifiableMap;
@@ -125,6 +130,39 @@ class DmsApplicationTests {
     val deployer = new DCServiceDeployer(volumeName, networkName, executor, dockerService, retryTemplate);
     deployer.deployDC(dc);
     deployer.destroy(dc);
+
+    executor.shutdown();
+    executor.awaitTermination(1, TimeUnit.HOURS);
+
+    log.info("sdf");
+  }
+
+  @Disabled
+  @Test
+  @SneakyThrows
+  public void testParseDockerCompose2(){
+    val dockerComposePath = "/templates/docker-compose.yaml";
+    val volumeName= "robvolume";
+    val networkName ="robnetwork";
+    val file = readResourcePath(dockerComposePath).getFile();
+    val yamlProcessor = new JacksonConfig().yamlProcessor();
+    val dcReader = new DCReader(yamlProcessor);
+
+    val dc = dcReader.readDockerCompose(file);
+
+    val executor = Executors.newFixedThreadPool(4);
+    val retryTemplate = new RetryTemplate();
+    val deployer = new DCServiceDeployer(volumeName, networkName, executor, dockerService, retryTemplate);
+    val graph = deployer.prepareGraph(dc);
+    val traverser = createConcurrentGraphTraversal(executor, graph);
+    traverser.traverse(x -> x.getData().doit(), () -> {});
+    traverser.reset();
+    traverser.traverse(x -> log.info("Visited: "+x.getData().getName()), () -> {} );
+    dockerService.deleteContainersByName(executor,
+        mapToUnmodifiableList(dc.getServices(), DCService::getServiceName), true, false);
+
+
+
 
     executor.shutdown();
     executor.awaitTermination(1, TimeUnit.HOURS);
