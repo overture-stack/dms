@@ -8,6 +8,7 @@ import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.properties.service.ServiceProperties;
 import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.ContainerState;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ExposedPort;
@@ -315,6 +316,10 @@ public class DockerService {
     }
     return result.get().getRunning();
 
+  }
+  public Optional<InspectContainerResponse> inspectContainerByName(@NonNull String containerName){
+    return findContainerId(containerName)
+        .map(id -> client.inspectContainerCmd(id).exec());
   }
   public Optional<ContainerState> findContainerState(@NonNull String containerId){
     try {
