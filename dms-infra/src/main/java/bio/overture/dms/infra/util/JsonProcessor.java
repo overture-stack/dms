@@ -8,8 +8,10 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static bio.overture.dms.infra.util.FileUtils.checkFileExists;
 
@@ -23,6 +25,11 @@ public class JsonProcessor {
   public JsonNode readJsonFile(@NonNull File f){
     checkFileExists(f.toPath());
     return objectMapper.readTree(f);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Map<String, Object> convertToMap(@NonNull Object o){
+    return objectMapper.convertValue(o, Map.class);
   }
 
   //TODO: handle JsonParseException
@@ -39,6 +46,11 @@ public class JsonProcessor {
   //TODO: handle JsonParseException
   public <T> T convertValue(@NonNull JsonNode root, @NonNull Class<T> tClass){
     return objectMapper.convertValue(root, tClass);
+  }
+
+  @SneakyThrows
+  public <T> T convertValue(@NonNull String payload, @NonNull Class<T> tClass){
+    return convertValue(objectMapper.readTree(payload), tClass);
   }
 
   public static List<String> getFieldNames(@NonNull JsonNode root){

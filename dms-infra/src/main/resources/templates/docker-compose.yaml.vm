@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+  ego-server:
+    image: "overture/ego:3.1.0"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: classpath:flyway/sql,classpath:db/migration
+      SPRING_PROFILES_ACTIVE: "auth,grpc,jwt"
+      SPRING_DATASOURCE_USERNAME: $ego.databasePassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified"
+      SWAGGER_HOST: $ego.host
+      SWAGGER_BASEURL: "/"
+      REFRESHTOKEN_COOKIEISSECURE: "true"
+      REFRESHTOKEN_DOMAIN: $ego.host
+      APITOKEN_DURATIONDAYS: $ego.apiTokenDurationDays
+      JWT_DURATIONMS: $ego.jwtDurationMS
+      REFRESHTOKEN_DURATIONMS: $ego.refreshTokenDurationMS
+#if( $ego.sso.google )
+      GOOGLE_CLIENT_CLIENTID: $ego.sso.google.clientId
+      GOOGLE_CLIENT_CLIENTSECRET: $ego.sso.google.clientSecret
+      GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI: $ego.sso.google.preEstablishedRedirectUri
+#end
+#if( $ego.sso.github )
+      GITHUB_CLIENT_CLIENTID: $ego.sso.github.clientId
+      GITHUB_CLIENT_CLIENTSECRET: $ego.sso.github.clientSecret
+      GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI: $ego.sso.github.preEstablishedRedirectUri
+#end
+#if( $ego.sso.linkedin )
+      LINKEDIN_CLIENT_CLIENTID: $ego.sso.linkedin.clientId
+      LINKEDIN_CLIENT_CLIENTSECRET: $ego.sso.linkedin.clientSecret
+      LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI: $ego.sso.linkedin.preEstablishedRedirectUri
+#end
+#if( $ego.sso.facebook )
+      FACEBOOK_CLIENT_CLIENTID: $ego.sso.facebook.clientId
+      FACEBOOK_CLIENT_CLIENTSECRET: $ego.sso.facebook.clientSecret
+      FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI: $ego.sso.facebook.preEstablishedRedirectUri
+#end
+#if( $ego.sso.orcid )
+      ORCID_CLIENT_CLIENTID: $ego.sso.orcid.clientId
+      ORCID_CLIENT_CLIENTSECRET: $ego.sso.orcid.clientSecret
+      ORCID_CLIENT_PREESTABLISHEDREDIRECTURI: $ego.sso.orcid.preEstablishedRedirectUri
+#end
+    expose:
+      - "8080"
+    depends_on:
+      - ego-db
+  ego-db:
+    image: postgres:11.1
+    environment:
+      - POSTGRES_DB=ego
+      - POSTGRES_PASSWORD=$ego.databasePassword
+    expose:
+      - "5432"

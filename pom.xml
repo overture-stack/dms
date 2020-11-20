@@ -84,6 +84,12 @@
 				<scope>compile</scope>
 			</dependency>
 
+			<!-- Template Engine -->
+			<dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity-engine-core</artifactId>
+				<version>${velocity.version}</version>
+			</dependency>
 
 			<!--Retry-->
 			<dependency>
@@ -372,6 +378,7 @@
 		<groovy.version>2.4.3</groovy.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<java-uuid-generator.version>3.1.5</java-uuid-generator.version>
+		<velocity.version>2.2</velocity.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>

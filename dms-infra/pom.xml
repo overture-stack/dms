@@ -102,6 +102,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Template Engine -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+        </dependency>
+
         <!--Logging-->
         <dependency>
             <groupId>ch.qos.logback</groupId>

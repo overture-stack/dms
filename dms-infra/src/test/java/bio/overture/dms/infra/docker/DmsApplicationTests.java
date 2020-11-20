@@ -2,33 +2,39 @@ package bio.overture.dms.infra.docker;
 
 import bio.overture.dms.infra.config.JacksonConfig;
 import bio.overture.dms.infra.job.DockerComposer;
-import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.service.DCReader;
 import bio.overture.dms.infra.service.DmsDeploymentService;
 import bio.overture.dms.infra.service.DockerComposeClient;
 import bio.overture.dms.infra.spec.DmsSpec;
 import bio.overture.dms.infra.spec.EgoSpec;
+import bio.overture.dms.infra.template.DCRenderer;
+import bio.overture.dms.infra.util.JsonProcessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Mount;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.retry.support.RetryTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static bio.overture.dms.core.CollectionUtils.mapToUnmodifiableList;
-import static bio.overture.dms.infra.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 import static bio.overture.dms.infra.util.FileUtils.readResourcePath;
 import static com.github.dockerjava.api.model.MountType.BIND;
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 @Slf4j
 @SpringBootTest
@@ -139,4 +145,65 @@ class DmsApplicationTests {
   @Test
   void contextLoads() {}
 
+  @Autowired private VelocityEngine velocityEngine;
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TestEgoDB{
+    private String password;
+    private Integer port;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TestEgoServer{
+    private Integer port;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TestData{
+    private TestEgoDB egodb;
+    private TestEgoServer egoserver;
+  }
+
+  @Autowired DCRenderer dcRenderer;
+
+  @Test
+  @Disabled
+  public void testTemplating(){
+
+    val dmsSpec = DmsSpec.builder()
+        .version("1.2.0")
+        .ego(
+            EgoSpec.builder()
+                .host("ego.staging.overture.bio")
+                .refreshTokenDurationMS(11111111)
+                .jwtDurationMS(2222222)
+                .apiTokenDurationDays(3333333)
+                .databasePassword("robivolidisk")
+                .sso(EgoSpec.SSOSpec.builder()
+                    .facebook(EgoSpec.SSOClientSpec.builder()
+                        .clientId("someFbClientId")
+                        .clientSecret("someFbClientSecret")
+                        .preEstablishedRedirectUri("https://ego.staging.overture.bio/something")
+                        .build() )
+                    .build())
+                .build() )
+        .build();
+
+
+
+    val out = dcRenderer.render(dmsSpec);
+
+
+    log.info("Sdfsd");
+
+  }
 }

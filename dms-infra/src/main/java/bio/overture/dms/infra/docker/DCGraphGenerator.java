@@ -52,9 +52,6 @@ public class DCGraphGenerator {
     val imagePullDeployJob = getOrCreateImagePullJob(s, gb);
     val containerDeployJob = getOrCreateContainerDeployJob(s, gb);
     gb.addEdge(imagePullDeployJob, containerDeployJob);
-//    val imagePullNode = gb.findNodeByName(imagePullDeployJob.getName()).orElse(Node.of(imagePullDeployJob));
-//    val containerDeployNode = gb.findNodeByName(containerDeployJob.getName()).orElse(Node.of(containerDeployJob));
-//    gb.addEdge(imagePullNode, containerDeployNode);
     return DCServiceJobContext.builder()
         .imagePull(imagePullDeployJob)
         .containerDeploy(containerDeployJob)

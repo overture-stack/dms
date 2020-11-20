@@ -17,6 +17,7 @@ import javax.validation.constraints.Pattern;
 
 import static bio.overture.dms.core.Strings.isBlank;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static java.util.Objects.isNull;
 
 @Data
 @Builder
@@ -69,6 +70,10 @@ public class EgoSpec {
 
     @Nullable
     private SSOClientSpec facebook;
+
+    @Nullable
+    private SSOClientSpec orcid;
+
   }
 
   @Data
