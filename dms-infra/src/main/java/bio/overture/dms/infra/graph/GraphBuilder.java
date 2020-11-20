@@ -10,8 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableMap;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
-public class GraphBuilder<T extends Nameable> extends Graph<T> {
+public class GraphBuilder<T extends Nameable> extends AbstractGraph<T, Node<T>> {
 
   public GraphBuilder(){
     super(new HashMap<>(), new HashMap<>());
@@ -27,11 +28,24 @@ public class GraphBuilder<T extends Nameable> extends Graph<T> {
   }
 
   // TODO: test immutability
-  public Graph<T> build(){
-    final Map<Node<T>, Set<Node<T>>> immutableMap = nodeMap.entrySet().stream()
-        .collect(toUnmodifiableMap(Map.Entry::getKey,
-            y -> Set.copyOf(y.getValue())));
-    return new Graph<>(Map.copyOf(nameMap), Map.copyOf(immutableMap));
+  public MemoryGraph<T> build(){
+    val memoryNodeMap = new HashMap<MemoryNode<T>, Set<MemoryNode<T>>>();
+
+    final Map<String, MemoryNode<T>> memoryNameMap = nameMap.entrySet().stream()
+        .collect(toUnmodifiableMap(Map.Entry::getKey, x -> MemoryNode.of(x.getValue())));
+
+    for (val e : nodeMap.entrySet()){
+      val parentNode = e.getKey();
+
+      val parentMemoryNode = memoryNameMap.get(parentNode.getData().getName());
+      val childMemoryNodes = e.getValue().stream()
+          .map(Node::getData)
+          .map(Nameable::getName)
+          .map(memoryNameMap::get)
+          .collect(toUnmodifiableSet());
+      memoryNodeMap.put(parentMemoryNode, childMemoryNodes);
+    }
+    return new MemoryGraph<>(memoryNameMap, Map.copyOf(memoryNodeMap));
   }
 
   private void initNode(Node<T> node) {

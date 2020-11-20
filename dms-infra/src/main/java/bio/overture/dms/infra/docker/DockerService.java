@@ -3,18 +3,15 @@ package bio.overture.dms.infra.docker;
 import bio.overture.dms.core.Nullable;
 import bio.overture.dms.infra.docker.model.DockerContainer;
 import bio.overture.dms.infra.docker.model.DockerImage;
-import bio.overture.dms.infra.docker.model.DockerVolume;
 import bio.overture.dms.infra.env.EnvProcessor;
 import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.properties.service.ServiceProperties;
+import bio.overture.dms.infra.util.Concurrency;
 import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.ContainerState;
-import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.Mount;
 import com.github.dockerjava.api.model.MountType;
@@ -24,35 +21,31 @@ import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import lombok.Builder;
-import lombok.Lombok;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.infra.docker.NotFoundException.buildNotFoundException;
+import static bio.overture.dms.core.Exceptions.checkArgument;
+import static bio.overture.dms.core.Strings.isBlank;
+import static bio.overture.dms.infra.util.Concurrency.waitForFutures;
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static java.lang.String.format;
@@ -65,8 +58,6 @@ import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static lombok.Lombok.preventNullAnalysis;
-import static lombok.Lombok.sneakyThrow;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -180,7 +171,9 @@ public class DockerService {
         .collect(toUnmodifiableList());
   }
 
-  public String createContainer(@NonNull String networkName, @NonNull String assetVolumeName, @NonNull DCService s){
+  public String createContainer(@NonNull String networkName, @Nullable String assetVolumeName, @NonNull DCService s){
+    checkArgument(s.getVolumes().isEmpty() || !isBlank(assetVolumeName),
+          "Cannot create container since assetVolumeName is blank and mounts are expected");
     val createContainerCmd = client.createContainerCmd(s.getImage())
         .withName(s.getServiceName())
         .withAttachStderr(true)
@@ -207,8 +200,9 @@ public class DockerService {
     }
 
     if (!s.getVolumes().isEmpty()){
-        hostConfig.withMounts(extractMounts(assetVolumeName, s.getVolumes()));
+      hostConfig.withMounts(extractMounts(assetVolumeName, s.getVolumes()));
     }
+
     createContainerCmd.withHostConfig(hostConfig);
 
     return createContainerCmd.exec().getId();
@@ -235,6 +229,22 @@ public class DockerService {
   public void startContainer(String containerId){
     client.startContainerCmd(containerId)
         .exec();
+  }
+
+  public void deleteContainersByName(@NonNull ExecutorService executorService,  @NonNull Collection<String> containerNames,
+      boolean force, boolean removeVolumes){
+    val futures = containerNames.stream()
+        .map(name -> executorService.submit(() -> {
+          log.info("Starting deletion of container '{}'", name);
+          deleteContainerByName(name, force, removeVolumes);
+          log.info("Finished deleting container '{}'", name);
+        }))
+        .collect(toUnmodifiableList());
+    waitForFutures(futures);
+  }
+
+  public void deleteContainerByName(@NonNull String containerName, boolean force, boolean removeVolumes){
+    findContainerId(containerName).ifPresent(id -> deleteContainer(id, force, removeVolumes));
   }
 
   public void deleteContainer(@NonNull String containerId, boolean force, boolean removeVolumes){

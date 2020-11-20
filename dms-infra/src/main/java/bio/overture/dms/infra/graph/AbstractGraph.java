@@ -1,6 +1,7 @@
 package bio.overture.dms.infra.graph;
 
 import bio.overture.dms.infra.model.Nameable;
+import com.sun.jna.Memory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -9,15 +10,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 @RequiredArgsConstructor
-public class Graph<T extends Nameable> {
+public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
 
-  @NonNull protected final Map<String, Node<T>> nameMap;
-  @NonNull protected final Map<Node<T>, Set<Node<T>>> nodeMap;
+  @NonNull protected final Map<String, N> nameMap;
+  @NonNull protected final Map<N, Set<N>> nodeMap;
 
   // TODO: test getting root nodes
   public Set<Node<T>> getRoots() {
@@ -47,5 +49,7 @@ public class Graph<T extends Nameable> {
   public static <T extends Nameable> GraphBuilder<T> builder(){
     return new GraphBuilder<>();
   }
+
+
 
 }

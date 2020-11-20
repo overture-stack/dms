@@ -1,8 +1,6 @@
 package bio.overture.dms.infra.job;
 
 import bio.overture.dms.infra.model.Nameable;
-import bio.overture.dms.infra.util.Exceptions;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,7 +8,7 @@ import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import static bio.overture.dms.infra.util.Exceptions.joinStackTrace;
+import static bio.overture.dms.core.Exceptions.joinStackTrace;
 import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
@@ -31,5 +29,15 @@ public class DeployJob implements Nameable {
       callback.onError(this);
       throw t;
     }
+  }
+
+  public void doit(){
+    try{
+      deployTask.run();
+    } catch (Throwable t){
+      log.error("ERROR: [{}] {}: {}", t.getClass().getName(), t.getMessage(), joinStackTrace(t));
+      throw t;
+    }
+
   }
 }
