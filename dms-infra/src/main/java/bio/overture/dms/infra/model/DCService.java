@@ -1,7 +1,7 @@
 package bio.overture.dms.infra.model;
 
-import bio.overture.dms.core.Joiner;
-import bio.overture.dms.core.Splitter;
+import bio.overture.dms.core.util.Joiner;
+import bio.overture.dms.core.util.Splitter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;

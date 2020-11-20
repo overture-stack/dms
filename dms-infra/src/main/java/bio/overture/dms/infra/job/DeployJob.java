@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import static bio.overture.dms.core.Exceptions.joinStackTrace;
+import static bio.overture.dms.core.util.Exceptions.joinStackTrace;
 import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j

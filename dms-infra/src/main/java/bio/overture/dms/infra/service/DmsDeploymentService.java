@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static bio.overture.dms.core.Futures.getFuture;
-import static bio.overture.dms.core.Futures.getFutures;
-import static bio.overture.dms.core.Futures.waitForFutures;
-import static bio.overture.dms.core.Joiner.COMMA;
+import static bio.overture.dms.core.util.Futures.getFuture;
+import static bio.overture.dms.core.util.Futures.getFutures;
+import static bio.overture.dms.core.util.Futures.waitForFutures;
+import static bio.overture.dms.core.util.Joiner.COMMA;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 @Slf4j

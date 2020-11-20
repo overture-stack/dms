@@ -1,6 +1,6 @@
 package bio.overture.dms.infra.docker;
 
-import bio.overture.dms.core.Splitter;
+import bio.overture.dms.core.util.Splitter;
 import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.core.util.SafeGet;
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static bio.overture.dms.core.Joiner.EQUALS;
+import static bio.overture.dms.core.util.Joiner.EQUALS;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;

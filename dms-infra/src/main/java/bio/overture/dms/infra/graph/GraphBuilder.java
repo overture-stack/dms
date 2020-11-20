@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static bio.overture.dms.core.Exceptions.checkArgument;
+import static bio.overture.dms.core.util.Exceptions.checkArgument;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 

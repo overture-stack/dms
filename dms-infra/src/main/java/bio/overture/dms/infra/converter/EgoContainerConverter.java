@@ -1,7 +1,7 @@
 package bio.overture.dms.infra.converter;
 
-import bio.overture.dms.core.Nullable;
-import bio.overture.dms.core.RandomGenerator;
+import bio.overture.dms.core.util.Nullable;
+import bio.overture.dms.core.util.RandomGenerator;
 import bio.overture.dms.infra.docker.model.DockerContainer;
 import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.properties.service.FlywayProperties;
@@ -18,7 +18,7 @@ import lombok.val;
 
 import java.util.List;
 
-import static bio.overture.dms.core.RandomGenerator.createRandomGenerator;
+import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static bio.overture.dms.infra.converter.InvalidSpecException.checkInvalidSpec;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;

@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.val;
 
-import static bio.overture.dms.core.Strings.isBlank;
+import static bio.overture.dms.core.util.Strings.isBlank;
 
 @Value
 @Builder

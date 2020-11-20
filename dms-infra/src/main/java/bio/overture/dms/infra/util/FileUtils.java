@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static bio.overture.dms.core.Joiner.COMMA;
+import static bio.overture.dms.core.util.Joiner.COMMA;
 import static bio.overture.dms.core.exception.NotFoundException.checkNotFound;
 import static java.lang.String.format;
 import static java.nio.file.Files.exists;

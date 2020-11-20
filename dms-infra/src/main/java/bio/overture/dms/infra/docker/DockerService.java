@@ -1,6 +1,6 @@
 package bio.overture.dms.infra.docker;
 
-import bio.overture.dms.core.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import bio.overture.dms.infra.docker.model.DockerContainer;
 import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.env.EnvProcessor;
@@ -42,8 +42,8 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.core.Exceptions.checkArgument;
-import static bio.overture.dms.core.Strings.isBlank;
+import static bio.overture.dms.core.util.Exceptions.checkArgument;
+import static bio.overture.dms.core.util.Strings.isBlank;
 import static bio.overture.dms.core.util.Concurrency.waitForFutures;
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 import static com.github.dockerjava.api.model.MountType.VOLUME;

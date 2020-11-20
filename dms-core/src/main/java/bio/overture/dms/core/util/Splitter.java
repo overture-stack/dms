@@ -1,13 +1,11 @@
-package bio.overture.dms.core;
+package bio.overture.dms.core.util;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;

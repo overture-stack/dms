@@ -1,6 +1,5 @@
 package bio.overture.dms.core.util;
 
-import bio.overture.dms.core.Exceptions;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

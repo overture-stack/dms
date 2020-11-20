@@ -1,6 +1,6 @@
 package bio.overture.dms.infra.env;
 
-import bio.overture.dms.core.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import bio.overture.dms.infra.config.EnvConfig;
 import bio.overture.dms.test.Tester;
 import lombok.AllArgsConstructor;

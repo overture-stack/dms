@@ -1,23 +1,19 @@
 package bio.overture.dms.infra.spec;
 
-import bio.overture.dms.core.Nullable;
-import bio.overture.dms.infra.env.EnvVariable;
-import bio.overture.dms.infra.properties.service.ego.SSOProperties;
+import bio.overture.dms.core.util.Nullable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import static bio.overture.dms.core.Strings.isBlank;
+import static bio.overture.dms.core.util.Strings.isBlank;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
-import static java.util.Objects.isNull;
 
 @Data
 @Builder

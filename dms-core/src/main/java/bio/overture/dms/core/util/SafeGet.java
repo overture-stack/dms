@@ -1,6 +1,5 @@
 package bio.overture.dms.core.util;
 
-import bio.overture.dms.core.Nullable;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

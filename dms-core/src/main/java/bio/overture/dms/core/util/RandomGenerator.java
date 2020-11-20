@@ -15,10 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package bio.overture.dms.core;
+package bio.overture.dms.core.util;
 
-import static bio.overture.dms.core.CollectionUtils.newArrayList;
-import static bio.overture.dms.core.Exceptions.checkArgument;
+import static bio.overture.dms.core.util.CollectionUtils.newArrayList;
+import static bio.overture.dms.core.util.Exceptions.checkArgument;
 import static com.fasterxml.uuid.Generators.randomBasedGenerator;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.shuffle;

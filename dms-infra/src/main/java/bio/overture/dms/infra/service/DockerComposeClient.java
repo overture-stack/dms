@@ -1,16 +1,13 @@
 package bio.overture.dms.infra.service;
 
-import bio.overture.dms.core.Joiner;
-import bio.overture.dms.core.Splitter;
+import bio.overture.dms.core.util.Joiner;
+import bio.overture.dms.core.util.Splitter;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.LogConfig;
 import com.github.dockerjava.api.model.Mount;
-import com.github.dockerjava.core.command.ExecStartResultCallback;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +16,13 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static bio.overture.dms.core.Joiner.WHITESPACE;
-import static bio.overture.dms.core.Joiner.WHITESPACE;
-import static bio.overture.dms.core.Strings.isBlank;
+import static bio.overture.dms.core.util.Strings.isBlank;
 import static com.github.dockerjava.api.model.MountType.BIND;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;

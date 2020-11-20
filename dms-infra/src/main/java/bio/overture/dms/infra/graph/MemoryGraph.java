@@ -1,17 +1,14 @@
 package bio.overture.dms.infra.graph;
 
-import bio.overture.dms.core.CollectionUtils;
 import bio.overture.dms.infra.model.Nameable;
-import lombok.Builder;
 import lombok.NonNull;
 import lombok.val;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static bio.overture.dms.core.CollectionUtils.mapToUnmodifiableSet;
+import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableSet;
 
 public class MemoryGraph<T extends Nameable> extends AbstractGraph<T, MemoryNode<T>> {
 
