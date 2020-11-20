@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 
 import static bio.overture.dms.core.Exceptions.checkArgument;
 import static bio.overture.dms.core.Strings.isBlank;
-import static bio.overture.dms.infra.util.Concurrency.waitForFutures;
+import static bio.overture.dms.core.util.Concurrency.waitForFutures;
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static java.lang.String.format;

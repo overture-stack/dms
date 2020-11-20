@@ -1,13 +1,9 @@
-package bio.overture.dms.infra.docker;
+package bio.overture.dms.core.exception;
 
-import bio.overture.dms.infra.converter.InvalidSpecException;
 import lombok.NonNull;
 import lombok.val;
 
 import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;

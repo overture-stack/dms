@@ -1,9 +1,7 @@
-package bio.overture.dms.infra.util;
+package bio.overture.dms.core.util;
 
 import bio.overture.dms.core.Exceptions;
-import lombok.Lombok;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -11,8 +9,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.Lombok.sneakyThrow;
 

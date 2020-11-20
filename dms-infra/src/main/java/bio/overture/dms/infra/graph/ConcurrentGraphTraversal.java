@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static bio.overture.dms.core.Exceptions.checkState;
-import static bio.overture.dms.infra.util.Concurrency.trySubmit;
+import static bio.overture.dms.core.util.Concurrency.trySubmit;
 import static java.lang.String.format;
 
 public class ConcurrentGraphTraversal<T extends Nameable> {

@@ -2,7 +2,7 @@ package bio.overture.dms.infra.docker;
 
 import bio.overture.dms.core.Splitter;
 import bio.overture.dms.infra.model.DCService;
-import bio.overture.dms.infra.util.SafeGet;
+import bio.overture.dms.core.util.SafeGet;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.Mount;
 import com.github.dockerjava.api.model.ContainerConfig;
@@ -13,7 +13,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

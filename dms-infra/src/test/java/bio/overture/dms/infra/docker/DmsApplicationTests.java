@@ -8,8 +8,6 @@ import bio.overture.dms.infra.service.DockerComposeClient;
 import bio.overture.dms.infra.spec.DmsSpec;
 import bio.overture.dms.infra.spec.EgoSpec;
 import bio.overture.dms.infra.template.DCRenderer;
-import bio.overture.dms.infra.util.JsonProcessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Mount;
@@ -20,15 +18,12 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -133,7 +128,12 @@ class DmsApplicationTests {
     val executor = Executors.newFixedThreadPool(4);
     val generator = new DCGraphGenerator(networkName, volumeName, dockerService);
     val dockerComposer = new DockerComposer(executor, generator, dockerService );
+    val reader = new DCServiceStateReader(dockerService);
     dockerComposer.deploy(dc);
+
+    Thread.sleep(4000);
+    val out = reader.readServiceState("ego-server");
+
     dockerComposer.destroy(dc, true, false);
 
     executor.shutdown();
@@ -204,6 +204,11 @@ class DmsApplicationTests {
 
 
     log.info("Sdfsd");
+
+  }
+
+  @Test
+  public void testYo(){
 
   }
 }

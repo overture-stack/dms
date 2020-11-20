@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
+import static bio.overture.dms.core.exception.NotFoundException.checkNotFound;
 import static bio.overture.dms.infra.util.FileUtils.checkExtensions;
 
 @Component

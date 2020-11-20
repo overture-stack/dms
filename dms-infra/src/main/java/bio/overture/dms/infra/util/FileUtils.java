@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static bio.overture.dms.core.Joiner.COMMA;
-import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
+import static bio.overture.dms.core.exception.NotFoundException.checkNotFound;
 import static java.lang.String.format;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
@@ -30,7 +30,8 @@ public class FileUtils {
   public static Resource readResourcePath(String filename) throws IOException, URISyntaxException {
     val resource = new DefaultResourceLoader().getResource(filename);
     if (!resource.exists()) {
-      throw new IllegalArgumentException(format("The resource \"%s\" was not found: %s", filename, resource.getFile().getAbsolutePath()));
+      throw new IllegalArgumentException(
+          format("The resource \"%s\" was not found: %s", filename, resource.getFile().getAbsolutePath()));
     }
     return resource;
   }

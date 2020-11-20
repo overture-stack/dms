@@ -1,8 +1,6 @@
 package bio.overture.dms.infra.graph;
 
-import bio.overture.dms.infra.docker.NotFoundException;
 import bio.overture.dms.infra.model.Nameable;
-import com.sun.jna.Memory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -11,10 +9,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
-import static bio.overture.dms.infra.docker.NotFoundException.buildNotFoundException;
-import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
+import static bio.overture.dms.core.exception.NotFoundException.buildNotFoundException;
+import static bio.overture.dms.core.exception.NotFoundException.checkNotFound;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 @RequiredArgsConstructor
