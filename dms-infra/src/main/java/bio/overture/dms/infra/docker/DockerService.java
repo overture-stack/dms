@@ -6,7 +6,6 @@ import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.env.EnvProcessor;
 import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.infra.properties.service.ServiceProperties;
-import bio.overture.dms.infra.util.Concurrency;
 import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectContainerResponse.ContainerState;
@@ -39,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
 
@@ -218,10 +216,10 @@ public class DockerService {
         .withVolumes(extractVolumes(dockerContainer))
         .exec()
         .getId();
-    val n = getNetwork(dockerContainer.getNetwork());
+    val networkId = getOrCreateNetwork(dockerContainer.getNetwork());
     client.connectToNetworkCmd()
         .withContainerId(containerId)
-        .withNetworkId(n.getId())
+        .withNetworkId(networkId)
         .exec();
     return containerId;
   }
@@ -253,17 +251,10 @@ public class DockerService {
         .withRemoveVolumes(removeVolumes)
         .exec();
   }
-  public Network getNetwork(String networkName) {
+  public String getOrCreateNetwork(String networkName) {
     return findNetwork(networkName)
-        .orElseGet(
-            () -> {
-              client.createNetworkCmd().withName(networkName).exec();
-              return findNetwork(networkName)
-                  .orElseThrow(
-                      () ->
-                          new IllegalStateException(
-                              format("could not create network \"%s\"", networkName)));
-            });
+        .map(Network::getId)
+        .orElseGet(() -> client.createNetworkCmd().withName(networkName).exec().getId());
   }
 
   @Value

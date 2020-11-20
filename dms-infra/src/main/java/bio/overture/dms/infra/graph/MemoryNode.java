@@ -29,8 +29,12 @@ public class MemoryNode<T extends Nameable> extends Node<T> {
     this.getNumUnvisitedParents().set(maxUnvisitedParents);
   }
 
+  public MemoryNode<T> copy(){
+    return new MemoryNode<>(getData(), maxUnvisitedParents);
+  }
+
   public static <T extends Nameable> MemoryNode<T> of(Node<T> node){
-    return new MemoryNode<T>(node.getData(), node.getNumUnvisitedParents().get());
+    return new MemoryNode<>(node.getData(), node.getNumUnvisitedParents().get());
   }
 
 }

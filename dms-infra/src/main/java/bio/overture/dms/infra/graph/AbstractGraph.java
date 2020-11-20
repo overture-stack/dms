@@ -1,5 +1,6 @@
 package bio.overture.dms.infra.graph;
 
+import bio.overture.dms.infra.docker.NotFoundException;
 import bio.overture.dms.infra.model.Nameable;
 import com.sun.jna.Memory;
 import lombok.NonNull;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static bio.overture.dms.infra.docker.NotFoundException.buildNotFoundException;
 import static bio.overture.dms.infra.docker.NotFoundException.checkNotFound;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
@@ -22,7 +24,7 @@ public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
   @NonNull protected final Map<N, Set<N>> nodeMap;
 
   // TODO: test getting root nodes
-  public Set<Node<T>> getRoots() {
+  public Set<N> getRoots() {
     val childSet = nodeMap.values().stream()
         .flatMap(Collection::stream)
         .collect(toUnmodifiableSet());
@@ -31,14 +33,31 @@ public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
         .collect(toUnmodifiableSet());
   }
 
-  public Set<Node<T>> getChildNodes(@NonNull Node<T> parent) {
+  public Set<N> getChildNodes(@NonNull T data){
+    return getChildNodes(data.getName());
+  }
+
+  public Set<N> getChildNodes(@NonNull String parentName){
+    return getChildNodes(getNode(parentName));
+  }
+
+  public Set<N> getChildNodes(@NonNull Node<T> parent) {
     checkNotFound(nodeMap.containsKey(parent),
-        "Could not find node with name: {}", parent.getData().getName());
+        "Could not find node with name: %s", parent.getData().getName());
     return nodeMap.get(parent).stream()
         .collect(toUnmodifiableSet());
   }
 
-  public Optional<Node<T>> findNodeByName(@NonNull String name) {
+  public N getNode(@NonNull T data) {
+    return getNode(data.getName());
+  }
+
+  public N getNode(@NonNull String name) {
+    return findNodeByName(name)
+        .orElseThrow(() -> buildNotFoundException("Could not find node with name: %s", name));
+  }
+
+  public Optional<N> findNodeByName(@NonNull String name) {
     return Optional.ofNullable(nameMap.get(name));
   }
 

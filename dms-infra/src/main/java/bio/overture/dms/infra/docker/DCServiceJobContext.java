@@ -10,6 +10,6 @@ import lombok.Value;
 @Builder
 public class DCServiceJobContext {
 
-  @NonNull private final Node<DeployJob> imagePull;
-  @NonNull private final Node<DeployJob> containerDeploy;
+  @NonNull private final DeployJob imagePull;
+  @NonNull private final DeployJob containerDeploy;
 }

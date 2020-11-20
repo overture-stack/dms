@@ -10,7 +10,6 @@ import bio.overture.dms.infra.docker.DockerService;
 import bio.overture.dms.infra.docker.model.DockerImage;
 import bio.overture.dms.infra.env.EnvProcessor;
 import bio.overture.dms.infra.reflection.Reflector;
-import bio.overture.dms.infra.util.FileUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -80,7 +79,7 @@ public class DmsApplication {
     val docker = new DockerService(volumeName, dockerClient, envProcessor);
 
     // Network
-    val network = docker.getNetwork(networkName);
+    val networkId = docker.getOrCreateNetwork(networkName);
 
     // Postgres
     val postgreRepo = "postgres";
@@ -119,7 +118,7 @@ public class DmsApplication {
     dockerClient
         .connectToNetworkCmd()
         .withContainerId(postgresContainer.getId())
-        .withNetworkId(network.getId())
+        .withNetworkId(networkId)
         .exec();
 
     /**
@@ -166,7 +165,7 @@ public class DmsApplication {
     dockerClient
         .connectToNetworkCmd()
         .withContainerId(egoContainer.getId())
-        .withNetworkId(network.getId())
+        .withNetworkId(networkId)
         .exec();
 
     dockerClient.startContainerCmd(egoContainer.getId()).exec();

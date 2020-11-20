@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static bio.overture.dms.core.Exceptions.checkArgument;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
@@ -17,14 +18,37 @@ public class GraphBuilder<T extends Nameable> extends AbstractGraph<T, Node<T>> 
   public GraphBuilder(){
     super(new HashMap<>(), new HashMap<>());
   }
+  public GraphBuilder<T> addEdge(@NonNull String parentName, @NonNull String childName) {
+    val parentNode = getNode(parentName);
+    val childNode = getNode(childName);
+    internalAddEdge(parentNode, childNode);
+    return this;
+  }
 
-  public GraphBuilder<T> addEdge(@NonNull Node<T> parent, @NonNull Node<T> child) {
-    initNode(parent);
-    initNode(child);
+  public GraphBuilder<T> addEdge(@NonNull T parentData, @NonNull T childData) {
+    val parentNode = getOrCreateNode(parentData);
+    checkArgument(parentData.equals(parentNode.getData()), "Conflicting parent data between stored data and input data for name: %s", parentData.getName());
 
+    val childNode= getOrCreateNode(childData);
+    checkArgument(childData.equals(childNode.getData()), "Conflicting child data between stored data and input data for name: %s", childData.getName());
+
+    initNode(parentNode);
+    initNode(childNode);
+
+    nodeMap.get(parentNode).add(childNode);
+    childNode.incrementUnvisitedParents();
+    return this;
+  }
+
+  private void initNode(Node<T> node){
+    if (!nodeMap.containsKey(node)){
+      nodeMap.put(node, new HashSet<>());
+    }
+  }
+
+  private void internalAddEdge(@NonNull Node<T> parent, @NonNull Node<T> child) {
     nodeMap.get(parent).add(child);
     child.incrementUnvisitedParents();
-    return this;
   }
 
   // TODO: test immutability
@@ -48,13 +72,13 @@ public class GraphBuilder<T extends Nameable> extends AbstractGraph<T, Node<T>> 
     return new MemoryGraph<>(memoryNameMap, Map.copyOf(memoryNodeMap));
   }
 
-  private void initNode(Node<T> node) {
-    if (!nameMap.containsKey(node.getData().getName())) {
-      val emptySet = new HashSet<Node<T>>();
-      nameMap.put(node.getData().getName(), node);
-      nodeMap.put(node, emptySet);
-    }
-
+  private Node<T> getOrCreateNode(@NonNull T t){
+    return findNodeByName(t.getName())
+        .orElseGet(() -> {
+          val n = Node.of(t);
+          this.nameMap.put(t.getName(), n );
+          return n;
+        });
   }
 
 
