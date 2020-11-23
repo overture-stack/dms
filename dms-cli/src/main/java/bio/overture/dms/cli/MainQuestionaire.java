@@ -3,7 +3,7 @@ package bio.overture.dms.cli;
 import static java.lang.String.format;
 
 import java.lang.reflect.Method;
-import java.util.Scanner;
+
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -60,8 +60,8 @@ public class MainQuestionaire {
   public static void main2(String[] args) {
     val ex = Config.builder().firstName("Robert").lastName("Tisma").age(5).build();
     for (val field : Config.class.getDeclaredFields()) {
-      if (field.isAnnotationPresent(Question.class)) {
-        val question = field.getDeclaredAnnotation(Question.class).value();
+      if (field.isAnnotationPresent(QuestionToAsk.class)) {
+        val question = field.getDeclaredAnnotation(QuestionToAsk.class).value();
         val getterName =
             "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         val methodRef = Config.class.getDeclaredMethod(getterName);

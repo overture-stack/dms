@@ -13,15 +13,15 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class Config {
 
-  @Question(value = "What is your firstname?")
+  @QuestionToAsk(value = "What is your firstname?")
   private String firstName;
 
-  @Question(
+  @QuestionToAsk(
       value = "What is your lastname?",
       dependentFieldNames = {Fields.firstName})
   private String lastName;
 
-  @Question(
+  @QuestionToAsk(
       value = "What is your age?",
       dependentFieldNames = {Fields.lastName})
   private int age;

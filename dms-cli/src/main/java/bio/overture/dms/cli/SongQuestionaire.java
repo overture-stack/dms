@@ -13,10 +13,10 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class SongQuestionaire {
 
-  @Question("Would you like to use kafka?")
+  @QuestionToAsk("Would you like to use kafka?")
   private boolean useKafka;
 
-  @Question(
+  @QuestionToAsk(
       value = "What should the song_id be?",
       dependentFieldNames = {Fields.useKafka})
   private String songId;
