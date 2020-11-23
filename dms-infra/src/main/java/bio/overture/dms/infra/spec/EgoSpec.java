@@ -34,6 +34,11 @@ public class EgoSpec {
   @Builder.Default
   private long refreshTokenDurationMS= 43200000L;
 
+  @Min(value = 2000)
+  @Builder.Default
+  private int apiHostPort = 9000;
+
+
   @NotNull
   private SSOSpec sso;
 
@@ -44,6 +49,10 @@ public class EgoSpec {
   //TODO: enable parameter validation
   @Pattern(regexp = "^[A-Za-z0-9]+")
   private String databasePassword;
+
+  @Min(value = 2000)
+  @Builder.Default
+  private int dbHostPort = 9001;
 
   public boolean isDatabasePasswordDefined(){
     return !isBlank(databasePassword);

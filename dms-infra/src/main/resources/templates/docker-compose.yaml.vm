@@ -43,6 +43,8 @@ services:
 #end
     expose:
       - "8080"
+    ports:
+      - "$ego.apiHostPort:8080"
     depends_on:
       - ego-db
   ego-db:
@@ -52,3 +54,5 @@ services:
       - POSTGRES_PASSWORD=$ego.databasePassword
     expose:
       - "5432"
+    ports:
+      - "$ego.dbHostPort:5432"

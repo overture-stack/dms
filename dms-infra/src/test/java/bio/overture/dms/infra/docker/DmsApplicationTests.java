@@ -3,6 +3,7 @@ package bio.overture.dms.infra.docker;
 import bio.overture.dms.infra.config.JacksonConfig;
 import bio.overture.dms.infra.job.DockerComposer;
 import bio.overture.dms.infra.service.DCReader;
+import bio.overture.dms.infra.service.DeployInfoService;
 import bio.overture.dms.infra.service.DmsDeploymentService;
 import bio.overture.dms.infra.service.DockerComposeClient;
 import bio.overture.dms.infra.spec.DmsSpec;
@@ -19,6 +20,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
+import org.javers.core.JaversBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,11 +130,14 @@ class DmsApplicationTests {
     val executor = Executors.newFixedThreadPool(4);
     val generator = new DCGraphGenerator(networkName, volumeName, dockerService);
     val dockerComposer = new DockerComposer(executor, generator, dockerService );
-    val reader = new DCServiceStateReader(dockerService);
+    val reader = new DeployInfoService(dockerService);
     dockerComposer.deploy(dc);
 
     Thread.sleep(4000);
-    val out = reader.readServiceState("ego-server");
+    val out = reader.readDeployInfo("ego-server");
+
+    val javers= JaversBuilder.javers().build();
+    val diff = javers.compare(dc.getServices().stream().filter(x -> x.getServiceName().equals("ego-server")).findFirst().get(), out.get());
 
     dockerComposer.destroy(dc, true, false);
 
@@ -207,8 +212,4 @@ class DmsApplicationTests {
 
   }
 
-  @Test
-  public void testYo(){
-
-  }
 }

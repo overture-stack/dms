@@ -1,8 +1,9 @@
-package bio.overture.dms.infra.docker;
+package bio.overture.dms.infra.service;
 
-import bio.overture.dms.core.util.Splitter;
-import bio.overture.dms.infra.model.DCService;
 import bio.overture.dms.core.util.SafeGet;
+import bio.overture.dms.core.util.Splitter;
+import bio.overture.dms.infra.docker.DockerService;
+import bio.overture.dms.infra.model.DeployInfo;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.Mount;
 import com.github.dockerjava.api.model.ContainerConfig;
@@ -23,26 +24,33 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
+/**
+ * Read deployment info
+ */
 @RequiredArgsConstructor
-public class DCServiceStateReader {
+public class DeployInfoService {
 
   @NonNull private final DockerService dockerService;
 
-
-  public Optional<DCService> readServiceState(@NonNull String serviceName){
-    return dockerService.inspectContainerByName(serviceName)
-        .map(x -> doit(x, serviceName));
+  /**
+   * For a container name, resolve what is currently deployed with the best effort
+   * @param containerName The name of the container to inspect
+   * @return Optional deploy info
+   */
+  public Optional<DeployInfo> readDeployInfo(@NonNull String containerName){
+    return dockerService.inspectContainerByName(containerName)
+        .map(x -> doit(x, containerName));
   }
 
-  private DCService doit(@NonNull InspectContainerResponse r, @NonNull String serviceName){
-    val out = new DCService();
-    extractEnvs(r).ifPresent(out::setEnvironment);
-    out.setExpose(extractExposedPorts(r));
-    out.setImage(extractImageName(r));
-    extractPorts(r).ifPresent(out::setPorts);
-    out.setServiceName(serviceName);
-    extractMounts(r).ifPresent(out::setVolumes);
-    return out;
+  private DeployInfo doit(@NonNull InspectContainerResponse r, @NonNull String containerName){
+    val out = DeployInfo.builder();
+    extractEnvs(r).ifPresent(out::environment);
+    out.expose(extractExposedPorts(r));
+    out.image(extractImageName(r));
+    extractPorts(r).ifPresent(out::ports);
+    out.containerName(containerName);
+    extractMounts(r).ifPresent(out::mounts);
+    return out.build();
   }
 
   private String extractImageName(InspectContainerResponse r){

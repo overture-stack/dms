@@ -108,6 +108,12 @@
             <artifactId>velocity-engine-core</artifactId>
         </dependency>
 
+        <!-- Java Object Diff Utility -->
+        <dependency>
+            <groupId>org.javers</groupId>
+            <artifactId>javers-core</artifactId>
+        </dependency>
+
         <!--Logging-->
         <dependency>
             <groupId>ch.qos.logback</groupId>

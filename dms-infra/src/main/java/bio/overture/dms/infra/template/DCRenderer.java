@@ -41,6 +41,7 @@ public class DCRenderer {
     return yamlProcessor.convertValue(renderedYaml, DockerCompose.class);
   }
 
+  //TODO: check that all the variables in template are resolvable, otherwise throw not found exception
   @SneakyThrows
   private void renderYaml(@NonNull DmsSpec spec, @NonNull OutputStream os){
     val template = velocityEngine.getTemplate(DC_TEMPLATE_LOC);
