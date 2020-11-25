@@ -35,7 +35,7 @@ import org.springframework.core.io.ByteArrayResource;
 public class ProjectBanner implements Banner {
 
   /** Other fonts can be found at http://www.figlet.org/examples.html */
-  private static final String BANNER_FONT_LOC = "/src/main/resources/banner-fonts/slant.flf";
+  private static final String BANNER_FONT_LOC = "/banner-fonts/slant.flf";
 
   @NonNull private final String applicationName;
   // Example: "${Ansi.GREEN} "

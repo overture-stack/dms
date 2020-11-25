@@ -27,14 +27,13 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
-@SpringBootApplication
+// @SpringBootApplication
 public class DmsApplication {
 
   @SneakyThrows
-  public static void main(String[] args) {
+  public static void main4(String[] args) {
 
     Path scratchPath = Paths.get("scratch");
     String networkName;

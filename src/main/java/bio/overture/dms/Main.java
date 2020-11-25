@@ -1,4 +1,4 @@
-package bio.overture.dms.cli;
+package bio.overture.dms;
 
 import static org.springframework.boot.SpringApplication.exit;
 

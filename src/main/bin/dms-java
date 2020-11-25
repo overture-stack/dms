@@ -66,5 +66,5 @@ java --illegal-access=deny \
 		 -Dlog.name=dms \
 		 -Dlog.path=$dms_logs \
 		 -Dlogback.configurationFile=$dms_home/conf/logback.xml \
-         -jar $dms_home/lib/dms-cli.jar \
+         -jar $dms_home/lib/dms.jar \
          $@
