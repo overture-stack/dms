@@ -6,11 +6,11 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.infra.spec.DmsSpec;
-import bio.overture.dms.infra.spec.EgoSpec;
-import bio.overture.dms.infra.spec.EgoSpec.SSOClientSpec;
-import bio.overture.dms.infra.spec.EgoSpec.SSOSpec;
-import bio.overture.dms.infra.util.JsonProcessor;
+import bio.overture.dms.model.spec.DmsSpec;
+import bio.overture.dms.model.spec.EgoSpec;
+import bio.overture.dms.model.spec.EgoSpec.SSOClientSpec;
+import bio.overture.dms.model.spec.EgoSpec.SSOSpec;
+import bio.overture.dms.util.ObjectSerializer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
@@ -37,18 +37,18 @@ import picocli.CommandLine.Option;
 public class SpecConfigCommand implements Callable<Integer> {
 
   private final QuestionFactory questionFactory;
-  private final JsonProcessor yamlProcessor;
+  private final ObjectSerializer yamlSerializer;
   private final BuildProperties buildProperties;
   private final TextTerminal<?> textTerminal;
 
   @Autowired
   public SpecConfigCommand(
       @NonNull QuestionFactory questionFactory,
-      @NonNull JsonProcessor yamlProcessor,
+      @NonNull ObjectSerializer yamlSerializer,
       @NonNull BuildProperties buildProperties,
       @NonNull TextTerminal<?> textTerminal) {
     this.questionFactory = questionFactory;
-    this.yamlProcessor = yamlProcessor;
+    this.yamlSerializer = yamlSerializer;
     this.buildProperties = buildProperties;
     this.textTerminal = textTerminal;
   }
@@ -81,7 +81,7 @@ public class SpecConfigCommand implements Callable<Integer> {
 
     val egoSpec = buildEgoSpec();
     val dmsSpec = DmsSpec.builder().version(buildProperties.getVersion()).ego(egoSpec).build();
-    yamlProcessor.writeToFile(dmsSpec, specFile);
+    yamlSerializer.serializeToFile(dmsSpec, specFile);
     textTerminal.executeWithPropertiesPrefix(
         "status", x -> x.println("Wrote spec file to " + specFile));
     return 0;

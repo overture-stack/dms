@@ -2,12 +2,16 @@ version: '3.7'
 services:
   ego-server:
     image: "overture/ego:3.1.0"
+    healthcheck:
+        test:
     environment:
       SERVER_PORT: 8080
       SPRING_FLYWAY_ENABLED: "true"
       SPRING_FLYWAY_LOCATIONS: classpath:flyway/sql,classpath:db/migration
-      SPRING_PROFILES_ACTIVE: "auth,grpc,jwt"
-      SPRING_DATASOURCE_USERNAME: $ego.databasePassword
+      # SPRING_PROFILES_ACTIVE: "auth,grpc,jwt"
+      SPRING_PROFILES_ACTIVE: "demo"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: $ego.databasePassword
       SPRING_DATASOURCE_URL: "jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified"
       SWAGGER_HOST: $ego.host
       SWAGGER_BASEURL: "/"

@@ -1,13 +1,13 @@
 package bio.overture.dms.cli.question;
 
-import static bio.overture.dms.core.enums.FieldTypes.isBoolean;
-import static bio.overture.dms.core.enums.FieldTypes.isEnum;
-import static bio.overture.dms.core.enums.FieldTypes.isInteger;
-import static bio.overture.dms.core.enums.FieldTypes.isLong;
-import static bio.overture.dms.core.enums.FieldTypes.isString;
-import static bio.overture.dms.core.util.Exceptions.checkArgument;
-import static bio.overture.dms.core.util.Joiner.COMMA;
-import static bio.overture.dms.core.util.Strings.isBlank;
+import static bio.overture.dms.enums.FieldTypes.isBoolean;
+import static bio.overture.dms.enums.FieldTypes.isEnum;
+import static bio.overture.dms.enums.FieldTypes.isInteger;
+import static bio.overture.dms.enums.FieldTypes.isLong;
+import static bio.overture.dms.enums.FieldTypes.isString;
+import static bio.overture.dms.util.Exceptions.checkArgument;
+import static bio.overture.dms.util.Joiner.COMMA;
+import static bio.overture.dms.util.Strings.isBlank;
 import static java.util.Objects.isNull;
 
 import java.util.List;
