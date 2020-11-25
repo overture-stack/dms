@@ -4,7 +4,7 @@ import bio.overture.dms.core.util.Nullable;
 import bio.overture.dms.infra.env.visitor.DumpEnvFieldVisitor;
 import bio.overture.dms.infra.env.visitor.EnvFieldVisitor;
 import bio.overture.dms.infra.env.visitor.ProcessEnvFieldVisitor;
-import bio.overture.dms.infra.reflection.FieldTypes;
+import bio.overture.dms.core.enums.FieldTypes;
 import bio.overture.dms.infra.reflection.Reflector;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

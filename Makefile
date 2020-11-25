@@ -64,6 +64,13 @@ help:
 package:
 	@mvn clean package
 
+package-cli-only:
+	@rm -rf ./dms-cli/target/dms-cli-*
+	@mvn package -DskipTests -am -pl dms-cli
+	@tar zxvf ./dms-cli/target/dms-cli-*-dist.tar.gz
+	@cd ./dms-cli/target/
+	
+
 #############################################################
 #  Docker targets
 #############################################################

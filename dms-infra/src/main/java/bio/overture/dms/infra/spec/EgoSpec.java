@@ -1,6 +1,7 @@
 package bio.overture.dms.infra.spec;
 
 import bio.overture.dms.core.util.Nullable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +55,7 @@ public class EgoSpec {
   @Builder.Default
   private int dbHostPort = 9001;
 
+  @JsonIgnore
   public boolean isDatabasePasswordDefined(){
     return !isBlank(databasePassword);
   }

@@ -1,4 +1,4 @@
-package bio.overture.dms.infra.reflection;
+package bio.overture.dms.core.enums;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +65,10 @@ public enum FieldTypes {
 
   public static boolean isString(Class<?> c) {
     return String.class.isAssignableFrom(c);
+  }
+
+  public static boolean isEnum(Class<?> c) {
+    return Enum.class.isAssignableFrom(c);
   }
 
 }

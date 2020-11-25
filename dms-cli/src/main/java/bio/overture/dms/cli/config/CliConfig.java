@@ -3,15 +3,20 @@ package bio.overture.dms.cli.config;
 import bio.overture.dms.cli.command.DmsCommand;
 import bio.overture.dms.cli.util.CommandListRenderer;
 import bio.overture.dms.cli.util.ProjectBanner;
+import bio.overture.dms.infra.util.JsonProcessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.NonNull;
 import lombok.val;
+import org.beryx.textio.TextIO;
+import org.beryx.textio.TextIoFactory;
+import org.beryx.textio.TextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import picocli.CommandLine;
-import picocli.CommandLine.IVersionProvider;
+import bio.overture.dms.cli.question.QuestionFactory;
 
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEADING;
@@ -29,6 +34,33 @@ public class CliConfig {
       @NonNull DmsCommand dmsCommand) {
     this.factory = factory;
     this.dmsCommand = dmsCommand;
+  }
+
+  @Bean
+  public TextTerminal<?> textTerminal(){
+    return TextIoFactory.getTextTerminal();
+  }
+
+  @Bean
+  public TextIO textIO(TextTerminal<?> textTerminal){
+    return new TextIO(textTerminal);
+  }
+
+  @Bean
+  public JsonProcessor jsonProcessor(){
+    val mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    return new JsonProcessor(mapper);
+  }
+
+  @Bean
+  public JsonProcessor yamlProcessor(){
+    val mapper = new ObjectMapper(new YAMLFactory()).enable(SerializationFeature.INDENT_OUTPUT);
+    return new JsonProcessor(mapper);
+  }
+
+  @Bean
+  public QuestionFactory questionFactory(TextIO textIO){
+    return new QuestionFactory(textIO);
   }
 
   @Bean

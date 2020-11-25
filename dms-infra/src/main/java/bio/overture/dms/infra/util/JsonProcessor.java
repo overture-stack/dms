@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,16 @@ public class JsonProcessor {
   @SneakyThrows
   public <T> T convertValue(@NonNull String payload, @NonNull Class<T> tClass){
     return convertValue(objectMapper.readTree(payload), tClass);
+  }
+
+  @SneakyThrows
+  public String writeAsString(@NonNull Object o){
+    return objectMapper.writeValueAsString(o);
+  }
+
+  @SneakyThrows
+  public void writeToFile(@NonNull Object o, @NonNull Path file){
+    objectMapper.writeValue(file.toFile(), o);
   }
 
   public static List<String> getFieldNames(@NonNull JsonNode root){
