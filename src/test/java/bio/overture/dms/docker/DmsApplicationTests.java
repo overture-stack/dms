@@ -4,7 +4,6 @@ import static bio.overture.dms.util.FileUtils.readResourcePath;
 import static com.github.dockerjava.api.model.MountType.BIND;
 
 import bio.overture.dms.compose.ComposeGraphGenerator;
-import bio.overture.dms.compose.ComposeInfoService;
 import bio.overture.dms.compose.ComposeManager;
 import bio.overture.dms.compose.ComposeReader;
 import bio.overture.dms.compose.ComposeTemplateEngine;
@@ -99,11 +98,10 @@ class DmsApplicationTests {
     val executor = Executors.newFixedThreadPool(4);
     val generator = new ComposeGraphGenerator(networkName, volumeName, dockerService);
     val dockerComposer = new ComposeManager(executor, generator, dockerService);
-    val reader = new ComposeInfoService(dockerService);
     dockerComposer.deploy(dc);
 
     Thread.sleep(4000);
-    val out = dockerComposer.readDeployInfo("ego-server");
+    val out = dockerComposer.inspectService("ego-server");
 
     val javers = JaversBuilder.javers().build();
     val diff =

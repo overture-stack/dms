@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 import bio.overture.dms.docker.DockerService;
 import bio.overture.dms.model.compose.Compose;
 import bio.overture.dms.model.compose.ComposeService;
-import bio.overture.dms.model.compose.ComposeServiceInfo;
+import bio.overture.dms.model.compose.ComposeServiceInspection;
 import bio.overture.dms.util.SafeGet;
 import bio.overture.dms.util.Splitter;
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -59,13 +59,13 @@ public class ComposeManager {
    * @param containerName The name of the container to inspect
    * @return Optional deploy info
    */
-  public Optional<ComposeServiceInfo> readDeployInfo(@NonNull String containerName) {
+  public Optional<ComposeServiceInspection> inspectService(@NonNull String containerName) {
     return dockerService.inspectContainerByName(containerName).map(x -> doit(x, containerName));
   }
 
-  private ComposeServiceInfo doit(
+  private ComposeServiceInspection doit(
       @NonNull InspectContainerResponse r, @NonNull String containerName) {
-    val out = ComposeServiceInfo.builder();
+    val out = ComposeServiceInspection.builder();
     extractEnvs(r).ifPresent(out::environment);
     out.expose(extractExposedPorts(r));
     out.image(extractImageName(r));

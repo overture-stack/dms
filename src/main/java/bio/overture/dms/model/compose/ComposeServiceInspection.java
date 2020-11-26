@@ -11,7 +11,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ComposeServiceInfo {
+public class ComposeServiceInspection {
 
   @NonNull private final String containerName;
   @NonNull private final String image;
