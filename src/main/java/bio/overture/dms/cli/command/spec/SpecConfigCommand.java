@@ -13,6 +13,7 @@ import bio.overture.dms.model.spec.EgoSpec.SSOSpec;
 import bio.overture.dms.util.ObjectSerializer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import lombok.NonNull;

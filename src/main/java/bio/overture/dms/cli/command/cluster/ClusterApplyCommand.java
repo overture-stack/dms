@@ -66,4 +66,28 @@ public class ClusterApplyCommand implements Callable<Integer> {
         "status", x -> x.println("Deployment completed successfully"));
     return 0;
   }
+
+  // TODO: template for what the deployer class should do.
+  //  The cli should simply call this method. Also makes testing easier.
+  //  The Command class is used to make sure the params are correctly mapped to the underlying
+  // method.
+  //  The underlying method is used to test the terminal output and interactive input.
+
+  //  @RequiredArgsConstructor
+  //  public static class Deployer<
+  //      S extends DMSSpec<E>, E extends EGOSpec, C extends ComposeObject<I>, I extends
+  // ComposeItem> {
+  //
+  //    private final SpecPersistence<S> specPersistence;
+  //    private final ComposeRenderEngine<S, C> composeRendererEngine;
+  //    private final bio.overture.dms.domain.ComposeManager<C> composeManager;
+  //    // TODO    private final TextTerminal
+  //
+  //    public Integer call() throws Exception {
+  //      val spec = specPersistence.readFromHome();
+  //      val composeObject = composeRendererEngine.render(spec);
+  //      composeManager.deploy(composeObject);
+  //      return 0;
+  //    }
+  //  }
 }
