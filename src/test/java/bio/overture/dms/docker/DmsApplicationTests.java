@@ -32,7 +32,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 @SpringBootTest
-class DmsApplicationTests {
+@Disabled
+public class DmsApplicationTests {
 
   @Autowired private DockerService dockerService;
 
