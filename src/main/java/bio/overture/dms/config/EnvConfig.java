@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EnvConfig {
 
-  private static final String REFLECTION_PATH = "bio.overture.dms.bio.overture.dms.infra";
+  private static final String REFLECTION_PATH = "bio.overture.dms";
 
   @Bean
   public EnvProcessor buildEnvProcessor(@Autowired Reflector reflector) {
