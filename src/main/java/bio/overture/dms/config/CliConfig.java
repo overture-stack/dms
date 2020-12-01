@@ -10,8 +10,7 @@ import bio.overture.dms.cli.util.ProjectBanner;
 import lombok.NonNull;
 import lombok.val;
 import org.beryx.textio.TextIO;
-import org.beryx.textio.TextIoFactory;
-import org.beryx.textio.TextTerminal;
+import org.beryx.textio.jline.JLineTextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +31,7 @@ public class CliConfig {
   }
 
   @Bean
-  public TextTerminal<?> textTerminal() {
-    return TextIoFactory.getTextTerminal();
-  }
-
-  @Bean
-  public TextIO textIO(TextTerminal<?> textTerminal) {
+  public TextIO textIO(JLineTextTerminal textTerminal) {
     return new TextIO(textTerminal);
   }
 
