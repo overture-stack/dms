@@ -2,7 +2,6 @@ package bio.overture.dms;
 
 import static org.springframework.boot.SpringApplication.exit;
 
-import bio.overture.dms.cli.BootstrapCommand;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,10 +40,10 @@ public class SpringMain implements CommandLineRunner, ExitCodeGenerator {
   }
 
   public static void main(String[] args) {
-    val bootstrap = new BootstrapCommand();
-    val cli = new CommandLine(bootstrap);
-    cli.execute(args);
     // TODO: do somethign with the bootstrap objects
+    //    val bootstrap = new BootstrapCommand();
+    //    val cli = new CommandLine(bootstrap);
+    //    cli.execute(args);
 
     // let Spring instantiate and inject dependencies
     val app = new SpringApplication(SpringMain.class);
