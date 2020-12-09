@@ -2,11 +2,15 @@
 Overture Data Management System
 
 
-## Source Code Organization
-This maven project contains several maven modules
+## Developmenet
+### Configure remote docker daemon control
+It is possible to run the dms locally while controlling a remote docker engine.
+1. Port forward the docker.sock [Forwarding the Docker Socket over SSH](https://medium.com/@dperny/forwarding-the-docker-socket-over-ssh-e6567cfab160)
+   ```
+   ssh -nNT -L /some/local/path/to/docker.sock:/var/run/docker.sock user@someremote
+   ```
+2. Run the dms with the following env variable set:
+   ```
+   DOCKER_HOST=unix:///some/local/path/to/docker.sock
+   ```
 
-1. **dms-bio.overture.dms.core**: Contains code that is commonly used in other modules. 
-2. **dms-test**: Contains testing code that is commonly used in other modules.
-3. **dms-spec**: Contains code related to specification
-4. **dms-docker**: Contains code related to docker
-5. **dms-cli**: Contains code related to the CLI
