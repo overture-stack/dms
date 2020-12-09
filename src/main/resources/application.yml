@@ -1,0 +1,3 @@
+# If blank, will use the system default docker daemon
+docker:
+  host: ""

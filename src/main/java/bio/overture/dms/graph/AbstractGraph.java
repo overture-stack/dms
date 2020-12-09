@@ -16,14 +16,14 @@ import lombok.val;
 @RequiredArgsConstructor
 public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
 
-  @NonNull protected final Map<String, N> nameMap;
-  @NonNull protected final Map<N, Set<N>> nodeMap;
+  @NonNull protected final Map<String, N> nodeMap;
+  @NonNull protected final Map<N, Set<N>> connectionMap;
 
   // TODO: test getting root nodes
   public Set<N> getRoots() {
     val childSet =
-        nodeMap.values().stream().flatMap(Collection::stream).collect(toUnmodifiableSet());
-    return nodeMap.keySet().stream()
+        connectionMap.values().stream().flatMap(Collection::stream).collect(toUnmodifiableSet());
+    return connectionMap.keySet().stream()
         .filter(x -> !childSet.contains(x))
         .collect(toUnmodifiableSet());
   }
@@ -38,10 +38,10 @@ public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
 
   public Set<N> getChildNodes(@NonNull Node<T> parent) {
     checkNotFound(
-        nodeMap.containsKey(parent),
+        connectionMap.containsKey(parent),
         "Could not find node with name: %s",
         parent.getData().getName());
-    return nodeMap.get(parent).stream().collect(toUnmodifiableSet());
+    return connectionMap.get(parent).stream().collect(toUnmodifiableSet());
   }
 
   public N getNode(@NonNull T data) {
@@ -54,11 +54,11 @@ public abstract class AbstractGraph<T extends Nameable, N extends Node<T>> {
   }
 
   public Optional<N> findNodeByName(@NonNull String name) {
-    return Optional.ofNullable(nameMap.get(name));
+    return Optional.ofNullable(nodeMap.get(name));
   }
 
   public int numNodes() {
-    return nameMap.size();
+    return nodeMap.size();
   }
 
   public static <T extends Nameable> GraphBuilder<T> builder() {

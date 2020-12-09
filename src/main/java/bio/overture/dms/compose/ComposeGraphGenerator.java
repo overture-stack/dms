@@ -16,6 +16,7 @@ import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated
 public class ComposeGraphGenerator {
 
   @NonNull private final String networkName;

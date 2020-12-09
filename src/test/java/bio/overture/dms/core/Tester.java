@@ -25,10 +25,11 @@ public class Tester {
       runnable.run();
     } catch (Exception e) {
       assertTrue(
-          exceptionClass.isInstance(e),
+          // Because of sneakythrows, need to get the cause aswell
+          exceptionClass.isInstance(e) || exceptionClass.isInstance(e.getCause()),
           "Expected exception of type: '%s' but got '%s'. Error was: %s",
           exceptionClass.getName(),
-          e.getClass().getName(),
+          exceptionClass.isInstance(e) ? e.getClass().getName() : e.getCause().getClass().getName(),
           e.getMessage());
       if (!isBlank(containingTextInMessage)) {
         assertTrue(

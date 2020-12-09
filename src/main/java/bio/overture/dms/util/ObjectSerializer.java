@@ -3,7 +3,6 @@ package bio.overture.dms.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,8 @@ public class ObjectSerializer {
   }
 
   @SneakyThrows
-  public void serializeToFile(@NonNull Object o, @NonNull Path file) {
-    objectMapper.writeValue(file.toFile(), o);
+  public void serializeToFile(@NonNull Object o, @NonNull File file) {
+    objectMapper.writeValue(file, o);
   }
 
   public static List<String> getFieldNames(@NonNull JsonNode root) {

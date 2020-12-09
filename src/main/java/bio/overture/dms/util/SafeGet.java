@@ -46,7 +46,7 @@ public class SafeGet<T, R> {
   }
 
   /** @return an optional representing the contained value */
-  public Optional<R> get() {
+  public Optional<R> find() {
     if (!isNull(value)) {
       return Optional.ofNullable(transformer.apply(value));
     }

@@ -12,27 +12,27 @@ import lombok.val;
 public class MemoryGraph<T extends Nameable> extends AbstractGraph<T, MemoryNode<T>> {
 
   public MemoryGraph(
-      @NonNull Map<String, MemoryNode<T>> nameMap,
-      @NonNull Map<MemoryNode<T>, Set<MemoryNode<T>>> nodeMap) {
-    super(nameMap, nodeMap);
+      @NonNull Map<String, MemoryNode<T>> nodeMap,
+      @NonNull Map<MemoryNode<T>, Set<MemoryNode<T>>> connectionMap) {
+    super(nodeMap, connectionMap);
   }
 
   public void reset() {
-    nameMap.values().forEach(MemoryNode::reset);
+    nodeMap.values().forEach(MemoryNode::reset);
   }
 
   public MemoryGraph<T> copy() {
-    val newNameMap = new HashMap<String, MemoryNode<T>>();
-    val newNodeMap = new HashMap<MemoryNode<T>, Set<MemoryNode<T>>>();
-    for (val entry : nameMap.entrySet()) {
+    val newNodeMap = new HashMap<String, MemoryNode<T>>();
+    val newConnectionMap = new HashMap<MemoryNode<T>, Set<MemoryNode<T>>>();
+    for (val entry : nodeMap.entrySet()) {
       val nodeName = entry.getKey();
       val node = entry.getValue();
       val nodeCopy = node.copy();
 
-      newNameMap.put(nodeName, nodeCopy);
-      val copyChildren = mapToUnmodifiableSet(nodeMap.get(node), MemoryNode::copy);
-      newNodeMap.put(nodeCopy, copyChildren);
+      newNodeMap.put(nodeName, nodeCopy);
+      val copyChildren = mapToUnmodifiableSet(connectionMap.get(node), MemoryNode::copy);
+      newConnectionMap.put(nodeCopy, copyChildren);
     }
-    return new MemoryGraph<>(Map.copyOf(newNameMap), Map.copyOf(newNodeMap));
+    return new MemoryGraph<>(Map.copyOf(newNodeMap), Map.copyOf(newConnectionMap));
   }
 }

@@ -81,7 +81,7 @@ public class SpecConfigCommand implements Callable<Integer> {
 
     val egoSpec = buildEgoSpec();
     val dmsSpec = DmsSpec.builder().version(buildProperties.getVersion()).ego(egoSpec).build();
-    yamlSerializer.serializeToFile(dmsSpec, specFile);
+    yamlSerializer.serializeToFile(dmsSpec, specFile.toFile());
     textTerminal.executeWithPropertiesPrefix(
         "status", x -> x.println("Wrote spec file to " + specFile));
     return 0;

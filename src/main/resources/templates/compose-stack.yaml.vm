@@ -1,0 +1,338 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+services:
+#  - name: ego-api
+#    dependencies:
+#      - name: ego-db
+#        condition: "service_started" # or "service_healthy"
+
+    #TODO: test rebooting computer, and ensuring swarm cluster is brought back online
+    #TODO: for ego db, if a running service is found, need to first compare service spec. If there is no change, then do not even do a
+  - name: ego-db
+    ServiceSpec:
+      Name: ego-db
+      TaskTemplate:
+        ContainerSpec:
+          Image: "postgres:11.1"
+          Env:
+            - POSTGRES_DB=ego
+            - POSTGRES_PASSWORD=$ego.databasePassword
+          Mounts:
+            - Type: volume
+              Source: ego-db-data
+              Target: /var/lib/postgresql/data
+              ReadOnly: false
+          Duration: null
+          StopGracePeriod: 120000000000
+          DNSConfig: null
+          OpenStdin: false
+          ReadOnly: false
+          Hosts: null
+          Hostname: null
+          Secrets: null
+          HealthCheck:
+            # 30s
+            Interval: 30000000000
+            # 30s
+            Timeout: 30000000000
+            Test:
+              - "CMD-SHELL"
+              - "pg_isready -U postgres"
+            Retries: 5
+            # 20s
+            StartPeriod: 20000000000
+          StopSignal: "SIGINT"
+          Privileges: null
+          Configs: null
+        Resources:
+          Limits:
+            #200 MiB
+            MemoryBytes: 209715200
+            #unlimited.
+            NanoCPUs: 0
+          Reservations:
+            #100 MiB
+            MemoryBytes: 104857600
+            #unlimited.
+            NanoCPUs: 0
+        # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
+        # when the restartpolicy is defined, postgres cannot restart normally.
+        RestartPolicy: null
+        Placement: null
+        LogDriver:
+          Name: "json-file"
+          Options: null
+        ForceUpdate: 0
+        Networks:
+          - Target: "dms-network"
+            Aliases: null
+        Runtime: null
+      Mode:
+        Replicated:
+          Replicas: 1
+        Global: null
+      UpdateConfig:
+        FailureAction: "rollback"
+        #Since there is a shared volume, containing process information
+        # need to ensure its stopped first
+        Order: "stop-first"
+        Parallelism: null
+        Delay: null
+        MaxFailureRatio: null
+        Monitor: null
+      RollbackConfig:
+        FailureAction: "continue"
+        #Since there is a shared volume, containing process information
+        # need to ensure its stopped first
+        Order: "stop-first"
+        Parallelism: null
+        Delay: null
+        MaxFailureRatio: 0.8
+        Monitor: null
+      Networks:
+        - Target: "dms-network"
+          Aliases: null
+      EndpointSpec:
+        Mode: "vip"
+        Ports:
+          - Name: "psql"
+            Protocol: "tcp"
+            TargetPort: 5432
+            PublishedPort: $ego.dbHostPort
+            PublishMode: "ingress"
+      Labels: null
+  - name: ego-api
+    ServiceSpec:
+      Name: ego-api
+      TaskTemplate:
+        ContainerSpec:
+          Image: "overture/ego:3.1.0"
+          Env:
+            - SERVER_PORT=8080
+            - SPRING_FLYWAY_ENABLED=true
+            - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
+            # SPRING_PROFILES_ACTIVE="auth,grpc,jwt"
+            - SPRING_PROFILES_ACTIVE=demo
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
+            - SWAGGER_HOST=$ego.host
+            - SWAGGER_BASEURL=/
+            - REFRESHTOKEN_COOKIEISSECURE=true
+            - REFRESHTOKEN_DOMAIN=$ego.host
+            - APITOKEN_DURATIONDAYS=$ego.apiTokenDurationDays
+            - JWT_DURATIONMS=$ego.jwtDurationMS
+            - REFRESHTOKEN_DURATIONMS=$ego.refreshTokenDurationMS
+#if( $ego.sso.google )
+            - GOOGLE_CLIENT_CLIENTID=$ego.sso.google.clientId
+            - GOOGLE_CLIENT_CLIENTSECRET=$ego.sso.google.clientSecret
+            - GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.google.preEstablishedRedirectUri
+#end
+#if( $ego.sso.github )
+            - GITHUB_CLIENT_CLIENTID=$ego.sso.github.clientId
+            - GITHUB_CLIENT_CLIENTSECRET=$ego.sso.github.clientSecret
+            - GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.github.preEstablishedRedirectUri
+#end
+#if( $ego.sso.linkedin )
+            - LINKEDIN_CLIENT_CLIENTID=$ego.sso.linkedin.clientId
+            - LINKEDIN_CLIENT_CLIENTSECRET=$ego.sso.linkedin.clientSecret
+            - LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.linkedin.preEstablishedRedirectUri
+#end
+#if( $ego.sso.facebook )
+            - FACEBOOK_CLIENT_CLIENTID=$ego.sso.facebook.clientId
+            - FACEBOOK_CLIENT_CLIENTSECRET=$ego.sso.facebook.clientSecret
+            - FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.facebook.preEstablishedRedirectUri
+#end
+#if( $ego.sso.orcid )
+            - ORCID_CLIENT_CLIENTID=$ego.sso.orcid.clientId
+            - ORCID_CLIENT_CLIENTSECRET=$ego.sso.orcid.clientSecret
+            - ORCID_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.orcid.preEstablishedRedirectUri
+#end
+          Mounts: null
+          Duration: null
+          StopGracePeriod: 120000000000
+          DNSConfig: null
+          OpenStdin: false
+          ReadOnly: false
+          Hosts: null
+          Hostname: null
+          Secrets: null
+          HealthCheck: null
+          StopSignal: "SIGINT"
+          Privileges: null
+          Configs: null
+        Resources:
+          Limits:
+            #2 GiB
+            MemoryBytes: 2147483648
+            #unlimited.
+            NanoCPUs: 0
+          Reservations:
+            #1.5 GiB
+            MemoryBytes: 1610612736
+            #unlimited.
+            NanoCPUs: 0
+        RestartPolicy:
+          Condition: "on-failure"
+          # 10s
+          Delay: 10000000000
+##          MaxAttempts: 10
+          MaxAttempts: 0
+          # unbounded
+          Window: 0
+        Placement: null
+        LogDriver:
+          Name: "json-file"
+          Options: null
+        ForceUpdate: 0
+        Networks:
+          - Target: "dms-network"
+            Aliases: null
+        Runtime: null
+      Mode:
+        Replicated:
+          Replicas: 1
+        Global: null
+      UpdateConfig:
+        FailureAction: "rollback"
+        #Since there is a shared volume, containing process information
+        # need to ensure its stopped first
+        Order: "start-first"
+        Parallelism: null
+        Delay: null
+        MaxFailureRatio: null
+        Monitor: null
+      RollbackConfig:
+        FailureAction: "continue"
+        #Since there is a shared volume, containing process information
+        # need to ensure its stopped first
+        Order: "start-first"
+        Parallelism: null
+        Delay: null
+        MaxFailureRatio: 0.8
+        Monitor: null
+      Networks:
+        - Target: "dms-network"
+          Aliases: null
+      EndpointSpec:
+        Mode: "vip"
+        Ports:
+          - Name: "api"
+            Protocol: "tcp"
+            TargetPort: 8080
+            PublishedPort: $ego.apiHostPort
+            PublishMode: "ingress"
+      Labels: null
+    dependencies:
+      - name: ego-db
+        type: "service_healthy"
+
+#########################################################
+# EXAMPLE
+#########################################################
+#  - name: ego-db
+#    ServiceSpec:
+#      Name: ego-db
+#      TaskTemplate:
+#        ContainerSpec:
+#          Image: "postgres:11.1"
+#          Labels: null
+#          Command:
+#            - "some"
+#            - "command"
+#          Args:
+#            - "some"
+#            - "arguments"
+#            - "for"
+#            - "the command"
+#          Env:
+#            - "POSTGRES_DB=ego"
+#            - "POSTGRES_PASSWORD=password"
+#          Dir: null
+#          User: null
+#          Groups: null
+#          TTY: false
+#          Mounts:
+#            - Type: "bind"
+#              Source: "/path/to/HostPath"
+#              Target: "/path/to/ContainerPath"
+#              ReadOnly: false
+#              BindOptions: null
+#              VolumeOptions: null
+#              TmpfsOptions: null
+#          Duration: null
+#          StopGracePeriod: 120000000
+#          DNSConfig: null
+#          OpenStdin: false
+#          ReadOnly: false
+#          Hosts: null
+#          Hostname: "some hostname"
+#          Secrets: null
+#          HealthCheck:
+#            Interval: 10000000
+#            Timeout: 10000000
+#            Test:
+#              - "CMD-SHELL"
+#              - "pg_isready -U postgres"
+#            Retries: 5
+#            StartPeriod: null
+#          StopSignal: "SIGINT"
+#          Privileges: null
+#          Configs: null
+#        Resources:
+#          Limits:
+#            MemoryBytes: 2323234
+#            NanoCPUs: 292929
+#          Reservations:
+#            MemoryBytes: 2898900909
+#            NanoCPUs: 98988777
+#        RestartPolicy:
+#          Condition: "on-failure"
+#          Delay: 5000000
+#          MaxAttempts: 10
+#          Window: 2020202
+#        Placement: null
+#        LogDriver:
+#          Name: "json-file"
+#          Options: null
+#        ForceUpdate: 0
+#        Networks:
+#          - Target: "somenetworkId"
+#            Aliases: null
+#        Runtime: null
+#      Mode:
+#        mode: "REPLICATED"
+#        Replicated:
+#          Replicas: 1
+#        Global: null
+#      UpdateConfig:
+#        Parallelism: null
+#        Delay: null
+#        FailureAction: "rollback"
+#        MaxFailureRatio: 0.8
+#        Monitor: null
+#        Order: "start-first"
+#      Networks:
+#        - Target: "somenetwoekid"
+#          Aliases: null
+#      EndpointSpec:
+#        Mode: "vip"
+#        Ports:
+#          - Name: "psql"
+#            Protocol: "tcp"
+#            TargetPort: 5432
+#            PublishedPort: 8432
+#            PublishMode: "ingress"
+#      Labels: null
+#      RollbackConfig:
+#        Parallelism: null
+#        Delay: null
+#        FailureAction: "pause"
+#        MaxFailureRatio: 0.8
+#        Monitor: null
+#        Order: "start-first"
+
+
+

@@ -88,7 +88,7 @@ public class ComposeManager {
                         toUnmodifiableMap(
                             InspectContainerResponse.Mount::getSource,
                             x -> x.getDestination().getPath())))
-        .get();
+        .find();
   }
 
   private Set<Integer> extractExposedPorts(InspectContainerResponse r) {
@@ -100,7 +100,7 @@ public class ComposeManager {
   private Optional<String> extractNetworkName(InspectContainerResponse r) {
     return SafeGet.of(r, InspectContainerResponse::getHostConfig)
         .map(HostConfig::getNetworkMode)
-        .get();
+        .find();
   }
 
   private Optional<Map<Integer, Integer>> extractPorts(InspectContainerResponse r) {
@@ -118,7 +118,7 @@ public class ComposeManager {
                   });
               return Map.copyOf(map);
             })
-        .get();
+        .find();
   }
 
   private Integer extractContainerPort(ExposedPort p) {
@@ -141,6 +141,6 @@ public class ComposeManager {
                     .map(x -> Splitter.EQUALS.split(x, true))
                     .collect(
                         toUnmodifiableMap(x -> x.get(0), x -> EQUALS.join(x.stream().skip(1)))))
-        .get();
+        .find();
   }
 }

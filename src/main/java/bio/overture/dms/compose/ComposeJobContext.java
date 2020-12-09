@@ -8,6 +8,6 @@ import lombok.Value;
 @Builder
 public class ComposeJobContext {
 
-  @NonNull private final ComposeJob imagePull;
+  @Deprecated private final ComposeJob imagePull;
   @NonNull private final ComposeJob containerDeploy;
 }
