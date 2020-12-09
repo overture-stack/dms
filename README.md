@@ -14,3 +14,8 @@ It is possible to run the dms locally while controlling a remote docker engine.
    DOCKER_HOST=unix:///some/local/path/to/docker.sock
    ```
 
+## Tips
+### Checking for OOM messages when a container/service is killed
+Sometimes, if the reserved/limit memory is too low, a container will get killed by the kernel. To find out if this is the case, run
+`journalctl -k | grep -i -e memory -e oom`. For java apps, the status `"task: non-zero exit (137)"` is usually the case.
+
