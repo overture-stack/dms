@@ -3,12 +3,12 @@ package bio.overture.dms.cli.command.cluster;
 import static bio.overture.dms.util.FileUtils.checkFileExists;
 
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.compose.ComposeGraphGenerator;
-import bio.overture.dms.compose.ComposeManager;
-import bio.overture.dms.compose.ComposeTemplateEngine;
-import bio.overture.dms.docker.DockerService;
 import bio.overture.dms.model.spec.DmsSpec;
 import bio.overture.dms.util.ObjectSerializer;
+import bio.overture.dms.version2.ComposeStackGraphGenerator;
+import bio.overture.dms.version2.ComposeStackManager;
+import bio.overture.dms.version2.ComposeStackRenderEngine;
+import bio.overture.dms.version2.SwarmService;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -28,20 +28,20 @@ import picocli.CommandLine.Command;
     description = "Deploy a spec to the cluster")
 public class ClusterApplyCommand implements Callable<Integer> {
 
-  private final DockerService dockerService;
+  private final SwarmService swarmService;
   private final TextTerminal<?> textTerminal;
-  private final ComposeTemplateEngine composeTemplateEngine;
+  private final ComposeStackRenderEngine composeStackRenderEngine;
   private final ObjectSerializer yamlSerializer;
 
   @Autowired
   public ClusterApplyCommand(
-      @NonNull DockerService dockerService,
+      @NonNull SwarmService swarmService,
       @NonNull TextTerminal<?> textTerminal,
-      @NonNull ComposeTemplateEngine composeTemplateEngine,
+      @NonNull ComposeStackRenderEngine composeStackRenderEngine,
       @NonNull ObjectSerializer yamlSerializer) {
-    this.dockerService = dockerService;
+    this.swarmService = swarmService;
     this.textTerminal = textTerminal;
-    this.composeTemplateEngine = composeTemplateEngine;
+    this.composeStackRenderEngine = composeStackRenderEngine;
     this.yamlSerializer = yamlSerializer;
   }
 
@@ -53,13 +53,13 @@ public class ClusterApplyCommand implements Callable<Integer> {
     checkFileExists(specFile);
     val dmsSpec = yamlSerializer.deserializeFile(specFile.toFile(), DmsSpec.class);
 
-    val dc = composeTemplateEngine.render(dmsSpec);
+    val cs = composeStackRenderEngine.render(dmsSpec);
 
     val executor = Executors.newFixedThreadPool(4);
-    val generator = new ComposeGraphGenerator(networkName, volumeName, dockerService);
-    val dockerComposer = new ComposeManager(executor, generator, dockerService);
-    textTerminal.executeWithPropertiesPrefix("status", x -> x.println("Starting deployement..."));
-    dockerComposer.deploy(dc);
+    val generator = new ComposeStackGraphGenerator(networkName, volumeName, swarmService);
+    val manager = new ComposeStackManager(executor, generator, swarmService);
+    textTerminal.executeWithPropertiesPrefix("status", x -> x.println("Starting deployment..."));
+    manager.deploy(cs);
     executor.shutdown();
     executor.awaitTermination(1, TimeUnit.HOURS);
     textTerminal.executeWithPropertiesPrefix(

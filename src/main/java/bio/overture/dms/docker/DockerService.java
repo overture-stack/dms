@@ -17,7 +17,6 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import bio.overture.dms.model.compose.ComposeService;
 import bio.overture.dms.util.Nullable;
-import bio.overture.dms.version2.SwarmSpecService;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.ContainerState;
@@ -232,7 +231,7 @@ public class DockerService {
   public String getOrCreateNetwork(String networkName) {
     return findNetwork(networkName)
         .map(Network::getId)
-        .orElseGet( () -> client.createNetworkCmd().withName(networkName).exec().getId());
+        .orElseGet(() -> client.createNetworkCmd().withName(networkName).exec().getId());
   }
 
   public DockerExecResponse exec(

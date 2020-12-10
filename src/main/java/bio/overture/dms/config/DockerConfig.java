@@ -7,7 +7,6 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import bio.overture.dms.docker.DockerService;
 import bio.overture.dms.util.SpringExecutorService;
-import bio.overture.dms.version2.SwarmSpecService;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
@@ -35,8 +34,7 @@ public class DockerConfig {
 
   @Bean
   @Autowired
-  public DockerService dockerService(
-      @NonNull DockerClient dockerClient) {
+  public DockerService dockerService(@NonNull DockerClient dockerClient) {
     return new DockerService(dockerClient);
   }
 
