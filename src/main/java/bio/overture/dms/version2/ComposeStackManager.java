@@ -27,12 +27,9 @@ public class ComposeStackManager {
         .traverse(x -> x.getData().run(), () -> {});
   }
 
-  // TODO: add force and removeVolumes switches. These are avaialble when managing containers
-  // outside of a swarm,
-  // however might not be needed when managing a swarm. Volumes might have to be managed manually.
   @SneakyThrows
-  public void destroy(@NonNull ComposeStack cs) {
-    swarmService.deleteSwarmServices(
-        mapToUnmodifiableList(cs.getServices(), ComposeService2::getName));
+  public void destroy(@NonNull ComposeStack cs, boolean destroyVolumes) {
+    swarmService.deleteServices(
+        mapToUnmodifiableList(cs.getServices(), ComposeService2::getName), destroyVolumes);
   }
 }

@@ -31,6 +31,7 @@ import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated
 public class ComposeManager {
 
   @NonNull private final ExecutorService executorService;

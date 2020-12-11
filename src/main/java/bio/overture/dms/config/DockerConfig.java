@@ -1,6 +1,6 @@
 package bio.overture.dms.config;
 
-import static bio.overture.dms.util.Strings.isBlank;
+import static bio.overture.dms.util.Strings.isDefined;
 import static com.github.dockerjava.core.DefaultDockerClientConfig.createDefaultConfigBuilder;
 import static com.github.dockerjava.core.DockerClientImpl.getInstance;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -46,7 +46,7 @@ public class DockerConfig {
 
   private DockerClientConfig buildDockerClientConfig() {
     val c = createDefaultConfigBuilder();
-    if (!isBlank(dockerHost)) {
+    if (!isDefined(dockerHost)) {
       c.withDockerHost(dockerHost);
     }
     return c.build();

@@ -7,26 +7,41 @@ import static bio.overture.dms.enums.FieldTypes.isLong;
 import static bio.overture.dms.enums.FieldTypes.isString;
 import static bio.overture.dms.util.Exceptions.checkArgument;
 import static bio.overture.dms.util.Joiner.COMMA;
-import static bio.overture.dms.util.Strings.isBlank;
+import static bio.overture.dms.util.Strings.isDefined;
+import static bio.overture.dms.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
+import bio.overture.dms.util.Nullable;
 import java.util.List;
 import java.util.Objects;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.beryx.textio.InputReader;
 import org.beryx.textio.TextIO;
 
+@Slf4j
 @RequiredArgsConstructor
 public class QuestionFactory {
+  private static final String DEFAULT_PROFILE = "question";
 
   @NonNull private final TextIO textIO;
 
   public <T> SingleQuestion<T> newSingleQuestion(
+      @NonNull String profile,
+      @NonNull Class<T> answerType,
+      @NonNull String question,
+      boolean optional,
+      T defaultValue) {
+    return new SingleQuestion<T>(
+        question, buildSingleInputReader(profile, answerType, optional, defaultValue));
+  }
+
+  public <T> SingleQuestion<T> newDefaultSingleQuestion(
       @NonNull Class<T> answerType, @NonNull String question, boolean optional, T defaultValue) {
     return new SingleQuestion<T>(
-        question, buildSingleInputReader(answerType, optional, defaultValue));
+        question, buildSingleInputReader(null, answerType, optional, defaultValue));
   }
 
   public SingleQuestion<String> newPasswordQuestion(@NonNull String question) {
@@ -66,11 +81,12 @@ public class QuestionFactory {
   }
 
   private <T> InputReader<T, ?> buildCommonInputReader(
-      @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+      @NonNull String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+    val resolvedProfile = resolveProfile(profile);
     var ir =
         buildDefaultInputReader(textIO, answerType)
             .withPromptAdjustments(true)
-            .withPropertiesPrefix("question")
+            .withPropertiesPrefix(resolvedProfile)
             .withInputTrimming(true);
     if (optional) {
       checkArgument(!isNull(defaultValue), "The defaultValue cannot be null when optional is true");
@@ -80,12 +96,12 @@ public class QuestionFactory {
   }
 
   private <T> InputReader<T, ?> buildSingleInputReader(
-      @NonNull Class<T> answerType, boolean optional, T defaultValue) {
-    return buildCommonInputReader(answerType, optional, defaultValue);
+      @Nullable String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+    return buildCommonInputReader(profile, answerType, optional, defaultValue);
   }
 
   private InputReader<String, ?> buildPasswordInputReader() {
-    return buildSingleInputReader(String.class, false, null).withInputMasking(true);
+    return buildSingleInputReader(null, String.class, false, null).withInputMasking(true);
   }
 
   //  @SuppressWarnings("unchecked")
@@ -94,7 +110,7 @@ public class QuestionFactory {
     checkArgument(
         !optional || !isNull(defaultValue),
         "Default value cannot be null when optional mode is used");
-    var ir = buildCommonInputReader(answerType, optional, defaultValue);
+    var ir = buildCommonInputReader(null, answerType, optional, defaultValue);
     if (optional) {
       ir =
           ir.withValueListChecker(
@@ -128,7 +144,7 @@ public class QuestionFactory {
         defaultValue);
 
     var ir =
-        buildCommonInputReader(answerType, optional, defaultValue)
+        buildCommonInputReader(null, answerType, optional, defaultValue)
             .withNumberedPossibleValues(selections);
     if (optional) {
       ir =
@@ -144,7 +160,7 @@ public class QuestionFactory {
                                   return true;
                                 } else if (x instanceof String) {
                                   val stringVal = (String) x;
-                                  return isBlank(stringVal);
+                                  return isDefined(stringVal);
                                 }
                                 return false;
                               });
@@ -159,6 +175,14 @@ public class QuestionFactory {
               });
     }
     return ir;
+  }
+
+  private static String resolveProfile(@Nullable String profile) {
+    if (isNotDefined(profile)) {
+      log.debug("Profile not defined, using default profile '{}'", DEFAULT_PROFILE);
+      return DEFAULT_PROFILE;
+    }
+    return profile;
   }
 
   @SuppressWarnings("unchecked")

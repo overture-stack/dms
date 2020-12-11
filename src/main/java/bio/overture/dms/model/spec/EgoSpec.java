@@ -1,6 +1,6 @@
 package bio.overture.dms.model.spec;
 
-import static bio.overture.dms.util.Strings.isBlank;
+import static bio.overture.dms.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import bio.overture.dms.util.Nullable;
@@ -53,7 +53,7 @@ public class EgoSpec {
 
   @JsonIgnore
   public boolean isDatabasePasswordDefined() {
-    return !isBlank(databasePassword);
+    return !isDefined(databasePassword);
   }
 
   @Data

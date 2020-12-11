@@ -3,7 +3,7 @@ package bio.overture.dms.docker;
 import static bio.overture.dms.util.Concurrency.waitForFutures;
 import static bio.overture.dms.util.Exceptions.checkArgument;
 import static bio.overture.dms.util.FileUtils.readResourcePath;
-import static bio.overture.dms.util.Strings.isBlank;
+import static bio.overture.dms.util.Strings.isDefined;
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static java.nio.file.Files.copy;
@@ -156,7 +156,7 @@ public class DockerService {
   public String createContainer(
       @NonNull String networkName, @Nullable String assetVolumeName, @NonNull ComposeService s) {
     checkArgument(
-        s.getVolumes().isEmpty() || !isBlank(assetVolumeName),
+        s.getVolumes().isEmpty() || !isDefined(assetVolumeName),
         "Cannot create container since assetVolumeName is blank and mounts are expected");
     val createContainerCmd =
         client

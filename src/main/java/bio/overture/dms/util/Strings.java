@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PRIVATE)
 public class Strings {
 
-  public static boolean isBlank(@Nullable String s) {
-    return isNull(s) || s.trim().equals("");
+  public static boolean isDefined(@Nullable String s) {
+    return isNull(s) || s.isBlank();
+  }
+
+  public static boolean isNotDefined(@Nullable String s) {
+    return !isDefined(s);
   }
 }

@@ -2,6 +2,7 @@ package bio.overture.dms.cli.command.cluster;
 
 import static bio.overture.dms.util.FileUtils.checkFileExists;
 
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
 import bio.overture.dms.model.spec.DmsSpec;
 import bio.overture.dms.util.ObjectSerializer;
@@ -15,7 +16,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.val;
-import org.beryx.textio.TextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
@@ -29,18 +29,18 @@ import picocli.CommandLine.Command;
 public class ClusterApplyCommand implements Callable<Integer> {
 
   private final SwarmService swarmService;
-  private final TextTerminal<?> textTerminal;
+  private final Terminal terminal;
   private final ComposeStackRenderEngine composeStackRenderEngine;
   private final ObjectSerializer yamlSerializer;
 
   @Autowired
   public ClusterApplyCommand(
       @NonNull SwarmService swarmService,
-      @NonNull TextTerminal<?> textTerminal,
+      @NonNull Terminal terminal,
       @NonNull ComposeStackRenderEngine composeStackRenderEngine,
       @NonNull ObjectSerializer yamlSerializer) {
     this.swarmService = swarmService;
-    this.textTerminal = textTerminal;
+    this.terminal = terminal;
     this.composeStackRenderEngine = composeStackRenderEngine;
     this.yamlSerializer = yamlSerializer;
   }
@@ -58,12 +58,11 @@ public class ClusterApplyCommand implements Callable<Integer> {
     val executor = Executors.newFixedThreadPool(4);
     val generator = new ComposeStackGraphGenerator(networkName, volumeName, swarmService);
     val manager = new ComposeStackManager(executor, generator, swarmService);
-    textTerminal.executeWithPropertiesPrefix("status", x -> x.println("Starting deployment..."));
+    terminal.printStatusLn("Starting deployment...");
     manager.deploy(cs);
     executor.shutdown();
     executor.awaitTermination(1, TimeUnit.HOURS);
-    textTerminal.executeWithPropertiesPrefix(
-        "status", x -> x.println("Deployment completed successfully"));
+    terminal.printStatusLn("Deployment completed successfully");
     return 0;
   }
 

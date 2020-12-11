@@ -3,6 +3,7 @@ package bio.overture.dms.version2;
 import static bio.overture.dms.version2.DeploymentStates.INFLIGHT;
 import static bio.overture.dms.version2.DeploymentStates.SUCCESSFUL;
 import static bio.overture.dms.version2.DeploymentStates.UNSUCCESSFUL;
+import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static com.github.dockerjava.api.model.TaskState.COMPLETE;
 import static com.github.dockerjava.api.model.TaskState.RUNNING;
 import static java.util.Comparator.comparing;
@@ -11,14 +12,19 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
+import bio.overture.dms.util.SafeGet;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.RemoveVolumeCmd;
 import com.github.dockerjava.api.exception.DockerException;
+import com.github.dockerjava.api.model.ContainerSpec;
+import com.github.dockerjava.api.model.Mount;
 import com.github.dockerjava.api.model.Network;
 import com.github.dockerjava.api.model.Service;
 import com.github.dockerjava.api.model.ServiceSpec;
 import com.github.dockerjava.api.model.SwarmNode;
 import com.github.dockerjava.api.model.SwarmNodeManagerStatus;
 import com.github.dockerjava.api.model.Task;
+import com.github.dockerjava.api.model.TaskSpec;
 import com.github.dockerjava.api.model.TaskStatus;
 import com.google.common.base.Stopwatch;
 import java.time.Duration;
@@ -27,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -61,28 +68,59 @@ public class SwarmService {
     return null;
   }
 
-  public void deleteSwarmServices(@NonNull List<String> names) {
-    findSwarmServices(names).forEach(id -> client.removeServiceCmd(id).exec());
+  public void deleteServices(@NonNull List<String> names, boolean destroyVolumes) {
+    streamSwarmServices(names)
+        .forEach(
+            s -> {
+              // TODO: BUG there is a bug here. volume removal happens right after remove service
+              // which is async.
+              // Need to wait for service to be killed and removed before volume can be removed.
+              // Best to do this concurrently
+              client.removeServiceCmd(s.getId()).exec();
+              if (destroyVolumes) {
+                streamVolumeNames(s).map(client::removeVolumeCmd).forEach(RemoveVolumeCmd::exec);
+              }
+            });
   }
 
-  public Optional<String> findSwarmService(@NonNull String name) {
-    return findSwarmServices(List.of(name)).stream().findFirst();
+  private Stream<String> streamVolumeNames(Service s) {
+    return SafeGet.of(s, Service::getSpec)
+        .map(ServiceSpec::getTaskTemplate)
+        .map(TaskSpec::getContainerSpec)
+        .map(ContainerSpec::getMounts)
+        .find()
+        .map(SwarmService::streamVolumeMountSources)
+        .orElseGet(
+            () -> {
+              log.error(
+                  "Could not extract ServiceSpec->TaskTemplate->ContainerSpec->Mounts from serviceId '{}' as one of them was null",
+                  s.getId());
+              return Stream.of();
+            });
   }
 
-  public Set<String> findSwarmServices(@NonNull List<String> names) {
-    val set = new HashSet<>(names);
-    return client.listServicesCmd().withNameFilter(names).exec().stream()
-        .filter(x -> nonNull(x.getSpec()))
+  public Optional<String> findServiceName(@NonNull String name) {
+    return findServiceNames(List.of(name)).stream().findFirst();
+  }
+
+  public Set<String> findServiceNames(@NonNull List<String> names) {
+    return streamSwarmServices(names)
         .map(Service::getSpec)
         .filter(x -> nonNull(x.getName()))
         .map(ServiceSpec::getName)
-        .filter(set::contains)
         .collect(toUnmodifiableSet());
+  }
+
+  public Stream<Service> streamSwarmServices(@NonNull List<String> names) {
+    val set = new HashSet<>(names);
+    return client.listServicesCmd().withNameFilter(names).exec().stream()
+        .filter(x -> nonNull(x.getSpec()) && nonNull(x.getSpec().getName()))
+        .filter(x -> set.contains(x.getSpec().getName()));
   }
 
   public Optional<SwarmServiceInfo> findSwarmServiceInfo(
       @NonNull String serviceName, boolean includeTasks) {
-    return findSwarmService(serviceName)
+    return findServiceName(serviceName)
         .map(serviceId -> buildSwarmServiceInfo(serviceName, serviceId, includeTasks));
   }
 
@@ -262,6 +300,10 @@ public class SwarmService {
         .filter(x -> x.getName().equals(networkName))
         .filter(x -> x.getDriver().equals("overlay"))
         .findFirst();
+  }
+
+  private static Stream<String> streamVolumeMountSources(List<Mount> mounts) {
+    return mounts.stream().filter(x -> x.getType() == VOLUME).map(Mount::getSource);
   }
 
   public static DeploymentStates resolveDeploymentState(

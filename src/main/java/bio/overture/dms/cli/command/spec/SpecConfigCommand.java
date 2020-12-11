@@ -5,6 +5,7 @@ import static java.nio.file.Files.createDirectories;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
 import bio.overture.dms.model.spec.DmsSpec;
 import bio.overture.dms.model.spec.EgoSpec;
@@ -19,7 +20,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.beryx.textio.TextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
@@ -39,18 +39,18 @@ public class SpecConfigCommand implements Callable<Integer> {
   private final QuestionFactory questionFactory;
   private final ObjectSerializer yamlSerializer;
   private final BuildProperties buildProperties;
-  private final TextTerminal<?> textTerminal;
+  private final Terminal terminal;
 
   @Autowired
   public SpecConfigCommand(
       @NonNull QuestionFactory questionFactory,
       @NonNull ObjectSerializer yamlSerializer,
       @NonNull BuildProperties buildProperties,
-      @NonNull TextTerminal<?> textTerminal) {
+      @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
     this.yamlSerializer = yamlSerializer;
     this.buildProperties = buildProperties;
-    this.textTerminal = textTerminal;
+    this.terminal = terminal;
   }
 
   @Option(
@@ -75,15 +75,13 @@ public class SpecConfigCommand implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    textTerminal.executeWithPropertiesPrefix(
-        "status", x -> x.println("Starting interactive configuration"));
+    terminal.printStatusLn("Starting interactive configuration");
     val specFile = provisionSpecFile();
 
     val egoSpec = buildEgoSpec();
     val dmsSpec = DmsSpec.builder().version(buildProperties.getVersion()).ego(egoSpec).build();
     yamlSerializer.serializeToFile(dmsSpec, specFile.toFile());
-    textTerminal.executeWithPropertiesPrefix(
-        "status", x -> x.println("Wrote spec file to " + specFile));
+    terminal.printStatusLn("Wrote spec file to %s", specFile);
     return 0;
   }
 
@@ -91,41 +89,42 @@ public class SpecConfigCommand implements Callable<Integer> {
     val b = EgoSpec.builder();
     val hostName =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 String.class, "What is the host name for the dms cluster?", false, null)
             .getAnswer();
     b.host(hostName);
 
     val apiKeyDurationDays =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 Integer.class, "How many days should api keys be valid for?", true, 30)
             .getAnswer();
     b.apiTokenDurationDays(apiKeyDurationDays);
 
     val jwtDurationHours =
         questionFactory
-            .newSingleQuestion(Integer.class, "How many hours should JWTs be valid for?", true, 3)
+            .newDefaultSingleQuestion(
+                Integer.class, "How many hours should JWTs be valid for?", true, 3)
             .getAnswer();
     b.jwtDurationMS(HOURS.toMillis(jwtDurationHours));
 
     val refreshTokenDurationHours =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 Integer.class, "How many hours should refresh tokens be valid for?", true, 12)
             .getAnswer();
     b.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
 
     val apiPort =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 Integer.class, "What port would you like to expose the EGO api on?", true, 9000)
             .getAnswer();
     b.apiHostPort(apiPort);
 
     val isSetDBPassword =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 Boolean.class, "Would you like to set the database password for EGO?", false, null)
             .getAnswer();
 
@@ -137,7 +136,7 @@ public class SpecConfigCommand implements Callable<Integer> {
 
     val dbPort =
         questionFactory
-            .newSingleQuestion(
+            .newDefaultSingleQuestion(
                 Integer.class, "What port would you like to expose the EGO db on?", true, 9001)
             .getAnswer();
     b.dbHostPort(dbPort);
@@ -157,14 +156,14 @@ public class SpecConfigCommand implements Callable<Integer> {
 
           val clientId =
               questionFactory
-                  .newSingleQuestion(
+                  .newDefaultSingleQuestion(
                       String.class, format("What is the %s client id?", p.toString()), false, null)
                   .getAnswer();
           clientSpecBuilder.clientId(clientId);
 
           val clientSecret =
               questionFactory
-                  .newSingleQuestion(
+                  .newDefaultSingleQuestion(
                       String.class,
                       format("What is the %s client secret?", p.toString()),
                       false,
@@ -174,7 +173,7 @@ public class SpecConfigCommand implements Callable<Integer> {
 
           val preEstablishedRedirectUri =
               questionFactory
-                  .newSingleQuestion(
+                  .newDefaultSingleQuestion(
                       String.class,
                       format("What is the %s pre-established redirect url?", p.toString()),
                       true,

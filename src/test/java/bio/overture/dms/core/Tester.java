@@ -1,6 +1,6 @@
 package bio.overture.dms.core;
 
-import static bio.overture.dms.util.Strings.isBlank;
+import static bio.overture.dms.util.Strings.isDefined;
 import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -31,7 +31,7 @@ public class Tester {
           exceptionClass.getName(),
           exceptionClass.isInstance(e) ? e.getClass().getName() : e.getCause().getClass().getName(),
           e.getMessage());
-      if (!isBlank(containingTextInMessage)) {
+      if (!isDefined(containingTextInMessage)) {
         assertTrue(
             e.getMessage().contains(containingTextInMessage),
             "Expected the following error message to contain the text '%s' but did not: %s",
