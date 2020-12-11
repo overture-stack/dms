@@ -19,8 +19,12 @@ public interface Terminal {
     return this;
   }
 
-  default Terminal printStatus(@NonNull String text) {
-    return clearLine().print("\r" + text);
+  default Terminal printStatus(@NonNull String formattedText, Object... args) {
+    return clearLine().printProfile("status", "\r" + formattedText, args);
+  }
+
+  default Terminal printStatusLn(@NonNull String formattedText, Object... args) {
+    return printStatus(formattedText, args).println();
   }
 
   default Terminal printError(@NonNull String formattedText, Object... args) {
