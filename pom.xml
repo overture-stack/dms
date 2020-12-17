@@ -156,6 +156,13 @@
 		</dependency>
 
 
+		<!-- Retry -->
+		<dependency>
+			<groupId>net.jodah</groupId>
+			<artifactId>failsafe</artifactId>
+			<version>${failsafe.version}</version>
+		</dependency>
+
 		<!--Logging-->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -399,6 +406,7 @@
 		<text-io.version>3.4.1</text-io.version>
 		<!-- This jline version needs to be the same as the one used in text-io-->
 		<jline.version>2.14.6</jline.version>
+		<failsafe.version>2.4.0</failsafe.version>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>

@@ -1,6 +1,6 @@
 package bio.overture.dms.env.visitor;
 
-import bio.overture.dms.util.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import java.util.Map;
 import lombok.NonNull;
 

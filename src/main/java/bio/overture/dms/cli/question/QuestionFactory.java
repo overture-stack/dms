@@ -1,17 +1,17 @@
 package bio.overture.dms.cli.question;
 
-import static bio.overture.dms.enums.FieldTypes.isBoolean;
-import static bio.overture.dms.enums.FieldTypes.isEnum;
-import static bio.overture.dms.enums.FieldTypes.isInteger;
-import static bio.overture.dms.enums.FieldTypes.isLong;
-import static bio.overture.dms.enums.FieldTypes.isString;
-import static bio.overture.dms.util.Exceptions.checkArgument;
-import static bio.overture.dms.util.Joiner.COMMA;
-import static bio.overture.dms.util.Strings.isDefined;
-import static bio.overture.dms.util.Strings.isNotDefined;
+import static bio.overture.dms.core.model.enums.FieldTypes.isBoolean;
+import static bio.overture.dms.core.model.enums.FieldTypes.isEnum;
+import static bio.overture.dms.core.model.enums.FieldTypes.isInteger;
+import static bio.overture.dms.core.model.enums.FieldTypes.isLong;
+import static bio.overture.dms.core.model.enums.FieldTypes.isString;
+import static bio.overture.dms.core.util.Exceptions.checkArgument;
+import static bio.overture.dms.core.util.Joiner.COMMA;
+import static bio.overture.dms.core.util.Strings.isDefined;
+import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
-import bio.overture.dms.util.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import java.util.List;
 import java.util.Objects;
 import lombok.NonNull;

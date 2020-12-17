@@ -2,7 +2,7 @@ package bio.overture.dms.config;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
-import bio.overture.dms.util.ObjectSerializer;
+import bio.overture.dms.core.util.ObjectSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.val;

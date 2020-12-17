@@ -4,9 +4,9 @@ import static bio.overture.dms.core.Tester.assertExceptionThrown;
 import static bio.overture.dms.core.Tester.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import bio.overture.dms.config.EnvConfig;
-import bio.overture.dms.exception.EnvProcessingException;
-import bio.overture.dms.util.Nullable;
+import bio.overture.dms.core.util.Nullable;
+import bio.overture.dms.env.config.EnvConfig;
+import bio.overture.dms.env.exception.EnvProcessingException;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;

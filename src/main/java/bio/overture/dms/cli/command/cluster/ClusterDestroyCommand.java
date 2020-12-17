@@ -1,16 +1,16 @@
 package bio.overture.dms.cli.command.cluster;
 
-import static bio.overture.dms.util.FileUtils.checkFileExists;
+import static bio.overture.dms.core.util.FileUtils.checkFileExists;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.model.spec.DmsSpec;
-import bio.overture.dms.util.ObjectSerializer;
-import bio.overture.dms.version2.ComposeStackGraphGenerator;
-import bio.overture.dms.version2.ComposeStackManager;
-import bio.overture.dms.version2.ComposeStackRenderEngine;
-import bio.overture.dms.version2.SwarmService;
+import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
+import bio.overture.dms.compose.service.ComposeStackManager;
+import bio.overture.dms.compose.service.ComposeStackRenderEngine;
+import bio.overture.dms.compose.service.SwarmService;
+import bio.overture.dms.core.model.spec.DmsSpec;
+import bio.overture.dms.core.util.ObjectSerializer;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -34,11 +34,11 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   private final QuestionFactory questionFactory;
   private final Terminal terminal;
 
-//  @Option(
-//      names = {"-v", "--volumes"},
-//      required = false,
-//      showDefaultValue = ALWAYS,
-//      description = "Additionally destroy volumes")
+  //  @Option(
+  //      names = {"-v", "--volumes"},
+  //      required = false,
+  //      showDefaultValue = ALWAYS,
+  //      description = "Additionally destroy volumes")
   private boolean destroyVolumes = false;
   //
   //  @Option(

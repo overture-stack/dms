@@ -1,6 +1,6 @@
 package bio.overture.dms.domain;
 
-import static bio.overture.dms.util.FileUtils.checkFileExists;
+import static bio.overture.dms.core.util.FileUtils.checkFileExists;
 import static java.lang.System.getProperty;
 import static java.nio.file.Files.createDirectories;
 

@@ -1,10 +1,10 @@
 package bio.overture.dms.core;
 
-import static bio.overture.dms.util.Strings.isDefined;
+import static bio.overture.dms.core.util.Strings.isDefined;
 import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
-import bio.overture.dms.util.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import lombok.*;
 import org.junit.jupiter.api.Assertions;
 

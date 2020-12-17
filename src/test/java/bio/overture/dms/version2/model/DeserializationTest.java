@@ -3,8 +3,9 @@ package bio.overture.dms.version2.model;
 import static bio.overture.dms.core.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import bio.overture.dms.util.FileUtils;
-import bio.overture.dms.util.ObjectSerializer;
+import bio.overture.dms.compose.model.stack.ComposeStack;
+import bio.overture.dms.core.util.FileUtils;
+import bio.overture.dms.core.util.ObjectSerializer;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;

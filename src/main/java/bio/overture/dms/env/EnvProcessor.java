@@ -1,18 +1,18 @@
 package bio.overture.dms.env;
 
-import static bio.overture.dms.exception.EnvProcessingException.checkEnvProcessing;
-import static bio.overture.dms.reflection.Reflector.isClassPublic;
+import static bio.overture.dms.env.exception.EnvProcessingException.checkEnvProcessing;
+import static bio.overture.dms.env.reflection.Reflector.isClassPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 
-import bio.overture.dms.enums.FieldTypes;
+import bio.overture.dms.core.model.enums.FieldTypes;
+import bio.overture.dms.core.util.Nullable;
+import bio.overture.dms.env.exception.EnvProcessingException;
+import bio.overture.dms.env.reflection.Reflector;
 import bio.overture.dms.env.visitor.DumpEnvFieldVisitor;
 import bio.overture.dms.env.visitor.EnvFieldVisitor;
 import bio.overture.dms.env.visitor.ProcessEnvFieldVisitor;
-import bio.overture.dms.exception.EnvProcessingException;
-import bio.overture.dms.reflection.Reflector;
-import bio.overture.dms.util.Nullable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;

@@ -2,7 +2,7 @@ package bio.overture.dms.env.visitor;
 
 import static java.util.Objects.isNull;
 
-import bio.overture.dms.util.Nullable;
+import bio.overture.dms.core.util.Nullable;
 import java.util.Map;
 import lombok.NonNull;
 
