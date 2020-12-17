@@ -51,25 +51,6 @@
 			<version>${docker-java.version}</version>
 		</dependency>
 
-		<!-- Reflection -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>${reflections.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>${groovy.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>${dom4j.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
 		<!-- Template Engine -->
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
@@ -325,30 +306,6 @@
 						<goals>
 							<goal>format</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<version>${plugin.gmavenplus.version}</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<configuration>
-							<scripts>
-								<script><![CDATA[
-	                        new org.reflections.Reflections("bio.overture.dms",
-	                        new org.reflections.scanners.FieldAnnotationsScanner(),
-	                        new org.reflections.scanners.MethodAnnotationsScanner(),
-	                        new org.reflections.scanners.MemberUsageScanner()
-	                        ).save("${project.build.outputDirectory}/META-INF/reflections/${project.artifactId}-reflections.xml")
-                            ]]></script>
-							</scripts>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
