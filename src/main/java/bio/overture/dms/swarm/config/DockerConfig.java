@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DockerConfig {
-  private static final String DMS_VOLUME_NAME = "dms-assets";
 
   private final DockerProperties dockerProperties;
 
