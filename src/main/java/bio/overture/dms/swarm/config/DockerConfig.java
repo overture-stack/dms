@@ -1,6 +1,5 @@
 package bio.overture.dms.swarm.config;
 
-import static bio.overture.dms.core.util.Strings.isDefined;
 import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static com.github.dockerjava.core.DefaultDockerClientConfig.createDefaultConfigBuilder;
 import static com.github.dockerjava.core.DockerClientImpl.getInstance;
@@ -13,7 +12,6 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

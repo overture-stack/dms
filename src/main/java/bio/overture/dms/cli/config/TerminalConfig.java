@@ -47,7 +47,9 @@ public class TerminalConfig {
   @Bean
   public Terminal terminal(@Autowired JLineTextTerminal textTerminal) {
     return new TerminalImpl(
-        terminalProperties.isAnsi(), terminalProperties.isSilent(),
-        textTerminal.getReader().getTerminal().getWidth(), textTerminal);
+        terminalProperties.isAnsi(),
+        terminalProperties.isSilent(),
+        textTerminal.getReader().getTerminal().getWidth(),
+        textTerminal);
   }
 }

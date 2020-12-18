@@ -1,6 +1,5 @@
 package bio.overture.dms.compose.service;
 
-import static bio.overture.dms.core.util.Joiner.PATH;
 import static java.nio.file.Files.walk;
 
 import bio.overture.dms.compose.model.stack.ComposeService;
@@ -33,8 +32,7 @@ public class ComposeStackRenderEngine {
 
   @Autowired
   public ComposeStackRenderEngine(
-      @NonNull VelocityEngine velocityEngine,
-      @NonNull ObjectSerializer yamlSerializer) {
+      @NonNull VelocityEngine velocityEngine, @NonNull ObjectSerializer yamlSerializer) {
     this.velocityEngine = velocityEngine;
     this.yamlSerializer = yamlSerializer;
   }

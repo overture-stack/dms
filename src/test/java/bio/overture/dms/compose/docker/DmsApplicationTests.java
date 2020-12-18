@@ -1,46 +1,16 @@
 package bio.overture.dms.compose.docker;
 
-import static com.github.dockerjava.api.model.MountType.BIND;
 
 import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
 import bio.overture.dms.compose.service.ComposeStackManager;
 import bio.overture.dms.compose.service.ComposeStackRenderEngine;
 import bio.overture.dms.core.model.spec.DmsSpec;
 import bio.overture.dms.core.model.spec.EgoSpec;
-import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.swarm.service.SwarmService;
-import bio.overture.dms.swarm.service.SwarmSpecService;
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.model.ContainerSpec;
-import com.github.dockerjava.api.model.Driver;
-import com.github.dockerjava.api.model.EndpointResolutionMode;
-import com.github.dockerjava.api.model.EndpointSpec;
-import com.github.dockerjava.api.model.HealthCheck;
-import com.github.dockerjava.api.model.Mount;
-import com.github.dockerjava.api.model.NetworkAttachmentConfig;
-import com.github.dockerjava.api.model.PortConfig;
-import com.github.dockerjava.api.model.PortConfigProtocol;
-import com.github.dockerjava.api.model.ResourceRequirements;
-import com.github.dockerjava.api.model.ResourceSpecs;
-import com.github.dockerjava.api.model.ServiceModeConfig;
-import com.github.dockerjava.api.model.ServiceReplicatedModeOptions;
-import com.github.dockerjava.api.model.ServiceRestartCondition;
-import com.github.dockerjava.api.model.ServiceRestartPolicy;
-import com.github.dockerjava.api.model.ServiceSpec;
-import com.github.dockerjava.api.model.TaskSpec;
-import com.github.dockerjava.api.model.UpdateConfig;
-import com.github.dockerjava.api.model.UpdateFailureAction;
-import com.github.dockerjava.api.model.UpdateOrder;
-import java.util.List;
 import java.util.concurrent.Executors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +27,8 @@ public class DmsApplicationTests {
   @Autowired private ComposeStackRenderEngine renderEngine;
   @Autowired private SwarmService swarmService;
 
-
   @Test
   void contextLoads() {}
-
-
 
   @Test
   @Disabled

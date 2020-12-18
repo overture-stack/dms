@@ -1,4 +1,4 @@
-package bio.overture.dms.core.graph;
+package bio.overture.dms.graph;
 
 import static bio.overture.dms.core.util.Concurrency.trySubmit;
 import static bio.overture.dms.core.util.Exceptions.checkState;

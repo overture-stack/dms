@@ -1,6 +1,5 @@
 package bio.overture.dms.core.util;
 
-import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.time.Duration;

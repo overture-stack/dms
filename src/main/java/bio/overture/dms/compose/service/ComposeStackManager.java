@@ -1,13 +1,11 @@
 package bio.overture.dms.compose.service;
 
-import static bio.overture.dms.core.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
+import static bio.overture.dms.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.compose.model.stack.ComposeStack;
 import bio.overture.dms.swarm.service.SwarmService;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import lombok.NonNull;

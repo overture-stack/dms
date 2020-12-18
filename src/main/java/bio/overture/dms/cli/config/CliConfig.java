@@ -1,5 +1,8 @@
 package bio.overture.dms.cli.config;
 
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEADING;
+
 import bio.overture.dms.cli.command.DmsCommand;
 import bio.overture.dms.cli.util.CommandListRenderer;
 import bio.overture.dms.cli.util.ProjectBanner;
@@ -12,9 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import picocli.CommandLine;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEADING;
-
 @Configuration
 public class CliConfig {
 
@@ -25,7 +25,9 @@ public class CliConfig {
   private final JLineTextTerminal jLineTextTerminal;
 
   @Autowired
-  public CliConfig(@NonNull CommandLine.IFactory factory, @NonNull DmsCommand dmsCommand,
+  public CliConfig(
+      @NonNull CommandLine.IFactory factory,
+      @NonNull DmsCommand dmsCommand,
       @NonNull JLineTextTerminal jLineTextTerminal) {
     this.factory = factory;
     this.dmsCommand = dmsCommand;

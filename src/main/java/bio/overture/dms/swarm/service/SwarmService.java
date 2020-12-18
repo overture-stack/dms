@@ -30,7 +30,6 @@ import com.github.dockerjava.api.model.TaskSpec;
 import com.github.dockerjava.api.model.TaskStatus;
 import com.google.common.base.Stopwatch;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

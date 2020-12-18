@@ -1,4 +1,4 @@
-package bio.overture.dms.core.graph;
+package bio.overture.dms.graph;
 
 import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableSet;
 

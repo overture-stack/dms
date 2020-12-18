@@ -1,11 +1,10 @@
 package bio.overture.dms.swarm.properties;
 
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -14,5 +13,4 @@ import javax.validation.constraints.NotBlank;
 public class DockerProperties {
 
   @NotBlank private String host;
-
 }

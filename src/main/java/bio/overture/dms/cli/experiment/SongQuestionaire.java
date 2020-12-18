@@ -1,4 +1,4 @@
-package bio.overture.dms.cli;
+package bio.overture.dms.cli.experiment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package bio.overture.dms.cli;
+package bio.overture.dms.cli.experiment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package bio.overture.dms.core.graph;
+package bio.overture.dms.graph;
 
 import bio.overture.dms.core.model.Nameable;
 import java.util.concurrent.atomic.AtomicInteger;

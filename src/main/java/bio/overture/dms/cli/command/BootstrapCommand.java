@@ -1,4 +1,4 @@
-package bio.overture.dms.cli;
+package bio.overture.dms.cli.command;
 
 import java.util.concurrent.Callable;
 import lombok.Data;

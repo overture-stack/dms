@@ -1,10 +1,10 @@
 package bio.overture.dms.compose.docker;
 
-import static bio.overture.dms.core.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
+import static bio.overture.dms.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bio.overture.dms.compose.model.job.ComposeJob;
-import bio.overture.dms.core.graph.MemoryGraph;
+import bio.overture.dms.graph.MemoryGraph;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
