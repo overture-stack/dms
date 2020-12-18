@@ -1,17 +1,15 @@
-package bio.overture.dms.compose.config;
+package bio.overture.dms.swarm.config;
 
 import static bio.overture.dms.core.util.Strings.isDefined;
+import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static com.github.dockerjava.core.DefaultDockerClientConfig.createDefaultConfigBuilder;
 import static com.github.dockerjava.core.DockerClientImpl.getInstance;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 
-import bio.overture.dms.compose.docker.DockerService;
-import bio.overture.dms.core.util.SpringExecutorService;
+import bio.overture.dms.swarm.properties.DockerProperties;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +21,11 @@ import org.springframework.context.annotation.Configuration;
 public class DockerConfig {
   private static final String DMS_VOLUME_NAME = "dms-assets";
 
-  @Value("${docker.host}")
-  private String dockerHost;
+  private final DockerProperties dockerProperties;
 
-  @Bean
-  public ExecutorService executor() {
-    val numThreads = Runtime.getRuntime().availableProcessors();
-    return new SpringExecutorService(newFixedThreadPool(numThreads), 4);
-  }
-
-  @Bean
   @Autowired
-  public DockerService dockerService(@NonNull DockerClient dockerClient) {
-    return new DockerService(dockerClient);
+  public DockerConfig(@NonNull DockerProperties dockerProperties) {
+    this.dockerProperties = dockerProperties;
   }
 
   @Bean
@@ -46,8 +36,8 @@ public class DockerConfig {
 
   private DockerClientConfig buildDockerClientConfig() {
     val c = createDefaultConfigBuilder();
-    if (!isDefined(dockerHost)) {
-      c.withDockerHost(dockerHost);
+    if (isNotDefined(dockerProperties.getHost())) {
+      c.withDockerHost(dockerProperties.getHost());
     }
     return c.build();
   }

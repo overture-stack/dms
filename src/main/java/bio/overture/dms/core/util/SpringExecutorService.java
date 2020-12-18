@@ -1,7 +1,9 @@
 package bio.overture.dms.core.util;
 
 import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,86 +22,86 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SpringExecutorService implements ExecutorService {
 
-  @NonNull private final ExecutorService delgate;
-  private final int timeoutHours;
+  @NonNull private final ExecutorService delegate;
+  private final Duration timeout;
 
   @PreDestroy
   @SneakyThrows
   public void destroy() {
-    log.info("Shutting down Spring executor service with timeoutHours={} ...", timeoutHours);
+    log.info("Shutting down Spring executor service with timeoutMs={} ...", timeout.toMillis());
     shutdown();
-    awaitTermination(timeoutHours, HOURS);
+    awaitTermination(timeout.toMillis(), MILLISECONDS);
     log.info("Successfully shutdown Spring executor service");
   }
 
   /** Delegated methods */
   @Override
   public void shutdown() {
-    delgate.shutdown();
+    delegate.shutdown();
   }
 
   @Override
   public List<Runnable> shutdownNow() {
-    return delgate.shutdownNow();
+    return delegate.shutdownNow();
   }
 
   @Override
   public boolean isShutdown() {
-    return delgate.isShutdown();
+    return delegate.isShutdown();
   }
 
   @Override
   public boolean isTerminated() {
-    return delgate.isTerminated();
+    return delegate.isTerminated();
   }
 
   @Override
   public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-    return delgate.awaitTermination(timeout, unit);
+    return delegate.awaitTermination(timeout, unit);
   }
 
   @Override
   public <T> Future<T> submit(Callable<T> task) {
-    return delgate.submit(task);
+    return delegate.submit(task);
   }
 
   @Override
   public <T> Future<T> submit(Runnable task, T result) {
-    return delgate.submit(task, result);
+    return delegate.submit(task, result);
   }
 
   @Override
   public Future<?> submit(Runnable task) {
-    return delgate.submit(task);
+    return delegate.submit(task);
   }
 
   @Override
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
       throws InterruptedException {
-    return delgate.invokeAll(tasks);
+    return delegate.invokeAll(tasks);
   }
 
   @Override
   public <T> List<Future<T>> invokeAll(
       Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
       throws InterruptedException {
-    return delgate.invokeAll(tasks, timeout, unit);
+    return delegate.invokeAll(tasks, timeout, unit);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
       throws InterruptedException, ExecutionException {
-    return delgate.invokeAny(tasks);
+    return delegate.invokeAny(tasks);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
-    return delgate.invokeAny(tasks, timeout, unit);
+    return delegate.invokeAny(tasks, timeout, unit);
   }
 
   @Override
   public void execute(Runnable command) {
-    delgate.execute(command);
+    delegate.execute(command);
   }
 }

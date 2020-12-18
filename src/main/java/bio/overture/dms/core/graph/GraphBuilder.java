@@ -9,13 +9,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.NonNull;
 import lombok.val;
 
 public class GraphBuilder<T extends Nameable> extends AbstractGraph<T, Node<T>> {
 
   public GraphBuilder() {
-    super(new HashMap<>(), new HashMap<>());
+    // We dont really need concurrent hashmaps here, since all "writing" is done during the building phase. Once the build method is called, a MemoryGraph is constructed and the internal hashmaps cannot be manipulated directly. Using concurrent hashmaps just in case.
+    super(new ConcurrentHashMap<>(), new ConcurrentHashMap<>());
   }
 
   public GraphBuilder<T> addEdge(@NonNull String parentName, @NonNull String childName) {

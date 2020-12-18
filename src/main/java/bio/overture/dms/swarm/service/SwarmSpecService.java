@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.service;
+package bio.overture.dms.swarm.service;
 
 import static bio.overture.dms.core.util.FileUtils.readResourcePath;
 
@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SwarmSpecService {
 
-  // TODO: move this into a directory called static or swarm. This is not a template file
-  private static final String INIT_SWARM_SPEC_LOC = "/initSwarm.yaml";
+  private static final String INIT_SWARM_SPEC_LOC = "/swarm/initSwarm.yaml";
   private final ObjectSerializer yamlSerializer;
 
   @Autowired

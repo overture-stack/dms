@@ -5,6 +5,10 @@ import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
 
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.compose.model.stack.ComposeStack;
+import bio.overture.dms.swarm.service.SwarmService;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +33,11 @@ public class ComposeStackManager {
 
   @SneakyThrows
   public void destroy(@NonNull ComposeStack cs, boolean destroyVolumes) {
-    swarmService.deleteServices(
-        mapToUnmodifiableList(cs.getServices(), ComposeService::getName), destroyVolumes);
+    val serviceNames = mapToUnmodifiableList(cs.getServices(), ComposeService::getName);
+    destroy(serviceNames, destroyVolumes);
+  }
+
+  public void destroy(@NonNull List<String> serviceNames, boolean destroyVolumes) {
+    swarmService.deleteServices(serviceNames, destroyVolumes);
   }
 }

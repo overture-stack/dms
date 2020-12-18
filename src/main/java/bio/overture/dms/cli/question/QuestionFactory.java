@@ -20,13 +20,20 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.beryx.textio.InputReader;
 import org.beryx.textio.TextIO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
+@Component
 public class QuestionFactory {
   private static final String DEFAULT_PROFILE = "question";
 
-  @NonNull private final TextIO textIO;
+  private final TextIO textIO;
+
+  @Autowired
+  public QuestionFactory(@NonNull TextIO textIO) {
+    this.textIO = textIO;
+  }
 
   public <T> SingleQuestion<T> newSingleQuestion(
       @NonNull String profile,

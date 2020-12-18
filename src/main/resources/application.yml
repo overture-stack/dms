@@ -1,3 +1,11 @@
-# If blank, will use the system default docker daemon
+terminal:
+  ansi: true
+  silent: false
+
+async:
+  threadCount: -1
+  timeoutSeconds: 14400
+
 docker:
+  # If blank, will use the system default docker daemon
   host: ""

@@ -3,6 +3,8 @@ package bio.overture.dms.compose.model.stack;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -20,5 +22,5 @@ import lombok.Data;
 @Data
 @JsonInclude(NON_NULL)
 public class ComposeStack {
-  private List<ComposeService> services;
+  private List<ComposeService> services = new ArrayList<>();
 }

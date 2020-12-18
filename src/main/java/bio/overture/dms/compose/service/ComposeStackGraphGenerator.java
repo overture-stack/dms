@@ -12,6 +12,7 @@ import bio.overture.dms.compose.model.stack.ComposeStack;
 import bio.overture.dms.core.graph.GraphBuilder;
 import bio.overture.dms.core.graph.MemoryGraph;
 import bio.overture.dms.core.graph.Node;
+import bio.overture.dms.swarm.service.SwarmService;
 import java.util.Map;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,6 @@ import lombok.val;
 @Slf4j
 @RequiredArgsConstructor
 public class ComposeStackGraphGenerator {
-
-  //  private static final int NUM_RETRIES = 30;
-  //  private static final Duration RETRY_DURATION = Duration.of(5, SECONDS);
 
   @NonNull private final String networkName;
   @NonNull private final String assetVolumeName;

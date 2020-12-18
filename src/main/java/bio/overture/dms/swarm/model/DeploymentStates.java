@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.model.stack;
+package bio.overture.dms.swarm.model;
 
 public enum DeploymentStates {
   INFLIGHT,

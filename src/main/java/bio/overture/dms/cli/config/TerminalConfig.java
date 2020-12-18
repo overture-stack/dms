@@ -2,10 +2,12 @@ package bio.overture.dms.cli.config;
 
 import static jline.internal.Configuration.getBoolean;
 
+import bio.overture.dms.cli.properties.TerminalProperties;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.terminal.TerminalImpl;
 import java.io.IOException;
 import jline.console.ConsoleReader;
+import lombok.NonNull;
 import lombok.val;
 import org.beryx.textio.jline.JLineTextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,12 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class TerminalConfig {
 
-  // TODO: make this configurable via BootstrapCommand
-  private boolean ansi = true;
-  // TODO: make this configurable via BootstrapCommand
-  private boolean silent;
+  private final TerminalProperties terminalProperties;
+
+  @Autowired
+  public TerminalConfig(@NonNull TerminalProperties terminalProperties) {
+    this.terminalProperties = terminalProperties;
+  }
 
   @Bean
   @Profile("!test")
@@ -43,6 +47,7 @@ public class TerminalConfig {
   @Bean
   public Terminal terminal(@Autowired JLineTextTerminal textTerminal) {
     return new TerminalImpl(
-        ansi, silent, textTerminal.getReader().getTerminal().getWidth(), textTerminal);
+        terminalProperties.isAnsi(), terminalProperties.isSilent(),
+        textTerminal.getReader().getTerminal().getWidth(), textTerminal);
   }
 }

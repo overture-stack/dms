@@ -7,6 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
+@Deprecated
 public class DockerExecResponse {
   @NonNull private final OutputStream stdout;
   @NonNull private final OutputStream stderr;

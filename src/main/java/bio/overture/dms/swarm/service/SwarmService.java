@@ -1,9 +1,9 @@
-package bio.overture.dms.compose.service;
+package bio.overture.dms.swarm.service;
 
-import static bio.overture.dms.compose.model.stack.DeploymentStates.INFLIGHT;
-import static bio.overture.dms.compose.model.stack.DeploymentStates.SUCCESSFUL;
-import static bio.overture.dms.compose.model.stack.DeploymentStates.UNSUCCESSFUL;
 import static bio.overture.dms.core.util.Concurrency.poll;
+import static bio.overture.dms.swarm.model.DeploymentStates.INFLIGHT;
+import static bio.overture.dms.swarm.model.DeploymentStates.SUCCESSFUL;
+import static bio.overture.dms.swarm.model.DeploymentStates.UNSUCCESSFUL;
 import static com.github.dockerjava.api.model.MountType.VOLUME;
 import static com.github.dockerjava.api.model.TaskState.COMPLETE;
 import static com.github.dockerjava.api.model.TaskState.RUNNING;
@@ -13,8 +13,8 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
-import bio.overture.dms.compose.model.stack.DeploymentStates;
 import bio.overture.dms.core.util.SafeGet;
+import bio.overture.dms.swarm.model.DeploymentStates;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.RemoveVolumeCmd;
 import com.github.dockerjava.api.exception.DockerException;
@@ -30,6 +30,7 @@ import com.github.dockerjava.api.model.TaskSpec;
 import com.github.dockerjava.api.model.TaskStatus;
 import com.google.common.base.Stopwatch;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

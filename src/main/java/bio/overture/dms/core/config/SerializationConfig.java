@@ -1,4 +1,4 @@
-package bio.overture.dms.config;
+package bio.overture.dms.core.config;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 

@@ -1,4 +1,4 @@
-package bio.overture.dms.version2.model;
+package bio.overture.dms.core;
 
 import static bio.overture.dms.core.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +81,7 @@ public class DeserializationTest {
 
   @SneakyThrows
   private static File getConfigYamlFile() {
-    val resource = FileUtils.readResourcePath("/config.yaml");
+    val resource = FileUtils.readResourcePath("/example.compose-stack.yaml");
     return resource.getFile();
   }
 }

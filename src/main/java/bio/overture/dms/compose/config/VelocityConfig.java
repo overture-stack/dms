@@ -12,6 +12,7 @@ public class VelocityConfig {
   @Bean
   public VelocityEngine velocityEngine() {
     val props = new Properties();
+    props.put("runtime.references.strict", "true");
     props.put("resource.loader", "class");
     props.put(
         "class.resource.loader.class",
