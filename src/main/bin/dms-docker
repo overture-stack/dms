@@ -3,11 +3,11 @@ set -euo pipefail
 
 DEFAULT_DOCKER_EXE=/usr/bin/docker
 export DOCKER_EXE=$DEFAULT_DOCKER_EXE
-export SPEC_FILENAME=spec.yaml
-export TEMP_SPEC_FILE=/tmp/$SPEC_FILENAME
+export CONFIG_FILENAME=config.yaml
+export TEMP_CONFIG_FILE=/tmp/$CONFIG_FILENAME
 
 export DMS_HOME=$HOME/.dms
-export DMS_SPEC_FILE=$DMS_HOME/spec.yaml
+export DMS_CONFIG_FILE=$DMS_HOME/$CONFIG_FILENAME
 
 MIN_VERSION=19.03.00
 
@@ -91,7 +91,7 @@ function getLatestVersion {
 	$DOCKER_EXE run --rm -i overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
 }
 
-function genLatestSpec {
+function genLatestConfig {
 	output_path=$1
 
 	$DOCKER_EXE pull overture/dms-version-helper:latest > /dev/null
@@ -104,22 +104,22 @@ function genLatestSpec {
 	echo -n "version: $result" > $output_path
 }
 
-function provisionSpec {
-	spec_filename=$1
+function provisionConfig {
+	config_filename=$1
 
 	if [ ! -d $DMS_HOME ];then
 		mkdir -p $DMS_HOME
 	fi
 
-	if [ ! -f $DMS_SPEC_FILE ];then
-		genLatestSpec $DMS_SPEC_FILE
+	if [ ! -f $DMS_CONFIG_FILE ];then
+		genLatestConfig $DMS_CONFIG_FILE
 	fi
 
-	if [ ! -f $DMS_SPEC_FILE ];then
-		echo "[ERROR]:  The spec file \"$DMS_SPEC_FILE\" was not created"
+	if [ ! -f $DMS_CONFIG_FILE ];then
+		echo "[ERROR]:  The config file \"$DMS_CONFIG_FILE\" was not created"
 		exit 1
 	fi
-	dms_version=$(cat $DMS_SPEC_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' 2>&1)
+	dms_version=$(cat $DMS_CONFIG_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' 2>&1)
 
 	# Return the version
 	echo $dms_version
@@ -133,14 +133,14 @@ function main {
 
 	# Constants
 	repo_name="overture/dms"
-	volume_name="dms-spec"
-	spec_filename="spec.yaml"
+	volume_name="dms-config"
+	config_filename=$CONFIG_FILENAME
 
 	setupDockerExecutable
 	checkDocker
 
-	# Get dms version from spec
-	dms_version=$(provisionSpec $spec_filename 2>&1)
+	# Get dms version from config
+	dms_version=$(provisionConfig $config_filename 2>&1)
 	if [ $? -ne 0 ]; then
 		echo "[ERROR]: There was an error obtaining the dms version"
 		echo "$dms_version"

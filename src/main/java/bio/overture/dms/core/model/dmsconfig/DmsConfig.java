@@ -1,4 +1,4 @@
-package bio.overture.dms.core.model.spec;
+package bio.overture.dms.core.model.dmsconfig;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static lombok.AccessLevel.PRIVATE;
@@ -15,9 +15,9 @@ import lombok.Value;
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
 @JsonInclude(NON_EMPTY)
-public class DmsSpec {
+public class DmsConfig {
 
   @NonNull private final String version;
 
-  @NonNull private final EgoSpec ego;
+  @NonNull private final EgoConfig ego;
 }

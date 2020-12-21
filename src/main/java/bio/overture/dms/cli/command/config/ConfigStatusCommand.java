@@ -1,16 +1,16 @@
-package bio.overture.dms.cli.command.spec;
+package bio.overture.dms.cli.command.config;
 
 import bio.overture.dms.cli.util.VersionProvider;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 
 @Command(
-    name = "check",
-    aliases = {"ch"},
+    name = "status",
+    aliases = {"st"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Check if the spec is ok to deploy")
-public class SpecCheckCommand implements Callable<Integer> {
+    description = "Show the status of the current configuration")
+public class ConfigStatusCommand implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {

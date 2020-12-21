@@ -1,4 +1,4 @@
-package bio.overture.dms.core.model.spec;
+package bio.overture.dms.core.model.dmsconfig;
 
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(NON_EMPTY)
-public class EgoSpec {
+public class EgoConfig {
 
   @Min(value = 1)
   @Builder.Default
@@ -38,7 +38,7 @@ public class EgoSpec {
   @Builder.Default
   private int apiHostPort = 9000;
 
-  @NotNull private SSOSpec sso;
+  @NotNull private EgoConfig.SSOConfig sso;
 
   @Pattern(regexp = "^\\S+$")
   private String host;
@@ -61,16 +61,16 @@ public class EgoSpec {
   @NoArgsConstructor
   @AllArgsConstructor
   @JsonInclude(NON_EMPTY)
-  public static class SSOSpec {
-    @Nullable private SSOClientSpec google;
+  public static class SSOConfig {
+    @Nullable private SSOClientConfig google;
 
-    @Nullable private SSOClientSpec github;
+    @Nullable private SSOClientConfig github;
 
-    @Nullable private SSOClientSpec linkedin;
+    @Nullable private SSOClientConfig linkedin;
 
-    @Nullable private SSOClientSpec facebook;
+    @Nullable private SSOClientConfig facebook;
 
-    @Nullable private SSOClientSpec orcid;
+    @Nullable private SSOClientConfig orcid;
   }
 
   @Data
@@ -78,7 +78,7 @@ public class EgoSpec {
   @NoArgsConstructor
   @AllArgsConstructor
   @JsonInclude(NON_EMPTY)
-  public static class SSOClientSpec {
+  public static class SSOClientConfig {
     @NotBlank private String clientId;
 
     @NotBlank private String clientSecret;

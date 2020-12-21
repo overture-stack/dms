@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 
+// TODO: refactor to use CompletableFutures
 public class ConcurrentGraphTraversal<T extends Nameable> {
 
   /** Dependencies */

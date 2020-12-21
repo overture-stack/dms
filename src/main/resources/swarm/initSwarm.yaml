@@ -38,7 +38,7 @@ TaskDefaults:
   LogDriver:
     # The log driver to use as a default for new tasks.
     Name: json-file
-    # Driver-specific options for the selectd log driver, specified
+    # Driver-specific options for the selected log driver, specified
     #as key/value pairs.
     # Options:
 

@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.command.cluster;
 
+import static bio.overture.dms.cli.model.enums.Constants.CONFIG_FILE_NAME;
 import static bio.overture.dms.core.util.FileUtils.checkFileExists;
 
 import bio.overture.dms.cli.question.QuestionFactory;
@@ -8,7 +9,7 @@ import bio.overture.dms.cli.util.VersionProvider;
 import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
 import bio.overture.dms.compose.service.ComposeStackManager;
 import bio.overture.dms.compose.service.ComposeStackRenderEngine;
-import bio.overture.dms.core.model.spec.DmsSpec;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.nio.file.Paths;
@@ -66,9 +67,10 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   public Integer call() throws Exception {
     val volumeName = "robvolume";
     val networkName = "robnetwork";
-    val specFile = Paths.get(System.getProperty("user.home")).resolve(".dms").resolve("spec.yaml");
+    val specFile =
+        Paths.get(System.getProperty("user.home")).resolve(".dms").resolve(CONFIG_FILE_NAME);
     checkFileExists(specFile);
-    val dmsSpec = yamlSerializer.deserializeFile(specFile.toFile(), DmsSpec.class);
+    val dmsSpec = yamlSerializer.deserializeFile(specFile.toFile(), DmsConfig.class);
 
     val cs = composeStackRenderEngine.render(dmsSpec);
     val generator = new ComposeStackGraphGenerator(networkName, volumeName, swarmService);

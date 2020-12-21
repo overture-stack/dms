@@ -1,11 +1,11 @@
 package bio.overture.dms.compose.docker;
 
-
 import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
 import bio.overture.dms.compose.service.ComposeStackManager;
 import bio.overture.dms.compose.service.ComposeStackRenderEngine;
-import bio.overture.dms.core.model.spec.DmsSpec;
-import bio.overture.dms.core.model.spec.EgoSpec;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.ego.EgoClientFactory;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.concurrent.Executors;
 import lombok.SneakyThrows;
@@ -35,10 +35,10 @@ public class DmsApplicationTests {
   @SneakyThrows
   public void testDeploy() {
     val dmsSpec =
-        DmsSpec.builder()
+        DmsConfig.builder()
             .version("234")
             .ego(
-                EgoSpec.builder()
+                EgoConfig.builder()
                     .apiHostPort(8080)
                     .apiTokenDurationDays(30)
                     .databasePassword("somePassword2134")
@@ -46,7 +46,7 @@ public class DmsApplicationTests {
                     .host("ego.example.com")
                     .jwtDurationMS(3 * 60 * 60 * 1000)
                     .refreshTokenDurationMS(3 * 3600 * 1000)
-                    .sso(EgoSpec.SSOSpec.builder().build())
+                    .sso(EgoConfig.SSOConfig.builder().build())
                     .build())
             .build();
     val d = renderEngine.render(dmsSpec);
@@ -82,10 +82,10 @@ public class DmsApplicationTests {
   @SneakyThrows
   public void testDestroy() {
     val dmsSpec =
-        DmsSpec.builder()
+        DmsConfig.builder()
             .version("234")
             .ego(
-                EgoSpec.builder()
+                EgoConfig.builder()
                     .apiHostPort(8080)
                     .apiTokenDurationDays(30)
                     .databasePassword("somePassword2134")
@@ -93,7 +93,7 @@ public class DmsApplicationTests {
                     .host("ego.example.com")
                     .jwtDurationMS(3 * 60 * 60 * 1000)
                     .refreshTokenDurationMS(3 * 3600 * 1000)
-                    .sso(EgoSpec.SSOSpec.builder().build())
+                    .sso(EgoConfig.SSOConfig.builder().build())
                     .build())
             .build();
     val d = renderEngine.render(dmsSpec);
@@ -239,4 +239,11 @@ public class DmsApplicationTests {
   }
    */
 
+  //TODO: add wiremocking tests for the ego client
+  @Test
+  public void testEgo() {
+    val client = EgoClientFactory.buildEgoClient("https://ego.icgc-argo.org/api");
+    val out = client.getPublicKey();
+    log.info("sdfsdf");
+  }
 }

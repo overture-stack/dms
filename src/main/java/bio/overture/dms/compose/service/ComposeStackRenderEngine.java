@@ -4,7 +4,7 @@ import static java.nio.file.Files.walk;
 
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.compose.model.stack.ComposeStack;
-import bio.overture.dms.core.model.spec.DmsSpec;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class ComposeStackRenderEngine {
     this.yamlSerializer = yamlSerializer;
   }
 
-  public ComposeStack render(@NonNull DmsSpec spec) throws IOException {
+  public ComposeStack render(@NonNull DmsConfig spec) throws IOException {
     val cs = new ComposeStack();
     walk(COMPOSE_STACK_TEMPLATE_DIR, 1)
         .filter(Files::isRegularFile)
@@ -47,7 +47,7 @@ public class ComposeStackRenderEngine {
   }
 
   @SneakyThrows
-  private ComposeService renderComposeService(DmsSpec spec, Path f) {
+  private ComposeService renderComposeService(DmsConfig spec, Path f) {
     val baos = new ByteArrayOutputStream();
     renderYaml(spec, baos, f);
     val renderedYaml = baos.toString();
@@ -56,7 +56,8 @@ public class ComposeStackRenderEngine {
   }
 
   @SneakyThrows
-  private void renderYaml(@NonNull DmsSpec spec, @NonNull OutputStream os, @NonNull Path filepath) {
+  private void renderYaml(
+      @NonNull DmsConfig spec, @NonNull OutputStream os, @NonNull Path filepath) {
     val vmfile = RESOURCES_DIR.relativize(filepath).toString();
     val template = velocityEngine.getTemplate(vmfile);
     val ctx = new VelocityContext(yamlSerializer.convertToMap(spec));

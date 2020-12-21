@@ -1,5 +1,6 @@
 package bio.overture.dms.domain;
 
+import static bio.overture.dms.cli.model.enums.Constants.CONFIG_FILE_NAME;
 import static bio.overture.dms.core.util.FileUtils.checkFileExists;
 import static java.lang.System.getProperty;
 import static java.nio.file.Files.createDirectories;
@@ -22,7 +23,7 @@ public interface SpecPersistence<S> {
   }
 
   default Path getSpecFilepath() {
-    return getDmsHomeDirpath().resolve("spec.yaml");
+    return getDmsHomeDirpath().resolve(CONFIG_FILE_NAME);
   }
 
   default S readFromHome() {

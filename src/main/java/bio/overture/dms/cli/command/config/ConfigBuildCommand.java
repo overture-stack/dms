@@ -1,5 +1,6 @@
-package bio.overture.dms.cli.command.spec;
+package bio.overture.dms.cli.command.config;
 
+import static bio.overture.dms.cli.model.enums.Constants.CONFIG_FILE_NAME;
 import static java.lang.String.format;
 import static java.nio.file.Files.createDirectories;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -7,10 +8,10 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.core.model.spec.DmsSpec;
-import bio.overture.dms.core.model.spec.EgoSpec;
-import bio.overture.dms.core.model.spec.EgoSpec.SSOClientSpec;
-import bio.overture.dms.core.model.spec.EgoSpec.SSOSpec;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,12 +30,12 @@ import picocli.CommandLine.Option;
 @Component
 @Slf4j
 @Command(
-    name = "config",
-    aliases = {"co"},
+    name = "build",
+    aliases = {"bu"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Interactively configure a spec")
-public class SpecConfigCommand implements Callable<Integer> {
+    description = "Interactively build a configuration")
+public class ConfigBuildCommand implements Callable<Integer> {
 
   private final QuestionFactory questionFactory;
   private final ObjectSerializer yamlSerializer;
@@ -42,7 +43,7 @@ public class SpecConfigCommand implements Callable<Integer> {
   private final Terminal terminal;
 
   @Autowired
-  public SpecConfigCommand(
+  public ConfigBuildCommand(
       @NonNull QuestionFactory questionFactory,
       @NonNull ObjectSerializer yamlSerializer,
       @NonNull BuildProperties buildProperties,
@@ -66,27 +67,28 @@ public class SpecConfigCommand implements Callable<Integer> {
   private boolean skipSystemCheck = false;
 
   @SneakyThrows
-  private Path provisionSpecFile() {
+  private Path provisionConfigFile() {
     val userDir = Paths.get(System.getProperty("user.home"));
     val dmsDir = userDir.resolve(".dms");
     createDirectories(dmsDir);
-    return dmsDir.resolve("spec.yaml");
+    return dmsDir.resolve(CONFIG_FILE_NAME);
   }
 
   @Override
   public Integer call() throws Exception {
     terminal.printStatusLn("Starting interactive configuration");
-    val specFile = provisionSpecFile();
+    val configFile = provisionConfigFile();
 
-    val egoSpec = buildEgoSpec();
-    val dmsSpec = DmsSpec.builder().version(buildProperties.getVersion()).ego(egoSpec).build();
-    yamlSerializer.serializeToFile(dmsSpec, specFile.toFile());
-    terminal.printStatusLn("Wrote spec file to %s", specFile);
+    val egoConfig = buildEgoConfig();
+    val dmsConfig =
+        DmsConfig.builder().version(buildProperties.getVersion()).ego(egoConfig).build();
+    yamlSerializer.serializeToFile(dmsConfig, configFile.toFile());
+    terminal.printStatusLn("Wrote config file to %s", configFile);
     return 0;
   }
 
-  private EgoSpec buildEgoSpec() {
-    val b = EgoSpec.builder();
+  private EgoConfig buildEgoConfig() {
+    val b = EgoConfig.builder();
     val hostName =
         questionFactory
             .newDefaultSingleQuestion(
@@ -141,8 +143,8 @@ public class SpecConfigCommand implements Callable<Integer> {
             .getAnswer();
     b.dbHostPort(dbPort);
 
-    val egoSpec = b.build();
-    egoSpec.setSso(new SSOSpec());
+    val egoConfig = b.build();
+    egoConfig.setSso(new SSOConfig());
 
     val ssoProviderSelection =
         questionFactory
@@ -152,14 +154,14 @@ public class SpecConfigCommand implements Callable<Integer> {
 
     ssoProviderSelection.forEach(
         p -> {
-          val clientSpecBuilder = SSOClientSpec.builder();
+          val clientConfigBuilder = SSOClientConfig.builder();
 
           val clientId =
               questionFactory
                   .newDefaultSingleQuestion(
                       String.class, format("What is the %s client id?", p.toString()), false, null)
                   .getAnswer();
-          clientSpecBuilder.clientId(clientId);
+          clientConfigBuilder.clientId(clientId);
 
           val clientSecret =
               questionFactory
@@ -169,7 +171,7 @@ public class SpecConfigCommand implements Callable<Integer> {
                       false,
                       null)
                   .getAnswer();
-          clientSpecBuilder.clientSecret(clientSecret);
+          clientConfigBuilder.clientSecret(clientSecret);
 
           val preEstablishedRedirectUri =
               questionFactory
@@ -179,31 +181,31 @@ public class SpecConfigCommand implements Callable<Integer> {
                       true,
                       format("https://%s/api/oauth/login/%s", hostName, p.toString().toLowerCase()))
                   .getAnswer();
-          clientSpecBuilder.preEstablishedRedirectUri(preEstablishedRedirectUri);
+          clientConfigBuilder.preEstablishedRedirectUri(preEstablishedRedirectUri);
 
-          val clientSpec = clientSpecBuilder.build();
+          val clientConfig = clientConfigBuilder.build();
 
-          p.setClientSpec(egoSpec.getSso(), clientSpec);
+          p.setClientConfig(egoConfig.getSso(), clientConfig);
         });
 
-    return egoSpec;
+    return egoConfig;
   }
 
   public enum SSOProviders {
-    GOOGLE(SSOSpec::setGoogle),
-    LINKEDIN(SSOSpec::setLinkedin),
-    GITHUB(SSOSpec::setGithub),
-    FACEBOOK(SSOSpec::setFacebook),
-    ORCID(SSOSpec::setOrcid);
+    GOOGLE(SSOConfig::setGoogle),
+    LINKEDIN(SSOConfig::setLinkedin),
+    GITHUB(SSOConfig::setGithub),
+    FACEBOOK(SSOConfig::setFacebook),
+    ORCID(SSOConfig::setOrcid);
 
-    private final BiConsumer<SSOSpec, SSOClientSpec> setter;
+    private final BiConsumer<SSOConfig, SSOClientConfig> setter;
 
-    SSOProviders(BiConsumer<SSOSpec, SSOClientSpec> setter) {
+    SSOProviders(BiConsumer<SSOConfig, SSOClientConfig> setter) {
       this.setter = setter;
     }
 
-    public void setClientSpec(SSOSpec s, SSOClientSpec clientSpec) {
-      setter.accept(s, clientSpec);
+    public void setClientConfig(SSOConfig s, SSOClientConfig clientConfig) {
+      setter.accept(s, clientConfig);
     }
   }
 }

@@ -87,7 +87,7 @@ public class QuestionFactory {
   }
 
   private <T> InputReader<T, ?> buildCommonInputReader(
-      @NonNull String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+      String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
     val resolvedProfile = resolveProfile(profile);
     var ir =
         buildDefaultInputReader(textIO, answerType)

@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.command.spec;
+package bio.overture.dms.cli.command.config;
 
 import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
@@ -13,8 +13,8 @@ import picocli.CommandLine.Option;
     aliases = {"g"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Get the current specification")
-public class SpecGetCommand implements Callable<Integer> {
+    description = "Get the current configuration")
+public class ConfigGetCommand implements Callable<Integer> {
 
   @Option(
       names = {"--show-secrets"},
