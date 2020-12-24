@@ -166,7 +166,7 @@ public class QuestionFactory {
                                   return true;
                                 } else if (x instanceof String) {
                                   val stringVal = (String) x;
-                                  return isDefined(stringVal);
+                                  return isNotDefined(stringVal);
                                 }
                                 return false;
                               });
@@ -184,7 +184,7 @@ public class QuestionFactory {
   }
 
   private static String resolveProfile(@Nullable String profile) {
-    if (isNotDefined(profile)) {
+    if (isDefined(profile)) {
       log.debug("Profile not defined, using default profile '{}'", DEFAULT_PROFILE);
       return DEFAULT_PROFILE;
     }

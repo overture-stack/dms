@@ -1,4 +1,4 @@
-package bio.overture.dms.core;
+package bio.overture.dms.util;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 import static lombok.AccessLevel.PRIVATE;

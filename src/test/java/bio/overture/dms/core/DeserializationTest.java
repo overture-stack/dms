@@ -1,6 +1,6 @@
 package bio.overture.dms.core;
 
-import static bio.overture.dms.core.Tester.assertExceptionThrown;
+import static bio.overture.dms.util.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bio.overture.dms.compose.model.stack.ComposeStack;

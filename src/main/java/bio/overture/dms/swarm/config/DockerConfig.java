@@ -1,6 +1,6 @@
 package bio.overture.dms.swarm.config;
 
-import static bio.overture.dms.core.util.Strings.isNotDefined;
+import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.github.dockerjava.core.DefaultDockerClientConfig.createDefaultConfigBuilder;
 import static com.github.dockerjava.core.DockerClientImpl.getInstance;
 
@@ -33,7 +33,7 @@ public class DockerConfig {
 
   private DockerClientConfig buildDockerClientConfig() {
     val c = createDefaultConfigBuilder();
-    if (isNotDefined(dockerProperties.getHost())) {
+    if (isDefined(dockerProperties.getHost())) {
       c.withDockerHost(dockerProperties.getHost());
     }
     return c.build();

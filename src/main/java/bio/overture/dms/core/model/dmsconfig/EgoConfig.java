@@ -1,6 +1,7 @@
 package bio.overture.dms.core.model.dmsconfig;
 
 import static bio.overture.dms.core.util.Strings.isDefined;
+import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import bio.overture.dms.core.util.Nullable;
@@ -53,7 +54,7 @@ public class EgoConfig {
 
   @JsonIgnore
   public boolean isDatabasePasswordDefined() {
-    return !isDefined(databasePassword);
+    return isDefined(databasePassword);
   }
 
   @Data
