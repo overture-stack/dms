@@ -1,0 +1,27 @@
+package bio.overture.dms.cli.questionnaire;
+
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import lombok.NonNull;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DmsQuestionnaire {
+
+  private final BuildProperties buildProperties;
+  private final EgoQuestionnaire egoQuestionnaire;
+
+  @Autowired
+  public DmsQuestionnaire(
+      @NonNull BuildProperties buildProperties, @NonNull EgoQuestionnaire egoQuestionnaire) {
+    this.buildProperties = buildProperties;
+    this.egoQuestionnaire = egoQuestionnaire;
+  }
+
+  public DmsConfig buildDmsConfig() {
+    val egoConfig = egoQuestionnaire.buildEgoConfig();
+    return DmsConfig.builder().version(buildProperties.getVersion()).ego(egoConfig).build();
+  }
+}

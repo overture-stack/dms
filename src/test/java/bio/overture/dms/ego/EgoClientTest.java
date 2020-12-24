@@ -77,17 +77,14 @@ public class EgoClientTest {
   public void testGetPublicKey() {
     val expectedPublicKey = "somePublicKeyString";
     setupGetPublicKey(expectedPublicKey);
-    val actualPublicKey= egoClient.getPublicKey();
+    val actualPublicKey = egoClient.getPublicKey();
     assertEquals(expectedPublicKey, actualPublicKey);
   }
 
   private void setupGetPublicKey(String expectedPublicKey) {
     stubFor(
         get(urlEqualTo("/oauth/token/public_key"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withBody(expectedPublicKey)));
+            .willReturn(aResponse().withStatus(200).withBody(expectedPublicKey)));
   }
 
   private void setupPostAccessToken(String clientId, String clientSecret) {

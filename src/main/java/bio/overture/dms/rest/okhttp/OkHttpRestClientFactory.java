@@ -4,10 +4,9 @@ import static bio.overture.dms.core.util.Joiner.WHITESPACE;
 import static bio.overture.dms.core.util.Strings.isDefined;
 
 import bio.overture.dms.core.util.ObjectSerializer;
+import bio.overture.dms.rest.RestClient;
 import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.rest.RetryingRestClientDecorator;
-import bio.overture.dms.rest.RestClient;
-
 import java.io.IOException;
 import java.time.Duration;
 import lombok.Builder;
@@ -22,8 +21,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * This factory is responsible for building a RestClient that is implemented using OkHttp as the http client,
- * and FailSafe as the retry client.
+ * This factory is responsible for building a RestClient that is implemented using OkHttp as the
+ * http client, and FailSafe as the retry client.
  */
 @Slf4j
 @Builder

@@ -1,7 +1,6 @@
 package bio.overture.dms.core.model.dmsconfig;
 
 import static bio.overture.dms.core.util.Strings.isDefined;
-import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import bio.overture.dms.core.util.Nullable;
@@ -55,6 +54,28 @@ public class EgoConfig {
   @JsonIgnore
   public boolean isDatabasePasswordDefined() {
     return isDefined(databasePassword);
+  }
+
+  private DmsAppCredentials dmsAppCredentials;
+
+  /**
+   * Represents the ego application credentials, that is used by this program to call any endpoint
+   * on the ego service. This implies, the app credential is of role ADMIN
+   */
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class DmsAppCredentials {
+    private String name;
+    private String clientId;
+    private String clientSecret;
+
+    @JsonIgnore
+    public boolean isSecretDefined() {
+      return isDefined(clientSecret);
+    }
   }
 
   @Data

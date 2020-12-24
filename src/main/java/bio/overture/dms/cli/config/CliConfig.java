@@ -9,7 +9,7 @@ import bio.overture.dms.cli.util.ProjectBanner;
 import lombok.NonNull;
 import lombok.val;
 import org.beryx.textio.TextIO;
-import org.beryx.textio.jline.JLineTextTerminal;
+import org.beryx.textio.TextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,21 +22,21 @@ public class CliConfig {
 
   private final CommandLine.IFactory factory; // auto-configured to inject PicocliSpringFactory
   private final DmsCommand dmsCommand;
-  private final JLineTextTerminal jLineTextTerminal;
+  private final TextTerminal<?> textTerminal;
 
   @Autowired
   public CliConfig(
       @NonNull CommandLine.IFactory factory,
       @NonNull DmsCommand dmsCommand,
-      @NonNull JLineTextTerminal jLineTextTerminal) {
+      @NonNull TextTerminal<?> textTerminal) {
     this.factory = factory;
     this.dmsCommand = dmsCommand;
-    this.jLineTextTerminal = jLineTextTerminal;
+    this.textTerminal = textTerminal;
   }
 
   @Bean
   public TextIO textIO() {
-    return new TextIO(jLineTextTerminal);
+    return new TextIO(textTerminal);
   }
 
   @Bean

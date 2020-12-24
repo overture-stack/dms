@@ -7,7 +7,6 @@ import static bio.overture.dms.core.model.enums.FieldTypes.isLong;
 import static bio.overture.dms.core.model.enums.FieldTypes.isString;
 import static bio.overture.dms.core.util.Exceptions.checkArgument;
 import static bio.overture.dms.core.util.Joiner.COMMA;
-import static bio.overture.dms.core.util.Strings.isDefined;
 import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
@@ -184,7 +183,7 @@ public class QuestionFactory {
   }
 
   private static String resolveProfile(@Nullable String profile) {
-    if (isDefined(profile)) {
+    if (isNotDefined(profile)) {
       log.debug("Profile not defined, using default profile '{}'", DEFAULT_PROFILE);
       return DEFAULT_PROFILE;
     }

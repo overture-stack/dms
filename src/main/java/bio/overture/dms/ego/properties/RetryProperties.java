@@ -1,7 +1,6 @@
 package bio.overture.dms.ego.properties;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
