@@ -273,6 +273,12 @@
 						<groupId>org.apache.maven.shared</groupId>
 						<artifactId>maven-dependency-analyzer</artifactId>
 						<version>${maven.dependency.analyzer.version}</version>
+
+					</dependency>
+					<dependency>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+						<version>${asm.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -381,6 +387,7 @@
 		<failsafe.version>2.4.0</failsafe.version>
 		<okhttp.version>4.9.0</okhttp.version>
 		<spring-cloud-stub-runner.version>3.0.0</spring-cloud-stub-runner.version>
+		<asm.verion>8.0.1</asm.verion>
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>
