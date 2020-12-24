@@ -4,30 +4,34 @@ import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.client.EgoClient;
 import bio.overture.dms.ego.client.EgoEndpoint;
 import bio.overture.dms.ego.model.EgoToken;
+import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.rest.okhttp.OkHttpRestClientFactory;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This factory is responsible for building an EgoClient using a RestClientFactory
+ */
 @Component
 public class EgoClientFactory {
 
   private final ObjectSerializer jsonSerializer;
-  private final OkHttpRestClientFactory okHttpRestClientFactory;
+  private final RestClientFactory restClientFactory;
 
   @Autowired
   public EgoClientFactory(
       @NonNull ObjectSerializer jsonSerializer,
-      @NonNull OkHttpRestClientFactory okHttpRestClientFactory) {
+      @NonNull RestClientFactory restClientFactory) {
     this.jsonSerializer = jsonSerializer;
-    this.okHttpRestClientFactory = okHttpRestClientFactory;
+    this.restClientFactory = restClientFactory;
   }
 
   public EgoClient buildNoAuthEgoClient(@NonNull String baseServerUrl) {
     return new EgoClient(
         new EgoEndpoint(baseServerUrl),
         jsonSerializer,
-        okHttpRestClientFactory.buildNoAuthRestClient());
+        restClientFactory.buildNoAuthRestClient());
   }
 
   public EgoClient buildBearerAuthEgoClient(
@@ -39,6 +43,6 @@ public class EgoClientFactory {
     return new EgoClient(
         new EgoEndpoint(baseServerUrl),
         jsonSerializer,
-        okHttpRestClientFactory.buildBearerAuthRestClient(token));
+        restClientFactory.buildBearerAuthRestClient(token));
   }
 }

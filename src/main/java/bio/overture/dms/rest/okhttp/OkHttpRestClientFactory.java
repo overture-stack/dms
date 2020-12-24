@@ -4,6 +4,7 @@ import static bio.overture.dms.core.util.Joiner.WHITESPACE;
 import static bio.overture.dms.core.util.Strings.isDefined;
 
 import bio.overture.dms.core.util.ObjectSerializer;
+import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.rest.RetryingRestClientDecorator;
 import bio.overture.dms.rest.RestClient;
 
@@ -12,20 +13,22 @@ import java.time.Duration;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jodah.failsafe.RetryPolicy;
-import okhttp3.Interceptor;
 import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * This factory is responsible for building a RestClient that is implemented using OkHttp as the http client,
+ * and FailSafe as the retry client.
+ */
 @Slf4j
 @Builder
 @RequiredArgsConstructor
-public class OkHttpRestClientFactory {
+public class OkHttpRestClientFactory implements RestClientFactory {
 
   /** Constants */
   private static final String CONTENT_TYPE = "Content-Type";
@@ -45,10 +48,12 @@ public class OkHttpRestClientFactory {
   @NonNull private final Duration writeTimeout;
   @NonNull private final RetryPolicy<String> retryPolicy;
 
+  @Override
   public RestClient buildBearerAuthRestClient(@NonNull String bearerToken) {
     return buildRestClient(bearerToken);
   }
 
+  @Override
   public RestClient buildNoAuthRestClient() {
     return buildRestClient(null);
   }
@@ -70,7 +75,6 @@ public class OkHttpRestClientFactory {
         .callTimeout(callTimeout)
         .connectTimeout(connectTimeout)
         .writeTimeout(writeTimeout)
-        .eventListener(new OkHttpEventListener(new OkHttpResponseCallback()))
         .build();
   }
 
