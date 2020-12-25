@@ -23,7 +23,7 @@ public class TestTerminalConfig {
   }
 
   @Bean
-  public MockTextTerminal mockTextTerminal() throws IOException {
+  public MockTextTerminal mockTextTerminal() {
     return new MockTextTerminal();
   }
 

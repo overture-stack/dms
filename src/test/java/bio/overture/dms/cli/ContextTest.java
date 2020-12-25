@@ -15,8 +15,7 @@ public class ContextTest {
   @Autowired private CommandLine commandLine;
 
   @Test
-  public void testRob() {
-    //    String[] args = {"config","status", "--help"};
+  public void testContext() {
     String[] args = {"bash-completion", "-n", "dms"};
     commandLine.execute(args);
   }

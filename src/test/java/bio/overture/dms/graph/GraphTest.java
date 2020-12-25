@@ -1,35 +1,52 @@
-package bio.overture.dms.compose.docker;
+package bio.overture.dms.graph;
 
 import static bio.overture.dms.graph.ConcurrentGraphTraversal.createConcurrentGraphTraversal;
+import static java.lang.String.format;
+import static java.util.Arrays.stream;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bio.overture.dms.compose.model.job.ComposeJob;
-import bio.overture.dms.graph.MemoryGraph;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class RobTest {
+public class GraphTest {
+
+  private Map<String, Integer> idx;
+  private int order;
+
+  @BeforeEach
+  public void beforeTest(){
+    this.idx = new HashMap<>();
+    this.order = 0;
+  }
 
   @Test
   @SneakyThrows
-  public void testExampleGraph() {
-    val executor = Executors.newFixedThreadPool(4);
+  public void testConcurrentGraphTraversal() {
+    val executor = newFixedThreadPool(10);
 
     // Create nodes
-    val a = createTestJob("a", 100);
-    val b = createTestJob("b", 100);
-    val c = createTestJob("c", 100);
-    val d = createTestJob("d", 100);
-    val e = createTestJob("e", 100);
-    val f = createTestJob("f", 100);
-    val g = createTestJob("g", 100);
-    val h = createTestJob("h", 100);
+    val a = createTestJob("a");
+    val b = createTestJob("b");
+    val c = createTestJob("c");
+    val d = createTestJob("d");
+    val e = createTestJob("e");
+    val f = createTestJob("f");
+    val g = createTestJob("g");
+    val h = createTestJob("h");
 
     // Build graph
     val graph =
@@ -81,19 +98,49 @@ public class RobTest {
 
     executor.shutdown();
     executor.awaitTermination(1, TimeUnit.HOURS);
+
+    /**
+     * Assert the jobs are executed in the correct order
+      */
+    //This is read as "b" and "c" are completed AFTER "a"
+    assertJobCompletedAfter("a", "b", "c");
+    assertJobCompletedAfter("b", "g", "e", "f");
+    assertJobCompletedAfter("c", "d");
+    assertJobCompletedAfter("e", "h");
+    assertJobCompletedAfter("f", "h");
+    //This is read as "e" and "f" are completed BEFORE "h"
+    assertJobCompletedBefore("h", "e", "f");
   }
 
-  private static ComposeJob createTestJob(String name, long delayMs) {
+  private void assertJobCompletedAfter(String jobName, String ... afterJobNames){
+    assertJobCompleted(false, jobName, afterJobNames);
+  }
+  private void assertJobCompletedBefore(String jobName, String ... beforeJobNames){
+    assertJobCompleted(true, jobName, beforeJobNames);
+  }
+
+  private void assertJobCompleted(boolean isBefore, String jobName, String ... otherJobNames){
+    stream(otherJobNames)
+        .forEach(other ->{
+              val result = (isBefore ? 1 : -1) * Integer.compare( idx.get(jobName), idx.get(other));
+              assertTrue(result < 0,
+                  format("The job %s[%s] did not finish %s %s[%s]",
+                      jobName, idx.get(jobName), isBefore ? "before":"after", other, idx.get(other)));
+            }
+        );
+  }
+
+  private synchronized void addJob(String name){
+    idx.put(name, order++);
+  }
+
+  private ComposeJob createTestJob(final String name) {
     return ComposeJob.builder()
         .name(name)
         .deployTask(
             () -> {
-              try {
-                Thread.sleep(delayMs);
-                log.info("This is '{}' with delay {}", name, delayMs);
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
+              log.info("This is '{}'", name);
+              addJob(name);
             })
         .build();
   }
