@@ -12,8 +12,8 @@ ServiceSpec:
         - SERVER_PORT=8080
         - SPRING_FLYWAY_ENABLED=true
         - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
-        # SPRING_PROFILES_ACTIVE="auth,grpc,jwt"
-        - SPRING_PROFILES_ACTIVE=demo
+        - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
+        # SPRING_PROFILES_ACTIVE=demo
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
         - SPRING_DATASOURCE_URL=jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
