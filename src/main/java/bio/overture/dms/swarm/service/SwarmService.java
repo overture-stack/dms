@@ -82,25 +82,32 @@ public class SwarmService {
     client.pingCmd().exec();
   }
 
-
-
+  /**
+   * Concurrently deletes services, along with any containers/tasks associated with them. Can optionally also delete volumes.
+   * Note: When a service is deleted, it does not mean the containers/tasks associated with the service was deleted as well. Before volume deletion, we need to ensure that both the services and their associated containers/tasks were deleted, so that we can delete volumes with out errors. This is done by concurrently issuing a deletion request for each service and then waiting (via a GuardedBlock and polling) for the associated containers/tasks to be removed.
+   * @param names of the services to be removed
+   * @param destroyVolumes If true, will destroy all volumes associated with the services
+   */
   @SneakyThrows
   public void deleteServices(@NonNull List<String> names, boolean destroyVolumes) {
+    // Get the volume names associated with the services
     val volumeNames = streamSwarmServices(names)
         .flatMap(this::streamVolumeNames)
         .collect(toUnmodifiableSet());
 
+    // Create an index mapping a ServiceName to a list of containerIds
     val idx = getServiceContainerIndex(names);
 
     if (!idx.isEmpty()){
-      waitForDeletedServicesAndContainers(idx, 133, ofMillis(1000));
+      // Concurrently delete services and wait for the associated containers/tasks to be deleted as well with the specified retry scheme
+      concurrentlyDeletedServicesAndWait(idx, 133, ofMillis(1000));
     }
 
     if (destroyVolumes){
-      // cleanup dangling containers that are connected to the volumes
+      // cleanup dangling containers that are connected to the volumes, but that might not have been associated with the previously running services.
       deleteContainersByVolumes(volumeNames);
 
-      // destroy volumes
+      // With all dependencies removed (services and containers), finally delete the volume
       deleteVolumes(volumeNames);
     }
   }
@@ -131,7 +138,7 @@ public class SwarmService {
   }
 
   @SneakyThrows
-  private void waitForDeletedServicesAndContainers(Map<String, List<String>> idx, int numRetries, Duration poll){
+  private void concurrentlyDeletedServicesAndWait(Map<String, List<String>> idx, int numRetries, Duration poll){
     val executors = newFixedThreadPool(idx.keySet().size());
     val futures = idx.entrySet().stream()
         .map(e -> {
