@@ -248,6 +248,10 @@ public class SwarmService {
   // b) Not blocking any dependency, and deploy all. Once deployed, run a separate command to poll
   // and check status.
   //    If something didnt start or is not ready, it should report it
+
+  /**
+   * Idempotent method that initializes a swarm cluster
+   */
   @SneakyThrows
   public void initializeSwarm() {
     val swarmSpec = swarmSpecService.getInitSwarmSpec();
