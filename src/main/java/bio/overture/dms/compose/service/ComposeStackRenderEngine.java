@@ -28,12 +28,16 @@ public class ComposeStackRenderEngine {
   private static final Path COMPOSE_STACK_TEMPLATE_DIR = RESOURCES_DIR.resolve("templates/stack/");
 
   private final VelocityEngine velocityEngine;
+  private final ObjectSerializer velocitySerializer;
   private final ObjectSerializer yamlSerializer;
 
   @Autowired
   public ComposeStackRenderEngine(
-      @NonNull VelocityEngine velocityEngine, @NonNull ObjectSerializer yamlSerializer) {
+      @NonNull VelocityEngine velocityEngine,
+      @NonNull ObjectSerializer velocitySerializer,
+      @NonNull ObjectSerializer yamlSerializer) {
     this.velocityEngine = velocityEngine;
+    this.velocitySerializer = velocitySerializer;
     this.yamlSerializer = yamlSerializer;
   }
 
@@ -60,7 +64,7 @@ public class ComposeStackRenderEngine {
       @NonNull DmsConfig spec, @NonNull OutputStream os, @NonNull Path filepath) {
     val vmfile = RESOURCES_DIR.relativize(filepath).toString();
     val template = velocityEngine.getTemplate(vmfile);
-    val ctx = new VelocityContext(yamlSerializer.convertToMap(spec));
+    val ctx = new VelocityContext(velocitySerializer.convertToMap(spec));
     val writer = new OutputStreamWriter(os);
     template.merge(ctx, writer);
     writer.flush();

@@ -3,6 +3,7 @@ package bio.overture.dms.core.model.enums;
 import static java.util.Arrays.stream;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.function.Function;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,10 @@ public enum FieldTypes {
 
   public boolean matchesField(@NonNull Field f) {
     return this.func.apply(f.getType());
+  }
+
+  public static boolean isUrl(Class<?> c) {
+    return URL.class.isAssignableFrom(c);
   }
 
   public static boolean isBoolean(Class<?> c) {

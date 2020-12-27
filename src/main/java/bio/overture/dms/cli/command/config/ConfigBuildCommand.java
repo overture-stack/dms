@@ -4,7 +4,6 @@ import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.questionnaire.DmsQuestionnaire;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-
 import java.util.concurrent.Callable;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import static java.util.Objects.isNull;
 
 @Component
 @Slf4j
@@ -54,9 +51,9 @@ public class ConfigBuildCommand implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     terminal.printStatusLn("Starting interactive configuration");
-    //TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
+    // TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
     dmsConfigStore.apply(storedDmsConfig -> dmsQuestionnaire.buildDmsConfig());
-    terminal.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath() );
+    terminal.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath());
     return 0;
   }
 }

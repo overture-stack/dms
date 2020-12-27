@@ -3,7 +3,6 @@ package bio.overture.dms.cli.config;
 import bio.overture.dms.cli.properties.TerminalProperties;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.terminal.TerminalImpl;
-import java.io.IOException;
 import lombok.NonNull;
 import org.beryx.textio.mock.MockTextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;

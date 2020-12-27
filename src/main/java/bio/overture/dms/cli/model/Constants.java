@@ -1,4 +1,4 @@
-package bio.overture.dms.cli.model.enums;
+package bio.overture.dms.cli.model;
 
 import static lombok.AccessLevel.PRIVATE;
 

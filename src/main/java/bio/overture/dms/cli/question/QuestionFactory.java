@@ -5,12 +5,18 @@ import static bio.overture.dms.core.model.enums.FieldTypes.isEnum;
 import static bio.overture.dms.core.model.enums.FieldTypes.isInteger;
 import static bio.overture.dms.core.model.enums.FieldTypes.isLong;
 import static bio.overture.dms.core.model.enums.FieldTypes.isString;
+import static bio.overture.dms.core.model.enums.FieldTypes.isUrl;
 import static bio.overture.dms.core.util.Exceptions.checkArgument;
 import static bio.overture.dms.core.util.Joiner.COMMA;
 import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
+import bio.overture.dms.cli.question.validation.QuestionValidator;
+import bio.overture.dms.cli.question.validation.UrlQuestionValidator;
+import bio.overture.dms.cli.terminal.UrlInputReader;
 import bio.overture.dms.core.util.Nullable;
+
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import lombok.NonNull;
@@ -24,8 +30,16 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class QuestionFactory {
-  private static final String DEFAULT_PROFILE = "question";
 
+  /**
+   * Constants
+   */
+  private static final String DEFAULT_PROFILE = "question";
+  private static final UrlQuestionValidator URL_QUESTION_VALIDATOR = new UrlQuestionValidator();
+
+  /**
+   * Dependencies
+   */
   private final TextIO textIO;
 
   @Autowired
@@ -47,6 +61,25 @@ public class QuestionFactory {
       @NonNull Class<T> answerType, @NonNull String question, boolean optional, T defaultValue) {
     return new SingleQuestion<T>(
         question, buildSingleInputReader(null, answerType, optional, defaultValue));
+  }
+
+  public <T> SingleQuestion<T> newDefaultSingleQuestion(
+      @NonNull Class<T> answerType,
+      @NonNull String question,
+      boolean optional,
+      T defaultValue,
+      @NonNull QuestionValidator<T> questionValidator) {
+    return new SingleQuestion<T>(
+        question,
+        buildSingleInputReader(null, answerType, optional, defaultValue)
+            .withValueChecker(questionValidator.createValueChecker()));
+  }
+
+  public SingleQuestion<URL> newUrlSingleQuestion(
+      @NonNull String question,
+      boolean optional,
+      URL defaultValue){
+    return newDefaultSingleQuestion(URL.class, question, optional, defaultValue, URL_QUESTION_VALIDATOR);
   }
 
   public SingleQuestion<String> newPasswordQuestion(@NonNull String question) {
@@ -203,6 +236,8 @@ public class QuestionFactory {
     } else if (isEnum(answerType)) {
       val a = (Class<Enum>) answerType;
       return (InputReader<T, ?>) t.newEnumInputReader(a);
+    } else if (isUrl(answerType)) {
+      return (InputReader<T, ?>) new UrlInputReader(t::getTextTerminal);
     } else {
       throw new IllegalArgumentException(
           "Could not build converter for answer of type: " + answerType.getCanonicalName());

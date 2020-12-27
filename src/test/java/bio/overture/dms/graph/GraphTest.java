@@ -7,14 +7,10 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bio.overture.dms.compose.model.job.ComposeJob;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +24,7 @@ public class GraphTest {
   private int order;
 
   @BeforeEach
-  public void beforeTest(){
+  public void beforeTest() {
     this.idx = new HashMap<>();
     this.order = 0;
   }
@@ -99,38 +95,43 @@ public class GraphTest {
     executor.shutdown();
     executor.awaitTermination(1, TimeUnit.HOURS);
 
-    /**
-     * Assert the jobs are executed in the correct order
-      */
-    //This is read as "b" and "c" are completed AFTER "a"
+    /** Assert the jobs are executed in the correct order */
+    // This is read as "b" and "c" are completed AFTER "a"
     assertJobCompletedAfter("a", "b", "c");
     assertJobCompletedAfter("b", "g", "e", "f");
     assertJobCompletedAfter("c", "d");
     assertJobCompletedAfter("e", "h");
     assertJobCompletedAfter("f", "h");
-    //This is read as "e" and "f" are completed BEFORE "h"
+    // This is read as "e" and "f" are completed BEFORE "h"
     assertJobCompletedBefore("h", "e", "f");
   }
 
-  private void assertJobCompletedAfter(String jobName, String ... afterJobNames){
+  private void assertJobCompletedAfter(String jobName, String... afterJobNames) {
     assertJobCompleted(false, jobName, afterJobNames);
   }
-  private void assertJobCompletedBefore(String jobName, String ... beforeJobNames){
+
+  private void assertJobCompletedBefore(String jobName, String... beforeJobNames) {
     assertJobCompleted(true, jobName, beforeJobNames);
   }
 
-  private void assertJobCompleted(boolean isBefore, String jobName, String ... otherJobNames){
+  private void assertJobCompleted(boolean isBefore, String jobName, String... otherJobNames) {
     stream(otherJobNames)
-        .forEach(other ->{
-              val result = (isBefore ? 1 : -1) * Integer.compare( idx.get(jobName), idx.get(other));
-              assertTrue(result < 0,
-                  format("The job %s[%s] did not finish %s %s[%s]",
-                      jobName, idx.get(jobName), isBefore ? "before":"after", other, idx.get(other)));
-            }
-        );
+        .forEach(
+            other -> {
+              val result = (isBefore ? 1 : -1) * Integer.compare(idx.get(jobName), idx.get(other));
+              assertTrue(
+                  result < 0,
+                  format(
+                      "The job %s[%s] did not finish %s %s[%s]",
+                      jobName,
+                      idx.get(jobName),
+                      isBefore ? "before" : "after",
+                      other,
+                      idx.get(other)));
+            });
   }
 
-  private synchronized void addJob(String name){
+  private synchronized void addJob(String name) {
     idx.put(name, order++);
   }
 

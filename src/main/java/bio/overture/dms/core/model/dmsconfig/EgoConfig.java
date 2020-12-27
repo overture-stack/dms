@@ -6,6 +6,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import bio.overture.dms.core.util.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.net.URL;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -40,8 +41,8 @@ public class EgoConfig {
 
   @NotNull private EgoConfig.SSOConfig sso;
 
-  @Pattern(regexp = "^\\S+$")
-  private String host;
+  @NotNull
+  private URL serverUrl;
 
   // TODO: enable parameter validation
   @Pattern(regexp = "^[A-Za-z0-9]+")

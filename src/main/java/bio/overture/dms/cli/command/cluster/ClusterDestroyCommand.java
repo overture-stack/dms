@@ -1,6 +1,6 @@
 package bio.overture.dms.cli.command.cluster;
 
-import static bio.overture.dms.cli.model.enums.Constants.CONFIG_FILE_NAME;
+import static bio.overture.dms.cli.model.Constants.CONFIG_FILE_NAME;
 import static bio.overture.dms.core.util.FileUtils.checkFileExists;
 
 import bio.overture.dms.cli.question.QuestionFactory;

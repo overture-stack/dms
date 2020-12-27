@@ -17,10 +17,10 @@ ServiceSpec:
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
         - SPRING_DATASOURCE_URL=jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
-        - SWAGGER_HOST=$ego.host
-        - SWAGGER_BASEURL=/
+        - SWAGGER_HOST=$ego.serverUrl.host:$ego.serverUrl.port
+        - SWAGGER_BASEURL=#if($ego.serverUrl.path == '')/#{else}$ego.serverUrl.path#end
         - REFRESHTOKEN_COOKIEISSECURE=true
-        - REFRESHTOKEN_DOMAIN=$ego.host
+        - REFRESHTOKEN_DOMAIN=$ego.serverUrl.host
         - APITOKEN_DURATIONDAYS=$ego.apiTokenDurationDays
         - JWT_DURATIONMS=$ego.jwtDurationMS
         - REFRESHTOKEN_DURATIONMS=$ego.refreshTokenDurationMS
