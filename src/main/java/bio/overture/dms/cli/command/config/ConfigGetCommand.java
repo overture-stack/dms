@@ -1,36 +1,41 @@
 package bio.overture.dms.cli.command.config;
 
-import static picocli.CommandLine.Help.Visibility.ALWAYS;
-
-import bio.overture.dms.cli.model.enums.OutputFormats;
+import bio.overture.dms.cli.DmsConfigStore;
+import bio.overture.dms.cli.command.AbstractTerminal;
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
 import java.util.concurrent.Callable;
+import lombok.NonNull;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
+@Component
 @Command(
     name = "get",
     aliases = {"g"},
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     description = "Get the current configuration")
-public class ConfigGetCommand implements Callable<Integer> {
+public class ConfigGetCommand extends AbstractTerminal implements Callable<Integer> {
 
-  @Option(
-      names = {"--show-secrets"},
-      required = false,
-      description = "Expose base64 encoded secrets")
-  private boolean showSecrets = false;
+  private final DmsConfigStore dmsConfigStore;
 
-  @Option(
-      names = {"-o", "--output-format"},
-      required = false,
-      showDefaultValue = ALWAYS,
-      description = "Specify output format: ${COMPLETION-CANDIDATES}")
-  private OutputFormats outputFormat = OutputFormats.yaml;
+  @Autowired
+  public ConfigGetCommand(@NonNull DmsConfigStore dmsConfigStore, @NonNull Terminal terminal) {
+    super(terminal);
+    this.dmsConfigStore = dmsConfigStore;
+  }
 
   @Override
   public Integer call() throws Exception {
-    return 0;
+    val result = dmsConfigStore.findStoredConfigContents();
+    if (result.isPresent()) {
+      println(result.get());
+      return 0;
+    }
+    printError("The dms configuration '%s' does not exist", dmsConfigStore.getDmsConfigFilePath());
+    return 1;
   }
 }

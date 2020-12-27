@@ -76,8 +76,8 @@ public class EgoQuestionnaire {
     URL serverUrl;
     if (clusterRunMode == PRODUCTION) {
       serverUrl =
-          questionFactory.newUrlSingleQuestion(
-                  "What will the EGO server base url be?", false, null)
+          questionFactory
+              .newUrlSingleQuestion("What will the EGO server base url be?", false, null)
               .getAnswer();
     } else if (clusterRunMode == LOCAL) {
       serverUrl = createLocalhostUrl(apiPort);
@@ -116,7 +116,8 @@ public class EgoQuestionnaire {
                 SSOProviders.class, "What SSO providers would you like to enable?", false, null)
             .getAnswer();
 
-    ssoProviderSelection .forEach( p -> {
+    ssoProviderSelection.forEach(
+        p -> {
           val clientConfig = processSSOClientConfig(clusterRunMode, serverUrl, p.toString());
           p.setClientConfig(egoConfig.getSso(), clientConfig);
         });
@@ -125,8 +126,8 @@ public class EgoQuestionnaire {
     return egoConfig;
   }
 
-  private SSOClientConfig processSSOClientConfig(ClusterRunModes clusterRunMode,
-      URL serverUrl, String providerType){
+  private SSOClientConfig processSSOClientConfig(
+      ClusterRunModes clusterRunMode, URL serverUrl, String providerType) {
     val clientConfigBuilder = SSOClientConfig.builder();
 
     val clientId =
@@ -139,16 +140,13 @@ public class EgoQuestionnaire {
     val clientSecret =
         questionFactory
             .newDefaultSingleQuestion(
-                String.class,
-                format("What is the %s client secret?", providerType),
-                false,
-                null)
+                String.class, format("What is the %s client secret?", providerType), false, null)
             .getAnswer();
     clientConfigBuilder.clientSecret(clientSecret);
 
-
-    var preEstablishedRedirectUri = format("%s/oauth/login/%s", serverUrl, providerType.toLowerCase());
-    if (clusterRunMode == PRODUCTION){
+    var preEstablishedRedirectUri =
+        format("%s/oauth/login/%s", serverUrl, providerType.toLowerCase());
+    if (clusterRunMode == PRODUCTION) {
       preEstablishedRedirectUri =
           questionFactory
               .newDefaultSingleQuestion(
@@ -265,5 +263,4 @@ public class EgoQuestionnaire {
       setter.accept(s, clientConfig);
     }
   }
-
 }

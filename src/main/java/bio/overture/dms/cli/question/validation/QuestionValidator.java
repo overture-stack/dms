@@ -18,5 +18,4 @@ public interface QuestionValidator<T> {
   default ValueChecker<T> createValueChecker() {
     return (val, itemName) -> getErrorMessages(val);
   }
-
 }

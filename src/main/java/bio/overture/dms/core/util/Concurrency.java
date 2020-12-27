@@ -32,12 +32,16 @@ public class Concurrency {
       boolean found = false;
       int count = 0;
       T result = null;
-      while (!found &&  (count == 0 || count < numRetries)) {
+      while (!found && (count == 0 || count < numRetries)) {
         result = supplier.get();
         found = targetResult.test(result);
         if (!found) {
-          log.debug("Retry ({}/{}): waiting {}ms with lock={}",
-               ++count, numRetries, pollPeriodMs, lock.toString());
+          log.debug(
+              "Retry ({}/{}): waiting {}ms with lock={}",
+              ++count,
+              numRetries,
+              pollPeriodMs,
+              lock.toString());
           lock.wait(pollPeriodMs);
         }
       }

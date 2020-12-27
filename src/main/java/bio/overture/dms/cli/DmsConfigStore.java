@@ -2,6 +2,7 @@ package bio.overture.dms.cli;
 
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.readString;
 
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
@@ -35,6 +36,15 @@ public class DmsConfigStore {
     val dmsDir = userDir.resolve(".dms");
     createDirectories(dmsDir);
     return dmsDir.resolve(CONFIG_FILE_NAME);
+  }
+
+  @SneakyThrows
+  public Optional<String> findStoredConfigContents() {
+    val file = getDmsConfigFilePath();
+    if (isRegularFile(file)) {
+      return Optional.of(readString(file));
+    }
+    return Optional.empty();
   }
 
   public Optional<DmsConfig> findStoredConfig() {

@@ -1,5 +1,25 @@
 package bio.overture.dms.swarm.service;
 
+import static bio.overture.dms.core.util.Concurrency.poll;
+import static bio.overture.dms.core.util.Concurrency.waitForFutures;
+import static bio.overture.dms.swarm.model.DeploymentStates.INFLIGHT;
+import static bio.overture.dms.swarm.model.DeploymentStates.SUCCESSFUL;
+import static bio.overture.dms.swarm.model.DeploymentStates.UNSUCCESSFUL;
+import static com.github.dockerjava.api.model.MountType.VOLUME;
+import static com.github.dockerjava.api.model.TaskState.COMPLETE;
+import static com.github.dockerjava.api.model.TaskState.RUNNING;
+import static java.time.Duration.ofMillis;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.toUnmodifiableMap;
+import static java.util.stream.Collectors.toUnmodifiableSet;
+
 import bio.overture.dms.core.util.SafeGet;
 import bio.overture.dms.swarm.model.DeploymentStates;
 import com.github.dockerjava.api.DockerClient;
@@ -19,17 +39,6 @@ import com.github.dockerjava.api.model.TaskSpec;
 import com.github.dockerjava.api.model.TaskStatus;
 import com.github.dockerjava.api.model.TaskStatusContainerStatus;
 import com.google.common.base.Stopwatch;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import net.jodah.failsafe.Failsafe;
-import net.jodah.failsafe.RetryPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,27 +50,16 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
-import static bio.overture.dms.core.util.Concurrency.poll;
-import static bio.overture.dms.core.util.Concurrency.waitForFutures;
-import static bio.overture.dms.swarm.model.DeploymentStates.INFLIGHT;
-import static bio.overture.dms.swarm.model.DeploymentStates.SUCCESSFUL;
-import static bio.overture.dms.swarm.model.DeploymentStates.UNSUCCESSFUL;
-import static com.github.dockerjava.api.model.MountType.VOLUME;
-import static com.github.dockerjava.api.model.TaskState.COMPLETE;
-import static com.github.dockerjava.api.model.TaskState.RUNNING;
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofSeconds;
-import static java.util.Comparator.comparing;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.concurrent.CompletableFuture.runAsync;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toUnmodifiableList;
-import static java.util.stream.Collectors.toUnmodifiableMap;
-import static java.util.stream.Collectors.toUnmodifiableSet;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -83,28 +81,35 @@ public class SwarmService {
   }
 
   /**
-   * Concurrently deletes services, along with any containers/tasks associated with them. Can optionally also delete volumes.
-   * Note: When a service is deleted, it does not mean the containers/tasks associated with the service was deleted as well. Before volume deletion, we need to ensure that both the services and their associated containers/tasks were deleted, so that we can delete volumes with out errors. This is done by concurrently issuing a deletion request for each service and then waiting (via a GuardedBlock and polling) for the associated containers/tasks to be removed.
+   * Concurrently deletes services, along with any containers/tasks associated with them. Can
+   * optionally also delete volumes. Note: When a service is deleted, it does not mean the
+   * containers/tasks associated with the service was deleted as well. Before volume deletion, we
+   * need to ensure that both the services and their associated containers/tasks were deleted, so
+   * that we can delete volumes with out errors. This is done by concurrently issuing a deletion
+   * request for each service and then waiting (via a GuardedBlock and polling) for the associated
+   * containers/tasks to be removed.
+   *
    * @param names of the services to be removed
    * @param destroyVolumes If true, will destroy all volumes associated with the services
    */
   @SneakyThrows
   public void deleteServices(@NonNull List<String> names, boolean destroyVolumes) {
     // Get the volume names associated with the services
-    val volumeNames = streamSwarmServices(names)
-        .flatMap(this::streamVolumeNames)
-        .collect(toUnmodifiableSet());
+    val volumeNames =
+        streamSwarmServices(names).flatMap(this::streamVolumeNames).collect(toUnmodifiableSet());
 
     // Create an index mapping a ServiceName to a list of containerIds
     val idx = getServiceContainerIndex(names);
 
-    if (!idx.isEmpty()){
-      // Concurrently delete services and wait for the associated containers/tasks to be deleted as well with the specified retry scheme
+    if (!idx.isEmpty()) {
+      // Concurrently delete services and wait for the associated containers/tasks to be deleted as
+      // well with the specified retry scheme
       concurrentlyDeletedServicesAndWait(idx, 133, ofMillis(1000));
     }
 
-    if (destroyVolumes){
-      // cleanup dangling containers that are connected to the volumes, but that might not have been associated with the previously running services.
+    if (destroyVolumes) {
+      // cleanup dangling containers that are connected to the volumes, but that might not have been
+      // associated with the previously running services.
       deleteContainersByVolumes(volumeNames);
 
       // With all dependencies removed (services and containers), finally delete the volume
@@ -129,7 +134,7 @@ public class SwarmService {
             });
   }
 
-  private Map<String, List<String>> getServiceContainerIndex(List<String> serviceNames){
+  private Map<String, List<String>> getServiceContainerIndex(List<String> serviceNames) {
     return streamSwarmServices(serviceNames)
         .map(Service::getSpec)
         .filter(Objects::nonNull)
@@ -138,48 +143,50 @@ public class SwarmService {
   }
 
   @SneakyThrows
-  private void concurrentlyDeletedServicesAndWait(Map<String, List<String>> idx, int numRetries, Duration poll){
+  private void concurrentlyDeletedServicesAndWait(
+      Map<String, List<String>> idx, int numRetries, Duration poll) {
     val executors = newFixedThreadPool(idx.keySet().size());
-    val futures = idx.entrySet().stream()
-        .map(e -> {
-          val serviceName = e.getKey();
-          val containerIds = e.getValue();
-          return executors.submit(() -> {
-            client.removeServiceCmd(serviceName).exec();
-            // We want several threads to be able to call this stateless wait method concurrently,
-            // and so we create a unique monitor per thread. For more info, refer to Guarded Blocks
-            // https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html
-            val lock = new Object();
-            waitForContainerDeletion(lock, containerIds, numRetries, poll);
-          });
-        }).collect(toUnmodifiableList());
+    val futures =
+        idx.entrySet().stream()
+            .map(
+                e -> {
+                  val serviceName = e.getKey();
+                  val containerIds = e.getValue();
+                  return executors.submit(
+                      () -> {
+                        client.removeServiceCmd(serviceName).exec();
+                        // We want several threads to be able to call this stateless wait method
+                        // concurrently,
+                        // and so we create a unique monitor per thread. For more info, refer to
+                        // Guarded Blocks
+                        // https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html
+                        val lock = new Object();
+                        waitForContainerDeletion(lock, containerIds, numRetries, poll);
+                      });
+                })
+            .collect(toUnmodifiableList());
     waitForFutures(futures);
     executors.shutdown();
     // Timeout to 1.5 times the expected retry period
-    executors.awaitTermination((numRetries+(numRetries/2))*poll.toMillis(), MILLISECONDS);
+    executors.awaitTermination((numRetries + (numRetries / 2)) * poll.toMillis(), MILLISECONDS);
   }
 
-  private void deleteContainersByVolumes(Collection<String> volumeNames){
-    client.listContainersCmd()
-        .withShowAll(true)
-        .withVolumeFilter(volumeNames)
-        .exec()
-        .stream()
+  private void deleteContainersByVolumes(Collection<String> volumeNames) {
+    client.listContainersCmd().withShowAll(true).withVolumeFilter(volumeNames).exec().stream()
         .map(Container::getId)
         .map(client::removeContainerCmd)
         .forEach(RemoveContainerCmd::exec);
   }
 
-  private void deleteVolumes(Set<String> volumeNames){
+  private void deleteVolumes(Set<String> volumeNames) {
     filterExistingVolumes(volumeNames).stream()
         .map(client::removeVolumeCmd)
         .map(x -> runAsync(x::exec))
         .forEach(CompletableFuture::join);
   }
 
-  private Set<String> filterExistingVolumes(Set<String> volumeNames){
-    return client.listVolumesCmd().exec()
-        .getVolumes().stream()
+  private Set<String> filterExistingVolumes(Set<String> volumeNames) {
+    return client.listVolumesCmd().exec().getVolumes().stream()
         .map(InspectVolumeResponse::getName)
         .filter(volumeNames::contains)
         .collect(toUnmodifiableSet());
@@ -249,9 +256,7 @@ public class SwarmService {
   // and check status.
   //    If something didnt start or is not ready, it should report it
 
-  /**
-   * Idempotent method that initializes a swarm cluster
-   */
+  /** Idempotent method that initializes a swarm cluster */
   @SneakyThrows
   public void initializeSwarm() {
     val swarmSpec = swarmSpecService.getInitSwarmSpec();
@@ -302,8 +307,7 @@ public class SwarmService {
   }
 
   private List<String> getContainerIdsForService(String serviceName) {
-    return client.listTasksCmd().withServiceFilter(serviceName)
-        .exec().stream()
+    return client.listTasksCmd().withServiceFilter(serviceName).exec().stream()
         .map(Task::getStatus)
         .map(TaskStatus::getContainerStatus)
         .filter(Objects::nonNull)
@@ -312,11 +316,15 @@ public class SwarmService {
         .collect(toUnmodifiableList());
   }
 
-  private void waitForContainerDeletion(Object lock, List<String> containerIds, int numRetries, Duration poll){
-    if (!containerIds.isEmpty()){
-      poll(lock,
+  private void waitForContainerDeletion(
+      Object lock, List<String> containerIds, int numRetries, Duration poll) {
+    if (!containerIds.isEmpty()) {
+      poll(
+          lock,
           () -> client.listContainersCmd().withIdFilter(containerIds).exec(),
-          List::isEmpty, numRetries, poll.toMillis() );
+          List::isEmpty,
+          numRetries,
+          poll.toMillis());
     }
   }
 

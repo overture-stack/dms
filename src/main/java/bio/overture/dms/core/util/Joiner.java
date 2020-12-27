@@ -1,6 +1,7 @@
 package bio.overture.dms.core.util;
 
 import static java.io.File.separator;
+import static java.lang.System.lineSeparator;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
@@ -12,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = PRIVATE)
 public class Joiner {
+  public static final Joiner NONE = Joiner.on("");
   public static final Joiner COMMA = Joiner.on(",");
   public static final Joiner WHITESPACE = Joiner.on(" ");
+  public static final Joiner NEWLINE = Joiner.on(lineSeparator());
   public static final Joiner EQUALS = Joiner.on("=");
   public static final Joiner COLON = Joiner.on(":");
   public static final Joiner PATH = Joiner.on(separator);

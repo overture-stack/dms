@@ -41,8 +41,7 @@ public class EgoConfig {
 
   @NotNull private EgoConfig.SSOConfig sso;
 
-  @NotNull
-  private URL serverUrl;
+  @NotNull private URL serverUrl;
 
   // TODO: enable parameter validation
   @Pattern(regexp = "^[A-Za-z0-9]+")

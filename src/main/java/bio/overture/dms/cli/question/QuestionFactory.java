@@ -15,7 +15,6 @@ import bio.overture.dms.cli.question.validation.QuestionValidator;
 import bio.overture.dms.cli.question.validation.UrlQuestionValidator;
 import bio.overture.dms.cli.terminal.UrlInputReader;
 import bio.overture.dms.core.util.Nullable;
-
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -31,15 +30,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class QuestionFactory {
 
-  /**
-   * Constants
-   */
+  /** Constants */
   private static final String DEFAULT_PROFILE = "question";
+
   private static final UrlQuestionValidator URL_QUESTION_VALIDATOR = new UrlQuestionValidator();
 
-  /**
-   * Dependencies
-   */
+  /** Dependencies */
   private final TextIO textIO;
 
   @Autowired
@@ -76,10 +72,9 @@ public class QuestionFactory {
   }
 
   public SingleQuestion<URL> newUrlSingleQuestion(
-      @NonNull String question,
-      boolean optional,
-      URL defaultValue){
-    return newDefaultSingleQuestion(URL.class, question, optional, defaultValue, URL_QUESTION_VALIDATOR);
+      @NonNull String question, boolean optional, URL defaultValue) {
+    return newDefaultSingleQuestion(
+        URL.class, question, optional, defaultValue, URL_QUESTION_VALIDATOR);
   }
 
   public SingleQuestion<String> newPasswordQuestion(@NonNull String question) {
