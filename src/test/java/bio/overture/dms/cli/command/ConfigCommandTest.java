@@ -42,7 +42,7 @@ public class ConfigCommandTest {
   @Test
   @SneakyThrows
   public void testConfigGet() {
-    val cmd = new ConfigGetCommand(dmsConfigStore, terminal);
+    val cmd = new ConfigGetCommand(dmsConfigStore, terminal, t);
     val exitCode = cmd.call();
     val output = testTextTerminal.getOutput(false);
     assertFalse(output.isBlank());

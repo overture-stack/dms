@@ -23,7 +23,7 @@ import picocli.CommandLine.Option;
 public class ConfigBuildCommand implements Callable<Integer> {
 
   private final DmsConfigStore dmsConfigStore;
-  private final Terminal terminal;
+  private final Terminal t;
   private final DmsQuestionnaire dmsQuestionnaire;
 
   @Autowired
@@ -32,7 +32,7 @@ public class ConfigBuildCommand implements Callable<Integer> {
       @NonNull Terminal terminal,
       @NonNull DmsQuestionnaire dmsQuestionnaire) {
     this.dmsConfigStore = dmsConfigStore;
-    this.terminal = terminal;
+    this.t = terminal;
     this.dmsQuestionnaire = dmsQuestionnaire;
   }
 
@@ -50,10 +50,10 @@ public class ConfigBuildCommand implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    terminal.printStatusLn("Starting interactive configuration");
+    t.printStatusLn("Starting interactive configuration");
     // TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
     dmsConfigStore.apply(storedDmsConfig -> dmsQuestionnaire.buildDmsConfig());
-    terminal.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath());
+    t.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath());
     return 0;
   }
 }
