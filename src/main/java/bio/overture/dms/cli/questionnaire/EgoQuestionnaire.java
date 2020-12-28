@@ -11,7 +11,9 @@ import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.DmsAppCredentials;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.AppCredentials;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
@@ -26,9 +28,12 @@ import org.springframework.stereotype.Component;
 public class EgoQuestionnaire {
 
   /** Constants */
-  private static final String DEFAULT_APP_NAME = "dms";
+  private static final String DEFAULT_DMS_APP_NAME = "dms";
 
-  private static final String DEFAULT_APP_CLIENT_ID = "dms";
+  private static final String DEFAULT_UI_APP_NAME = "ego-ui";
+
+  private static final String DEFAULT_DMS_APP_CLIENT_ID = "dms";
+  private static final String DEFAULT_UI_APP_CLIENT_ID = "ego-ui";
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
   private static final RandomGenerator RANDOM_GENERATOR =
       createRandomGenerator(ConfigBuildCommand.class.getSimpleName());
@@ -52,12 +57,23 @@ public class EgoQuestionnaire {
             .getAnswer();
     b.apiTokenDurationDays(apiKeyDurationDays);
 
-    val jwtDurationHours =
+    val jwtUserDurationHours =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, "How many hours should JWTs be valid for?", true, 3)
+                Integer.class, "How many hours should USER JWTs be valid for?", true, 3)
             .getAnswer();
-    b.jwtDurationMS(HOURS.toMillis(jwtDurationHours));
+
+    val jwtAppDurationHours =
+        questionFactory
+            .newDefaultSingleQuestion(
+                Integer.class, "How many hours should APP JWTs be valid for?", true, 3)
+            .getAnswer();
+
+    b.jwt(
+        JwtConfig.builder()
+            .app(new JwtDuration(HOURS.toMillis(jwtUserDurationHours)))
+            .app(new JwtDuration(HOURS.toMillis(jwtAppDurationHours)))
+            .build());
 
     val refreshTokenDurationHours =
         questionFactory
@@ -123,6 +139,7 @@ public class EgoQuestionnaire {
         });
 
     egoConfig.setDmsAppCredentials(processDmsAppCreds(egoConfig));
+    egoConfig.setUiAppCredentials(processUiAppCreds());
     return egoConfig;
   }
 
@@ -160,7 +177,15 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private DmsAppCredentials processDmsAppCreds(EgoConfig egoConfig) {
+  private AppCredentials processUiAppCreds() {
+    return AppCredentials.builder()
+        .name(DEFAULT_DMS_APP_NAME)
+        .clientId(DEFAULT_UI_APP_CLIENT_ID)
+        .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
+        .build();
+  }
+
+  private AppCredentials processDmsAppCreds(EgoConfig egoConfig) {
     if (isNull(egoConfig.getDmsAppCredentials())) {
       // doesnt exist, ask questions
       val clientId =
@@ -168,15 +193,15 @@ public class EgoQuestionnaire {
               .newDefaultSingleQuestion(
                   String.class,
                   "The EGO application with name '"
-                      + DEFAULT_APP_NAME
+                      + DEFAULT_DMS_APP_NAME
                       + "' was not yet configured. Please input the clientId?",
                   true,
-                  DEFAULT_APP_CLIENT_ID)
+                  DEFAULT_DMS_APP_CLIENT_ID)
               .getAnswer();
 
       val clientSecret = generateAppSecret();
-      return DmsAppCredentials.builder()
-          .name(DEFAULT_APP_NAME)
+      return AppCredentials.builder()
+          .name(DEFAULT_DMS_APP_NAME)
           .clientId(clientId)
           .clientSecret(clientSecret)
           .build();
@@ -198,7 +223,7 @@ public class EgoQuestionnaire {
                 .newDefaultSingleQuestion(
                     String.class,
                     "The EGO application with name '"
-                        + DEFAULT_APP_NAME
+                        + DEFAULT_DMS_APP_NAME
                         + "' is already configured. "
                         + "Please input the name to update: ",
                     true,
@@ -210,7 +235,7 @@ public class EgoQuestionnaire {
                 .newDefaultSingleQuestion(
                     String.class,
                     "The EGO application '"
-                        + DEFAULT_APP_CLIENT_ID
+                        + DEFAULT_DMS_APP_CLIENT_ID
                         + "' is already configured. Please input the clientId to update?",
                     true,
                     creds.getClientId())
@@ -218,7 +243,7 @@ public class EgoQuestionnaire {
 
         val clientSecret = generateAppSecret();
 
-        return DmsAppCredentials.builder()
+        return AppCredentials.builder()
             .name(appName)
             .clientId(clientId)
             .clientSecret(clientSecret)

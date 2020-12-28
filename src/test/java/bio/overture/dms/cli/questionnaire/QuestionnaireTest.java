@@ -40,6 +40,7 @@ public class QuestionnaireTest {
         List.of(
             "30",
             "3",
+            "4",
             "12",
             "9000",
             "https://dms.example.org:9933/hi/there",
@@ -56,7 +57,8 @@ public class QuestionnaireTest {
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(PRODUCTION);
 
     assertEquals(30, egoConfig.getApiTokenDurationDays());
-    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwtDurationMS());
+    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwt().getUser().getDurationMs());
+    assertEquals(Duration.of(4, HOURS).toMillis(), egoConfig.getJwt().getApp().getDurationMs());
     assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getRefreshTokenDurationMS());
     assertEquals(9000, egoConfig.getApiHostPort());
     assertEquals(new URL("https://dms.example.org:9933/hi/there"), egoConfig.getServerUrl());
@@ -83,6 +85,7 @@ public class QuestionnaireTest {
         List.of(
             "30",
             "3",
+            "5",
             "12",
             "9000",
             "N",
@@ -97,7 +100,8 @@ public class QuestionnaireTest {
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(LOCAL);
 
     assertEquals(30, egoConfig.getApiTokenDurationDays());
-    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwtDurationMS());
+    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwt().getUser().getDurationMs());
+    assertEquals(Duration.of(5, HOURS).toMillis(), egoConfig.getJwt().getApp().getDurationMs());
     assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getRefreshTokenDurationMS());
     assertEquals(9000, egoConfig.getApiHostPort());
     assertEquals(new URL("http://localhost:9000"), egoConfig.getServerUrl());

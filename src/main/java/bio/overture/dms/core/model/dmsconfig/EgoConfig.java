@@ -27,9 +27,7 @@ public class EgoConfig {
   @Builder.Default
   private int apiTokenDurationDays = 30;
 
-  @Min(value = 60000L)
-  @Builder.Default
-  private long jwtDurationMS = 10800000L;
+  @NotNull private JwtConfig jwt;
 
   @Min(value = 60000L)
   @Builder.Default
@@ -56,7 +54,8 @@ public class EgoConfig {
     return isDefined(databasePassword);
   }
 
-  private DmsAppCredentials dmsAppCredentials;
+  private AppCredentials dmsAppCredentials;
+  private AppCredentials uiAppCredentials;
 
   /**
    * Represents the ego application credentials, that is used by this program to call any endpoint
@@ -67,7 +66,7 @@ public class EgoConfig {
   @NoArgsConstructor
   @AllArgsConstructor
   @JsonInclude(NON_EMPTY)
-  public static class DmsAppCredentials {
+  public static class AppCredentials {
     private String name;
     private String clientId;
     private String clientSecret;
@@ -106,5 +105,28 @@ public class EgoConfig {
     @NotBlank private String clientSecret;
 
     @NotBlank private String preEstablishedRedirectUri;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class JwtConfig {
+    private static final JwtDuration DEFAULT_JWT_DURATION = new JwtDuration(10800000L);
+
+    @NotNull @Builder.Default private JwtDuration user = DEFAULT_JWT_DURATION;
+
+    @NotNull @Builder.Default private JwtDuration app = DEFAULT_JWT_DURATION;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(NON_EMPTY)
+    public static class JwtDuration {
+      @Min(1)
+      private long durationMs;
+    }
   }
 }

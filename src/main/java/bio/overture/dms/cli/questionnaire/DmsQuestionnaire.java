@@ -32,7 +32,9 @@ public class DmsQuestionnaire {
                 ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
             .getAnswer();
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
-    return DmsConfig.builder().version(buildProperties.getVersion()).ego(egoConfig).build();
+    return DmsConfig.builder()
+        .clusterRunMode(clusterRunMode)
+        .version(buildProperties.getVersion()).ego(egoConfig).build();
   }
 
   public static enum ClusterRunModes {

@@ -7,22 +7,37 @@ ServiceSpec:
   Name: ego-api
   TaskTemplate:
     ContainerSpec:
-      Image: "overture/ego:3.1.0"
+      Image: "overture/ego:3.6.0"
       Env:
         - SERVER_PORT=8080
         - SPRING_FLYWAY_ENABLED=true
         - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
         - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
-        # SPRING_PROFILES_ACTIVE=demo
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
         - SPRING_DATASOURCE_URL=jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
         - SWAGGER_HOST=$ego.serverUrl.host:$ego.serverUrl.port
         - SWAGGER_BASEURL=#if($ego.serverUrl.path == '')/#{else}$ego.serverUrl.path#end
+#if( $clusterRunMode == 'LOCAL')
+        - LOGIN_NONCE_SECURE=false
+        - LOGIN_NONCE_SAMESITE=lax
+#end
+        - INITIALIZATION_ENABLED=true
+        - INITIALIZATION_APPLICATIONS_0_NAME=$ego.uiAppCredentials.name
+        - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
+        - INITIALIZATION_APPLICATIONS_0_CLIENTID=$ego.uiAppCredentials.clientId
+        - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$ego.uiAppCredentials.clientSecret
+#if( $ego.dmsAppCredentials )
+        - INITIALIZATION_APPLICATIONS_1_NAME=$ego.dmsAppCredentials.name
+        - INITIALIZATION_APPLICATIONS_1_TYPE=ADMIN
+        - INITIALIZATION_APPLICATIONS_1_CLIENTID=$ego.dmsAppCredentials.clientId
+        - INITIALIZATION_APPLICATIONS_1_CLIENTSECRET=$ego.dmsAppCredentials.clientSecret
+#end
         - REFRESHTOKEN_COOKIEISSECURE=true
         - REFRESHTOKEN_DOMAIN=$ego.serverUrl.host
         - APITOKEN_DURATIONDAYS=$ego.apiTokenDurationDays
-        - JWT_DURATIONMS=$ego.jwtDurationMS
+        - JWT_USER_DURATIONMS=$ego.jwt.user.durationMs
+        - JWT_APP_DURATIONMS=$ego.jwt.app.durationMs
         - REFRESHTOKEN_DURATIONMS=$ego.refreshTokenDurationMS
 #if( $ego.sso.google )
         - GOOGLE_CLIENT_CLIENTID=$ego.sso.google.clientId
