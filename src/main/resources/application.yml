@@ -19,6 +19,12 @@ ego:
       max-seconds: 256
       multiplier: 2.0
 
+compose-stack:
+  network: dms-swarm-network
+
+swarm:
+  auto-initialize: true
+
 docker:
   # If blank, will use the system default docker daemon
   host: ""

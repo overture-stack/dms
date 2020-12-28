@@ -52,29 +52,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
+@RequiredArgsConstructor
 public class SwarmService {
 
   private static final List<Task> EMPTY_TASKS = List.of();
 
-  private final DockerClient client;
-  private final SwarmSpecService swarmSpecService;
-
-  @Autowired
-  public SwarmService(@NonNull DockerClient client, @NonNull SwarmSpecService swarmSpecService) {
-    this.client = client;
-    this.swarmSpecService = swarmSpecService;
-  }
+  @NonNull private final DockerClient client;
+  @NonNull private final SwarmSpecService swarmSpecService;
 
   public void ping() {
     client.pingCmd().exec();
@@ -93,7 +86,7 @@ public class SwarmService {
    * @param destroyVolumes If true, will destroy all volumes associated with the services
    */
   @SneakyThrows
-  public void deleteServices(@NonNull List<String> names, boolean destroyVolumes) {
+  public void deleteServices(@NonNull Collection<String> names, boolean destroyVolumes) {
     // Get the volume names associated with the services
     val volumeNames =
         streamSwarmServices(names).flatMap(this::streamVolumeNames).collect(toUnmodifiableSet());
@@ -134,7 +127,8 @@ public class SwarmService {
             });
   }
 
-  private Map<String, List<String>> getServiceContainerIndex(List<String> serviceNames) {
+  private Map<String, Collection<String>> getServiceContainerIndex(
+      Collection<String> serviceNames) {
     return streamSwarmServices(serviceNames)
         .map(Service::getSpec)
         .filter(Objects::nonNull)
@@ -144,7 +138,7 @@ public class SwarmService {
 
   @SneakyThrows
   private void concurrentlyDeletedServicesAndWait(
-      Map<String, List<String>> idx, int numRetries, Duration poll) {
+      Map<String, Collection<String>> idx, int numRetries, Duration poll) {
     val executors = newFixedThreadPool(idx.keySet().size());
     val futures =
         idx.entrySet().stream()
@@ -204,9 +198,9 @@ public class SwarmService {
         .collect(toUnmodifiableSet());
   }
 
-  public Stream<Service> streamSwarmServices(@NonNull List<String> names) {
+  public Stream<Service> streamSwarmServices(@NonNull Collection<String> names) {
     val set = new HashSet<>(names);
-    return client.listServicesCmd().withNameFilter(names).exec().stream()
+    return client.listServicesCmd().withNameFilter(List.copyOf(names)).exec().stream()
         .filter(x -> nonNull(x.getSpec()) && nonNull(x.getSpec().getName()))
         .filter(x -> set.contains(x.getSpec().getName()));
   }
@@ -317,7 +311,7 @@ public class SwarmService {
   }
 
   private void waitForContainerDeletion(
-      Object lock, List<String> containerIds, int numRetries, Duration poll) {
+      Object lock, Collection<String> containerIds, int numRetries, Duration poll) {
     if (!containerIds.isEmpty()) {
       poll(
           lock,

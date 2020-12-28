@@ -5,39 +5,47 @@ import static bio.overture.dms.graph.ConcurrentGraphTraversal.createConcurrentGr
 
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.compose.model.stack.ComposeStack;
+import bio.overture.dms.domain.ComposeManager;
 import bio.overture.dms.swarm.service.SwarmService;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.stereotype.Component;
 
+/** Implementation of a ComposeManager that manages a Swarm cluster using ComposeStack objects */
 @Slf4j
-@RequiredArgsConstructor
-public class ComposeStackManager {
+@Component
+public class ComposeStackManager implements ComposeManager<ComposeStack> {
 
-  @NonNull private final ExecutorService executorService;
-  @NonNull private final ComposeStackGraphGenerator graphGenerator;
-  @NonNull private final SwarmService swarmService;
+  private final ExecutorService executorService;
+  private final ComposeStackGraphGenerator graphGenerator;
+  private final SwarmService swarmService;
 
-  @SneakyThrows
+  public ComposeStackManager(
+      @NonNull ExecutorService executorService,
+      @NonNull ComposeStackGraphGenerator graphGenerator,
+      @NonNull SwarmService swarmService) {
+    this.executorService = executorService;
+    this.graphGenerator = graphGenerator;
+    this.swarmService = swarmService;
+  }
+
+  @Override
   public void deploy(@NonNull ComposeStack cs) {
-    swarmService.initializeSwarm();
     val graph = graphGenerator.generateGraph(cs);
     createConcurrentGraphTraversal(executorService, graph)
         .traverse(x -> x.getData().run(), () -> {});
   }
 
-  @SneakyThrows
+  @Override
   public void destroy(@NonNull ComposeStack cs, boolean destroyVolumes) {
     val serviceNames = mapToUnmodifiableList(cs.getServices(), ComposeService::getName);
     destroy(serviceNames, destroyVolumes);
   }
 
-  public void destroy(@NonNull List<String> serviceNames, boolean destroyVolumes) {
-    swarmService.initializeSwarm();
+  private void destroy(@NonNull Collection<String> serviceNames, boolean destroyVolumes) {
     swarmService.deleteServices(serviceNames, destroyVolumes);
   }
 }

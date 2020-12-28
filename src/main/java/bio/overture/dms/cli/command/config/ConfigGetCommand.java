@@ -35,7 +35,8 @@ public class ConfigGetCommand implements Callable<Integer> {
       t.println(result.get());
       return 0;
     }
-    t.printError("The dms configuration '%s' does not exist", dmsConfigStore.getDmsConfigFilePath());
+    t.printError(
+        "The dms configuration '%s' does not exist", dmsConfigStore.getDmsConfigFilePath());
     return 1;
   }
 }

@@ -6,4 +6,7 @@ public class DockerComposeManager implements ComposeManager<DockerComposeObject>
 
   @Override
   public void deploy(DockerComposeObject composeObject) {}
+
+  @Override
+  public void destroy(DockerComposeObject composeObject, boolean destroyVolumes) {}
 }

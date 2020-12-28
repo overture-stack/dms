@@ -7,7 +7,6 @@ import bio.overture.dms.compose.model.stack.ComposeStack;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -41,11 +40,12 @@ public class ComposeStackRenderEngine {
     this.yamlSerializer = yamlSerializer;
   }
 
-  public ComposeStack render(@NonNull DmsConfig spec) throws IOException {
+  @SneakyThrows
+  public ComposeStack render(@NonNull DmsConfig dmsConfig) {
     val cs = new ComposeStack();
     walk(COMPOSE_STACK_TEMPLATE_DIR, 1)
         .filter(Files::isRegularFile)
-        .map(f -> renderComposeService(spec, f))
+        .map(f -> renderComposeService(dmsConfig, f))
         .forEach(x -> cs.getServices().add(x));
     return cs;
   }

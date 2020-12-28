@@ -1,6 +1,8 @@
 package bio.overture.dms.domain;
 
-public interface ComposeManager<C extends ComposeObject> {
+public interface ComposeManager<T> {
 
-  void deploy(C composeObject);
+  void deploy(T composeObject);
+
+  void destroy(T composeObject, boolean destroyVolumes);
 }

@@ -24,13 +24,14 @@ import lombok.val;
 public class ComposeStackGraphGenerator {
 
   @NonNull private final String networkName;
-  @NonNull private final String assetVolumeName;
   @NonNull private final SwarmService swarmService;
 
-  public MemoryGraph<ComposeJob> generateGraph(@NonNull ComposeStack cs) {
+  public void init() {
+    // Ensure docker network exist, otherwise create them
+    provisionDockerPrerequisites(networkName);
+  }
 
-    // Ensure docker network and volumes exist
-    provisionDockerPrerequisites(networkName, assetVolumeName);
+  public MemoryGraph<ComposeJob> generateGraph(@NonNull ComposeStack cs) {
 
     // Create graph builder
     val gb = GraphBuilder.<ComposeJob>builder();
@@ -45,10 +46,7 @@ public class ComposeStackGraphGenerator {
     return gb.build();
   }
 
-  private void provisionDockerPrerequisites(String networkName, String assetVolumeName) {
-    // Create asset volume if it does not already exist
-    swarmService.createVolume(assetVolumeName);
-
+  private void provisionDockerPrerequisites(String networkName) {
     // Create network if it does not already exist
     swarmService.getOrCreateNetwork(networkName);
   }

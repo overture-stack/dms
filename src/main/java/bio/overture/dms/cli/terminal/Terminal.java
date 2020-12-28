@@ -31,6 +31,10 @@ public interface Terminal {
     return clearLine().printProfile("error", formattedText, args);
   }
 
+  default Terminal printErrorLn(@NonNull String formattedText, Object... args) {
+    return printError(formattedText, args).println();
+  }
+
   default Terminal printLink(@NonNull String formattedText, Object... args) {
     return clearLine().printProfile("link", formattedText, args);
   }

@@ -1,24 +1,18 @@
 package bio.overture.dms.cli.command.cluster;
 
-import static bio.overture.dms.cli.model.Constants.CONFIG_FILE_NAME;
-import static bio.overture.dms.core.util.FileUtils.checkFileExists;
+import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
+import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
-import bio.overture.dms.compose.service.ComposeStackManager;
-import bio.overture.dms.compose.service.ComposeStackRenderEngine;
-import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.util.ObjectSerializer;
-import bio.overture.dms.swarm.service.SwarmService;
-import java.nio.file.Paths;
+import bio.overture.dms.compose.service.DmsComposeManager;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Component
@@ -29,60 +23,54 @@ import picocli.CommandLine.Command;
     description = "Destroy the cluster")
 public class ClusterDestroyCommand implements Callable<Integer> {
 
-  private final ObjectSerializer yamlSerializer;
-  private final ComposeStackRenderEngine composeStackRenderEngine;
-  private final SwarmService swarmService;
-  private final QuestionFactory questionFactory;
-  private final Terminal terminal;
+  /** Dependencies */
+  private final Terminal t;
 
-  //  @Option(
-  //      names = {"-v", "--volumes"},
-  //      required = false,
-  //      showDefaultValue = ALWAYS,
-  //      description = "Additionally destroy volumes")
+  private final QuestionFactory questionFactory;
+  private final DmsComposeManager dmsComposeManager;
+  private final DmsConfigStore dmsConfigStore;
+
+  /** CLI Options */
+  @CommandLine.Option(
+      names = {"-v", "--volumes"},
+      required = false,
+      showDefaultValue = ALWAYS,
+      description = "Additionally destroy volumes")
   private boolean destroyVolumes = false;
-  //
-  //  @Option(
-  //      names = {"-f", "--force"},
-  //      required = false,
-  //      showDefaultValue = ALWAYS,
-  //      description = "Forcefully destroy volumes without asking first")
+
+  @CommandLine.Option(
+      names = {"-f", "--force"},
+      required = false,
+      showDefaultValue = ALWAYS,
+      description = "Forcefully destroy volumes without asking first")
   private boolean force = false;
 
   @Autowired
   public ClusterDestroyCommand(
-      @NonNull ObjectSerializer yamlSerializer,
-      @NonNull ComposeStackRenderEngine composeStackRenderEngine,
-      @NonNull SwarmService swarmService,
+      @NonNull Terminal terminal,
       @NonNull QuestionFactory questionFactory,
-      @NonNull Terminal terminal) {
-    this.yamlSerializer = yamlSerializer;
-    this.composeStackRenderEngine = composeStackRenderEngine;
-    this.swarmService = swarmService;
-    this.terminal = terminal;
+      @NonNull DmsComposeManager dmsComposeManager,
+      @NonNull DmsConfigStore dmsConfigStore) {
+    this.t = terminal;
     this.questionFactory = questionFactory;
+    this.dmsComposeManager = dmsComposeManager;
+    this.dmsConfigStore = dmsConfigStore;
   }
 
   @Override
   public Integer call() throws Exception {
-    val volumeName = "robvolume";
-    val networkName = "robnetwork";
-    val specFile =
-        Paths.get(System.getProperty("user.home")).resolve(".dms").resolve(CONFIG_FILE_NAME);
-    checkFileExists(specFile);
-    val dmsSpec = yamlSerializer.deserializeFile(specFile.toFile(), DmsConfig.class);
+    val result = dmsConfigStore.findStoredConfig();
+    if (result.isPresent()) {
+      t.printStatusLn(
+          "Starting cluster destruction: force=%s  destroyVolumes=%s", force, destroyVolumes);
+      val resolvedDestroyVolumes = resolveDestroyVolumes();
+      dmsComposeManager.destroy(result.get(), resolvedDestroyVolumes);
+      t.printStatusLn("Finished cluster destruction");
+      return 0;
+    }
 
-    val cs = composeStackRenderEngine.render(dmsSpec);
-    val generator = new ComposeStackGraphGenerator(networkName, volumeName, swarmService);
-    val executor = Executors.newFixedThreadPool(4);
-    val stackManager = new ComposeStackManager(executor, generator, swarmService);
-
-    terminal.printStatusLn(
-        "Starting cluster destruction: force=%s  destroyVolumes=%s", force, destroyVolumes);
-    val resolvedDestroyVolumes = resolveDestroyVolumes();
-    stackManager.destroy(cs, resolvedDestroyVolumes);
-    terminal.printStatusLn("Finished cluster destruction");
-    return 0;
+    t.printErrorLn("Could not find DMS configuration: %s", dmsConfigStore.getDmsConfigFilePath());
+    return 1;
   }
 
   private boolean resolveDestroyVolumes() {
@@ -92,18 +80,18 @@ public class ClusterDestroyCommand implements Callable<Integer> {
       resolvedDestroyVolumes =
           questionFactory
               .newSingleQuestion(
-                  "warning",
+                  "warning", // TODO: replace with QuestionProfile
                   Boolean.class,
                   "Are you sure you want to destroy the volumes for all services? This is IRREVERSIBLE ",
                   true,
                   false)
               .getAnswer();
       if (!resolvedDestroyVolumes) {
-        terminal.printStatus("Volumes will NOT be destroyed!");
+        t.printStatus("Volumes will NOT be destroyed!");
       }
     }
     if (force) {
-      terminal.printStatus("Forcefully destroying all volumes!");
+      t.printStatus("Forcefully destroying all volumes!");
     }
     return resolvedDestroyVolumes;
   }
