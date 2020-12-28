@@ -8,10 +8,12 @@ import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.reverseOrder;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,13 @@ import org.springframework.core.io.Resource;
 @NoArgsConstructor(access = PRIVATE)
 public class FileUtils {
 
+  public static InputStream readResourceStream(@NonNull String filename) {
+    val is = FileUtils.class.getClassLoader().getResourceAsStream(filename);
+    checkNotFound(nonNull(is), "Could not find file '%s' on the classpath", filename);
+    return is;
+  }
+
+  @Deprecated
   public static Resource readResourcePath(String filename) throws IOException, URISyntaxException {
     val resource = new DefaultResourceLoader().getResource(filename);
     if (!resource.exists()) {

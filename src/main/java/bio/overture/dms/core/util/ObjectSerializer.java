@@ -1,8 +1,11 @@
 package bio.overture.dms.core.util;
 
+import static bio.overture.dms.core.util.FileUtils.checkFileExists;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +22,24 @@ public class ObjectSerializer {
 
   // TODO: handle JsonParseException
   @SneakyThrows
+  public JsonNode deserializeFile(@NonNull InputStream is) {
+    return objectMapper.readTree(is);
+  }
+
+  @SneakyThrows
   public JsonNode deserializeFile(@NonNull File f) {
-    FileUtils.checkFileExists(f.toPath());
+    checkFileExists(f.toPath());
     return objectMapper.readTree(f);
   }
 
   @SneakyThrows
+  public <T> T deserializeFile(@NonNull InputStream is, Class<T> tClass) {
+    return objectMapper.readValue(is, tClass);
+  }
+
+  @SneakyThrows
   public <T> T deserializeFile(@NonNull File f, Class<T> tClass) {
-    FileUtils.checkFileExists(f.toPath());
+    checkFileExists(f.toPath());
     return objectMapper.readValue(f, tClass);
   }
 

@@ -1,6 +1,7 @@
 terminal:
   ansi: true
   silent: false
+  width: 80
 
 async:
   threadCount: -1
@@ -21,9 +22,6 @@ ego:
 
 compose-stack:
   network: dms-swarm-network
-
-swarm:
-  auto-initialize: true
 
 docker:
   # If blank, will use the system default docker daemon

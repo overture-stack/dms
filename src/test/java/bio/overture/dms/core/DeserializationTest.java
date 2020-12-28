@@ -1,14 +1,14 @@
 package bio.overture.dms.core;
 
+import static bio.overture.dms.core.util.FileUtils.readResourceStream;
 import static bio.overture.dms.util.Tester.assertExceptionThrown;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bio.overture.dms.compose.model.stack.ComposeStack;
-import bio.overture.dms.core.util.FileUtils;
 import bio.overture.dms.core.util.ObjectSerializer;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.SneakyThrows;
@@ -55,8 +55,7 @@ public class DeserializationTest {
   @Test
   @SneakyThrows
   public void deserialization_unknownFields_fail(@TempDir Path tempDir) {
-    val file = getConfigYamlFile();
-    val jsonNode = (ObjectNode) yamlSerializer.deserializeFile(file);
+    val jsonNode = (ObjectNode) yamlSerializer.deserializeFile(getConfigYamlFile());
 
     jsonNode.put("someRandomField", "someRandomValue");
 
@@ -80,8 +79,7 @@ public class DeserializationTest {
   }
 
   @SneakyThrows
-  private static File getConfigYamlFile() {
-    val resource = FileUtils.readResourcePath("/example.compose-stack.yaml");
-    return resource.getFile();
+  private static InputStream getConfigYamlFile() {
+    return readResourceStream("/example.compose-stack.yaml");
   }
 }

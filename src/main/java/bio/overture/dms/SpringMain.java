@@ -46,9 +46,13 @@ public class SpringMain implements CommandLineRunner, ExitCodeGenerator {
     //    cli.execute(args);
 
     // let Spring instantiate and inject dependencies
-    val app = new SpringApplication(SpringMain.class);
-    app.setBannerMode(Banner.Mode.OFF);
-    //    app.setAdditionalProfiles(<profiles>); //dynamically set spring profiles, if need to
-    System.exit(exit(app.run(args)));
+    try {
+      val app = new SpringApplication(SpringMain.class);
+      app.setBannerMode(Banner.Mode.OFF);
+      //    app.setAdditionalProfiles(<profiles>); //dynamically set spring profiles, if need to
+      System.exit(exit(app.run(args)));
+    } catch (Throwable t) {
+      System.out.println(t.getMessage());
+    }
   }
 }

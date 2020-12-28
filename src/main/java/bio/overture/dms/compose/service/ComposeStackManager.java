@@ -34,6 +34,7 @@ public class ComposeStackManager implements ComposeManager<ComposeStack> {
 
   @Override
   public void deploy(@NonNull ComposeStack cs) {
+    swarmService.initializeSwarm();
     val graph = graphGenerator.generateGraph(cs);
     createConcurrentGraphTraversal(executorService, graph)
         .traverse(x -> x.getData().run(), () -> {});
@@ -46,6 +47,7 @@ public class ComposeStackManager implements ComposeManager<ComposeStack> {
   }
 
   private void destroy(@NonNull Collection<String> serviceNames, boolean destroyVolumes) {
+    swarmService.initializeSwarm();
     swarmService.deleteServices(serviceNames, destroyVolumes);
   }
 }

@@ -52,22 +52,32 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
+@Component
 public class SwarmService {
 
+  /** Constants */
   private static final List<Task> EMPTY_TASKS = List.of();
 
-  @NonNull private final DockerClient client;
-  @NonNull private final SwarmSpecService swarmSpecService;
+  /** Dependencies */
+  private final DockerClient client;
+
+  private final SwarmSpecService swarmSpecService;
+
+  @Autowired
+  public SwarmService(@NonNull DockerClient client, @NonNull SwarmSpecService swarmSpecService) {
+    this.client = client;
+    this.swarmSpecService = swarmSpecService;
+  }
 
   public void ping() {
     client.pingCmd().exec();

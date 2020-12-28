@@ -13,4 +13,5 @@ public class TerminalProperties {
 
   private boolean silent;
   private boolean ansi;
+  private int width;
 }
