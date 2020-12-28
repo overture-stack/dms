@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.question;
 
+import static bio.overture.dms.cli.model.enums.QuestionProfiles.QUESTION;
 import static bio.overture.dms.core.model.enums.FieldTypes.isBoolean;
 import static bio.overture.dms.core.model.enums.FieldTypes.isEnum;
 import static bio.overture.dms.core.model.enums.FieldTypes.isInteger;
@@ -11,6 +12,7 @@ import static bio.overture.dms.core.util.Joiner.COMMA;
 import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
+import bio.overture.dms.cli.model.enums.QuestionProfiles;
 import bio.overture.dms.cli.question.validation.QuestionValidator;
 import bio.overture.dms.cli.question.validation.UrlQuestionValidator;
 import bio.overture.dms.cli.terminal.UrlInputReader;
@@ -23,15 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.beryx.textio.InputReader;
 import org.beryx.textio.TextIO;
+import org.beryx.textio.TextTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Note: Since the QuestionFactory depends on TextTerminal, in a test context it does not make sense
+ * to share a TestTextTerminal, since multiple tests would be mutating a singleton TextTerminal
+ * instance. QuestionFactory should be instantiated once per test, along with its TestTextTerminal.
+ */
 @Slf4j
 @Component
 public class QuestionFactory {
 
   /** Constants */
-  private static final String DEFAULT_PROFILE = "question";
+  private static final QuestionProfiles DEFAULT_QUESTION_PROFILE = QUESTION;
 
   private static final UrlQuestionValidator URL_QUESTION_VALIDATOR = new UrlQuestionValidator();
 
@@ -44,7 +52,7 @@ public class QuestionFactory {
   }
 
   public <T> SingleQuestion<T> newSingleQuestion(
-      @NonNull String profile,
+      @NonNull QuestionProfiles profile,
       @NonNull Class<T> answerType,
       @NonNull String question,
       boolean optional,
@@ -114,7 +122,7 @@ public class QuestionFactory {
   }
 
   private <T> InputReader<T, ?> buildCommonInputReader(
-      String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+      QuestionProfiles profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
     val resolvedProfile = resolveProfile(profile);
     var ir =
         buildDefaultInputReader(textIO, answerType)
@@ -129,7 +137,10 @@ public class QuestionFactory {
   }
 
   private <T> InputReader<T, ?> buildSingleInputReader(
-      @Nullable String profile, @NonNull Class<T> answerType, boolean optional, T defaultValue) {
+      @Nullable QuestionProfiles profile,
+      @NonNull Class<T> answerType,
+      boolean optional,
+      T defaultValue) {
     return buildCommonInputReader(profile, answerType, optional, defaultValue);
   }
 
@@ -210,12 +221,16 @@ public class QuestionFactory {
     return ir;
   }
 
-  private static String resolveProfile(@Nullable String profile) {
-    if (isNotDefined(profile)) {
-      log.debug("Profile not defined, using default profile '{}'", DEFAULT_PROFILE);
-      return DEFAULT_PROFILE;
+  public static QuestionFactory buildQuestionFactory(@NonNull TextTerminal<?> textTerminal) {
+    return new QuestionFactory(new TextIO(textTerminal));
+  }
+
+  private static String resolveProfile(@Nullable QuestionProfiles profile) {
+    if (isNull(profile)) {
+      log.debug("Profile not defined, using default profile '{}'", DEFAULT_QUESTION_PROFILE);
+      return DEFAULT_QUESTION_PROFILE.toString();
     }
-    return profile;
+    return profile.toString();
   }
 
   @SuppressWarnings("unchecked")

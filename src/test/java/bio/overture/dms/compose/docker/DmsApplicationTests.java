@@ -1,13 +1,18 @@
 package bio.overture.dms.compose.docker;
 
-import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
-import bio.overture.dms.compose.service.ComposeStackManager;
+import static bio.overture.dms.cli.question.QuestionFactory.buildQuestionFactory;
+import static bio.overture.dms.util.TestTextTerminal.createTestTextTerminal;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import bio.overture.dms.cli.DmsConfigStore;
+import bio.overture.dms.cli.command.cluster.ClusterApplyCommand;
+import bio.overture.dms.cli.command.cluster.ClusterDestroyCommand;
+import bio.overture.dms.cli.terminal.TerminalImpl;
 import bio.overture.dms.compose.service.ComposeStackRenderEngine;
-import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.compose.service.DmsComposeManager;
+import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.EgoClientFactory;
 import bio.overture.dms.swarm.service.SwarmService;
-import java.util.concurrent.Executors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,8 +29,10 @@ import org.springframework.test.context.ActiveProfiles;
 public class DmsApplicationTests {
 
   // NOTE: https://docs.docker.com/engine/swarm/how-swarm-mode-works/swarm-task-states/
-  @Autowired private ComposeStackRenderEngine renderEngine;
-  @Autowired private SwarmService swarmService;
+  @Autowired DmsComposeManager dmsComposeManager;
+  @Autowired private DmsConfigStore dmsConfigStore;
+  // TODO: add wiremocking tests for the ego client
+  @Autowired private EgoClientFactory egoClientFactory;
 
   @Test
   void contextLoads() {}
@@ -34,46 +41,22 @@ public class DmsApplicationTests {
   @Disabled
   @SneakyThrows
   public void testDeploy() {
-    val dmsSpec =
-        DmsConfig.builder()
-            .version("234")
-            .ego(
-                EgoConfig.builder()
-                    .apiHostPort(8080)
-                    .apiTokenDurationDays(30)
-                    .databasePassword("somePassword2134")
-                    .dbHostPort(10432)
-                    .host("ego.example.com")
-                    .jwtDurationMS(3 * 60 * 60 * 1000)
-                    .refreshTokenDurationMS(3 * 3600 * 1000)
-                    .sso(EgoConfig.SSOConfig.builder().build())
-                    .build())
-            .build();
-    val d = renderEngine.render(dmsSpec);
-    val generator = new ComposeStackGraphGenerator("dms-network", "someVolume", swarmService);
-    val executor = Executors.newFixedThreadPool(10);
-    val manager = new ComposeStackManager(executor, generator, swarmService);
-    manager.deploy(d);
+    val ttt = createTestTextTerminal();
+    val clusterApplyCommand =
+        new ClusterApplyCommand(
+            TerminalImpl.builder()
+                .ansi(true)
+                .silent(false)
+                .terminalWidth(80)
+                .textTerminal(ttt)
+                .build(),
+            dmsComposeManager,
+            dmsConfigStore);
 
-    //    val networkId = swarmService.getOrCreateNetwork("dms-network");
-    //
-    //    for (val s : d.getServices()){
-    //      val result = swarmService.findSwarmService(s.getName());
-    //      if (result.isPresent()){
-    //        val version = dockerClient.inspectServiceCmd(result.get()).exec().getVersion();
-    //        val tasks = dockerClient.listTasksCmd().withServiceFilter(s.getName()).exec().stream()
-    //            .filter(x -> x.getServiceId().equals(result.get()))
-    //            .collect(Collectors.toUnmodifiableList());
-    //        dockerClient.updateServiceCmd(result.get(),
-    // s.getServerSpec()).withVersion(version.getIndex()).exec();
-    //      } else {
-    //        val resp = dockerClient.createServiceCmd(s.getServerSpec()).exec();
-    //      }
-    //    }
+    val exitCode = clusterApplyCommand.call();
+    assertEquals(0, exitCode);
 
-    //    dockerClient.removeServiceCmd(resp.getId()).exec();
-    //    dockerClient.removeNetworkCmd(networkId).exec();
-    //    dockerClient.removeImageCmd("postgres:11.1").withForce(true).exec();
+    log.info(ttt.getOutput(false));
     log.info("Sdf");
   }
 
@@ -81,168 +64,33 @@ public class DmsApplicationTests {
   @Disabled
   @SneakyThrows
   public void testDestroy() {
-    val dmsSpec =
-        DmsConfig.builder()
-            .version("234")
-            .ego(
-                EgoConfig.builder()
-                    .apiHostPort(8080)
-                    .apiTokenDurationDays(30)
-                    .databasePassword("somePassword2134")
-                    .dbHostPort(10432)
-                    .host("ego.example.com")
-                    .jwtDurationMS(3 * 60 * 60 * 1000)
-                    .refreshTokenDurationMS(3 * 3600 * 1000)
-                    .sso(EgoConfig.SSOConfig.builder().build())
+    val ttt = createTestTextTerminal().addInput("Y");
+    val questionFactory = buildQuestionFactory(ttt);
+    val clusterDestroyCommand =
+        ClusterDestroyCommand.builder()
+            .terminal(
+                TerminalImpl.builder()
+                    .ansi(true)
+                    .silent(false)
+                    .terminalWidth(80)
+                    .textTerminal(ttt)
                     .build())
+            .questionFactory(questionFactory)
+            .dmsComposeManager(dmsComposeManager)
+            .dmsConfigStore(dmsConfigStore)
             .build();
-    val d = renderEngine.render(dmsSpec);
-    val generator = new ComposeStackGraphGenerator("dms-network", "someVolume", swarmService);
-    val executor = Executors.newFixedThreadPool(10);
-    val manager = new ComposeStackManager(executor, generator, swarmService);
-    manager.destroy(d, false);
-  }
+    clusterDestroyCommand.setDestroyVolumes(true);
 
-  /*
-  @Autowired private DockerService dockerService;
+    val exitCode = clusterDestroyCommand.call();
+    assertEquals(0, exitCode);
 
-  @Test
-  @Disabled
-  @SneakyThrows
-  public void testSwarm() {
-
-    val imageName = "postgres:11.1";
-    val networkName = "rob-network";
-    //    dockerClient.removeImageCmd(imageName).withForce(true).withNoPrune(true).exec();
-    val swarmService = new SwarmService(dockerClient, swarmSpecService);
-    val networkId = dockerService.getOrCreateNetwork("rob-network");
-
-    swarmService.initializeSwarm();
-    //    dockerClient.initializeSwarmCmd(swarmSpec).exec();
-
-    val serviceSpec =
-        new ServiceSpec()
-            .withName("ego-db")
-            .withEndpointSpec(
-                new EndpointSpec()
-                    .withMode(EndpointResolutionMode.VIP)
-                    .withPorts(
-                        List.of(
-                            new PortConfig()
-                                .withName("psql")
-                                .withProtocol(PortConfigProtocol.TCP)
-                                .withPublishMode(PortConfig.PublishMode.ingress)
-                                .withTargetPort(5432)
-                                .withPublishedPort(8432))))
-            .withNetworks(List.of(new NetworkAttachmentConfig().withTarget(networkId)))
-            .withUpdateConfig(
-                new UpdateConfig()
-                    .withFailureAction(UpdateFailureAction.ROLLBACK)
-                    .withOrder(UpdateOrder.START_FIRST)
-                    .withMaxFailureRatio(0.8f))
-            .withRollbackConfig(
-                new UpdateConfig()
-                    .withFailureAction(UpdateFailureAction.PAUSE)
-                    .withOrder(UpdateOrder.START_FIRST)
-                    .withMaxFailureRatio(0.8f))
-            .withTaskTemplate(
-                new TaskSpec()
-                    .withLogDriver(new Driver().withName("json-file"))
-                    .withNetworks(List.of(new NetworkAttachmentConfig().withTarget(networkId)))
-                    .withRestartPolicy(
-                        new ServiceRestartPolicy()
-                            .withCondition(ServiceRestartCondition.ON_FAILURE)
-                            .withDelay(5000000L)
-                            .withMaxAttempts(10L))
-                    .withContainerSpec(
-                        new ContainerSpec()
-                            // https://github.com/peter-evans/docker-compose-healthcheck
-                            .withImage(imageName)
-                            .withEnv(List.of("POSTGRES_DB=ego", "POSTGRES_PASSWORD=password"))
-                            .withTty(false)
-                            .withOpenStdin(false)
-                            .withReadOnly(false)
-                            .withStopSignal("SIGINT")
-                            .withStopGracePeriod(120000000L)
-                            .withHealthCheck(
-                                new HealthCheck()
-                                    .withTest(List.of("CMD-SHELL", "pg_isready -U postgres"))
-                                //                    .withInterval(10*1000000L)
-                                //                    .withTimeout(10*1000000L)
-                                //                    .withRetries(5)
-                            ))
-                //            .withResources(new ResourceRequirements()
-                //                .withLimits(new ResourceSpecs()
-                //                    .withMemoryBytes()
-                //                )
-                //            )
-            );
-    val output = this.yamlSerializer.serializeValue(serviceSpec);
-
-    dockerClient.listServicesCmd().exec().stream()
-        .filter(x -> x.getSpec().getName().equals(serviceSpec.getName()))
-        .map(Service::getId)
-        .distinct()
-        .forEach(x -> dockerClient.removeServiceCmd(x).exec());
-
-    val serviceId = dockerClient.createServiceCmd(serviceSpec).exec().getId();
-    val inspecServiceResp = dockerClient.inspectServiceCmd(serviceId).exec();
-
-    val state =
-        swarmService.waitForServiceRunning(serviceSpec.getName(), 10, Duration.ofSeconds(2));
-
+    log.info(ttt.getOutput(false));
     log.info("sdf");
   }
 
-  @Disabled
-  @Test
-  @SneakyThrows
-  public void testDC() {
-    val imageName = "docker/compose:alpine-1.27.4";
-    dockerClient.pullImageCmd(imageName).start().awaitCompletion();
-    //    val dockerComposePath = "src/main/resources/templates/docker-compose.yaml";
-    val dockerComposePath = "/templates/docker-compose.yaml";
-    val containerName = "docker-compose-cnt";
-    dockerService
-        .findContainerId(containerName)
-        .ifPresent(id -> dockerService.deleteContainer(id, true, false));
-    val container =
-        dockerClient
-            .createContainerCmd(imageName)
-            .withName("docker-compose-cnt")
-            .withCmd("-p", "dms", "-f", "/docker-compose.yaml", "up", "-d")
-            .withHostConfig(
-                HostConfig.newHostConfig()
-                    .withMounts(
-                        List.of(
-                            new Mount()
-                                .withSource("/var/run/docker.sock")
-                                .withType(BIND)
-                                .withTarget("/var/run/docker.sock")
-                                .withReadOnly(true),
-                            new Mount()
-                                .withSource("/usr/bin/docker")
-                                .withType(BIND)
-                                .withTarget("/usr/bin/docker")
-                                .withReadOnly(true))))
-            .exec();
-    val file = readResourcePath(dockerComposePath);
-    dockerClient
-        .copyArchiveToContainerCmd(container.getId())
-        .withHostResource(file.getFile().getAbsolutePath())
-        .withRemotePath("/")
-        .exec();
-    dockerClient.startContainerCmd(container.getId()).exec();
-    dockerClient.waitContainerCmd(container.getId());
-    dockerClient.removeContainerCmd(container.getId()).withForce(true).exec();
-    log.info("sdf");
-  }
-   */
-
-  //TODO: add wiremocking tests for the ego client
   @Test
   public void testEgo() {
-    val client = EgoClientFactory.buildEgoClient("https://ego.icgc-argo.org/api");
+    val client = egoClientFactory.buildNoAuthEgoClient("https://ego.icgc-argo.org/api");
     val out = client.getPublicKey();
     log.info("sdfsdf");
   }

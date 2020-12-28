@@ -36,13 +36,19 @@ public class ConfigCommandTest {
   @BeforeEach
   public void beforeTest() {
     this.testTextTerminal = createTestTextTerminal();
-    this.terminal = new TerminalImpl(true, false, 80, testTextTerminal);
+    this.terminal =
+        TerminalImpl.builder()
+            .ansi(true)
+            .silent(false)
+            .terminalWidth(80)
+            .textTerminal(testTextTerminal)
+            .build();
   }
 
   @Test
   @SneakyThrows
   public void testConfigGet() {
-    val cmd = new ConfigGetCommand(dmsConfigStore, terminal, t);
+    val cmd = new ConfigGetCommand(dmsConfigStore, terminal);
     val exitCode = cmd.call();
     val output = testTextTerminal.getOutput(false);
     assertFalse(output.isBlank());

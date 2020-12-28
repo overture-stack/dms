@@ -2,11 +2,14 @@ package bio.overture.dms.cli.terminal;
 
 import static java.lang.String.format;
 
+import bio.overture.dms.cli.model.enums.QuestionProfiles;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.beryx.textio.TextTerminal;
 
+@Builder
 @RequiredArgsConstructor
 public class TerminalImpl implements Terminal {
 
@@ -18,11 +21,11 @@ public class TerminalImpl implements Terminal {
   @NonNull private final TextTerminal<?> textTerminal;
 
   @Override
-  public Terminal printProfile(String printProfile, String formattedText, Object... args) {
+  public Terminal printProfile(QuestionProfiles profile, String formattedText, Object... args) {
     if (!silent) {
       if (ansi) {
         textTerminal.executeWithPropertiesPrefix(
-            printProfile, t -> t.print(format(formattedText, args)));
+            profile.toString(), t -> t.print(format(formattedText, args)));
       } else {
         return print(formattedText, args);
       }

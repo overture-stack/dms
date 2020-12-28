@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.command.cluster;
 
+import static bio.overture.dms.cli.model.enums.QuestionProfiles.WARNING;
 import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
 import bio.overture.dms.cli.DmsConfigStore;
@@ -8,13 +9,16 @@ import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
 import bio.overture.dms.compose.service.DmsComposeManager;
 import java.util.concurrent.Callable;
+import lombok.Builder;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+@Setter
 @Component
 @Command(
     name = "destroy",
@@ -45,6 +49,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
       description = "Forcefully destroy volumes without asking first")
   private boolean force = false;
 
+  @Builder
   @Autowired
   public ClusterDestroyCommand(
       @NonNull Terminal terminal,
@@ -80,7 +85,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
       resolvedDestroyVolumes =
           questionFactory
               .newSingleQuestion(
-                  "warning", // TODO: replace with QuestionProfile
+                  WARNING,
                   Boolean.class,
                   "Are you sure you want to destroy the volumes for all services? This is IRREVERSIBLE ",
                   true,
