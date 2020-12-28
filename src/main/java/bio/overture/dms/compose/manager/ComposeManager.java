@@ -1,4 +1,4 @@
-package bio.overture.dms.domain;
+package bio.overture.dms.compose.manager;
 
 public interface ComposeManager<T> {
 

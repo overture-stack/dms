@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.service;
+package bio.overture.dms.compose.manager;
 
 import static bio.overture.dms.compose.model.stack.DependencyTypes.SERVICE_HEALTHY;
 import static bio.overture.dms.compose.model.stack.DependencyTypes.SERVICE_STARTED;

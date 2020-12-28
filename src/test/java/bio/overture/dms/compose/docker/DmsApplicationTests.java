@@ -8,7 +8,7 @@ import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.command.cluster.ClusterApplyCommand;
 import bio.overture.dms.cli.command.cluster.ClusterDestroyCommand;
 import bio.overture.dms.cli.terminal.TerminalImpl;
-import bio.overture.dms.compose.service.DmsComposeManager;
+import bio.overture.dms.compose.manager.DmsComposeManager;
 import bio.overture.dms.ego.EgoClientFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

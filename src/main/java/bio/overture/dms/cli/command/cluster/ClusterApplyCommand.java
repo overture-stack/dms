@@ -3,7 +3,7 @@ package bio.overture.dms.cli.command.cluster;
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.compose.service.DmsComposeManager;
+import bio.overture.dms.compose.manager.DmsComposeManager;
 import java.util.concurrent.Callable;
 import lombok.NonNull;
 import lombok.val;

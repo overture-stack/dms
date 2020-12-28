@@ -1,7 +1,7 @@
 package bio.overture.dms.compose.config;
 
 import bio.overture.dms.compose.properties.ComposeStackProperties;
-import bio.overture.dms.compose.service.ComposeStackGraphGenerator;
+import bio.overture.dms.compose.manager.ComposeStackGraphGenerator;
 import bio.overture.dms.swarm.service.SwarmService;
 import lombok.NonNull;
 import lombok.val;

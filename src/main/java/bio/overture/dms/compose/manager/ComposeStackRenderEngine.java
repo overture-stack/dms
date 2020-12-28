@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.service;
+package bio.overture.dms.compose.manager;
 
 import static java.nio.file.Files.walk;
 

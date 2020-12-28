@@ -1,8 +1,7 @@
-package bio.overture.dms.compose.service;
+package bio.overture.dms.compose.manager;
 
 import bio.overture.dms.compose.model.stack.ComposeStack;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.domain.ComposeManager;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
