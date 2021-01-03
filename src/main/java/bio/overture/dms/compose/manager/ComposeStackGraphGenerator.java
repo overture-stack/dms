@@ -93,7 +93,20 @@ public class ComposeStackGraphGenerator {
     return gb.findNodeByName(jobName)
         .map(Node::getData)
         .orElseGet(
-            () -> ComposeJob.builder().name(jobName).deployTask(() -> deployService(s)).build());
+            () -> ComposeJob.builder().name(jobName).deployTask(() -> {
+              processPreDeployStep(s);
+              deployService(s);
+              processPostDeployStep(s);
+            }).build());
+  }
+
+  private void processPreDeployStep(ComposeService s) {
+    throw new IllegalStateException();
+    // get registered process for that service
+  }
+
+  private void processPostDeployStep(ComposeService s) {
+    throw new IllegalStateException();
   }
 
   // TODO: refactor

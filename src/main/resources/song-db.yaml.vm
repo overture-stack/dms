@@ -1,0 +1,98 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+name: song-db
+ServiceSpec:
+  Name: song-db
+  TaskTemplate:
+    ContainerSpec:
+      Image: "postgres:11.1"
+      Env:
+        - POSTGRES_DB=song
+        - POSTGRES_PASSWORD=$song.databasePassword
+      Mounts:
+        - Type: volume
+          Source: song-db-data
+          Target: /var/lib/postgresql/data
+          ReadOnly: false
+      Duration: null
+      StopGracePeriod: 120000000000
+      DNSConfig: null
+      OpenStdin: false
+      ReadOnly: false
+      Hosts: null
+      Hostname: null
+      Secrets: null
+      HealthCheck:
+        # 30s
+        Interval: 30000000000
+        # 30s
+        Timeout: 30000000000
+        Test:
+          - "CMD-SHELL"
+          - "pg_isready -U postgres"
+        Retries: 5
+        # 20s
+        StartPeriod: 20000000000
+      StopSignal: "SIGINT"
+      Privileges: null
+      Configs: null
+    Resources:
+      Limits:
+        #200 MiB
+        MemoryBytes: 209715200
+        #unlimited.
+        NanoCPUs: 0
+      Reservations:
+        #100 MiB
+        MemoryBytes: 104857600
+        #unlimited.
+        NanoCPUs: 0
+    # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
+    # when the restartpolicy is defined, postgres cannot restart normally.
+    RestartPolicy: null
+    Placement: null
+    LogDriver:
+      Name: "json-file"
+      Options: null
+    ForceUpdate: 0
+    Networks:
+      - Target: "dms-network"
+        Aliases: null
+    Runtime: null
+  Mode:
+    Replicated:
+      Replicas: 1
+    Global: null
+  UpdateConfig:
+    FailureAction: "rollback"
+    #Since there is a shared volume, containing process information
+    # need to ensure its stopped first
+    Order: "stop-first"
+    Parallelism: null
+    Delay: null
+    MaxFailureRatio: null
+    Monitor: null
+  RollbackConfig:
+    FailureAction: "continue"
+    #Since there is a shared volume, containing process information
+    # need to ensure its stopped first
+    Order: "stop-first"
+    Parallelism: null
+    Delay: null
+    MaxFailureRatio: 0.8
+    Monitor: null
+  Networks:
+    - Target: "dms-network"
+      Aliases: null
+  EndpointSpec:
+    Mode: "vip"
+    Ports:
+      - Name: "psql"
+        Protocol: "tcp"
+        TargetPort: 5432
+        PublishedPort: $song.dbHostPort
+        PublishMode: "ingress"
+  Labels: null
+

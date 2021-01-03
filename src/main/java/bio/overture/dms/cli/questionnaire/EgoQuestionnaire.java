@@ -139,7 +139,7 @@ public class EgoQuestionnaire {
         });
 
     egoConfig.setDmsAppCredentials(processDmsAppCreds(egoConfig));
-    egoConfig.setUiAppCredentials(processUiAppCreds());
+    egoConfig.setUiAppCredentials(processUiAppCreds(egoConfig));
     return egoConfig;
   }
 
@@ -177,11 +177,12 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private AppCredentials processUiAppCreds() {
+  private AppCredentials processUiAppCreds(@NonNull EgoConfig egoConfig) {
     return AppCredentials.builder()
         .name(DEFAULT_DMS_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
+        .redirectUri("http://localhost:8080") //TODO: ego-ui url is baked in!!!! needs to be dynamic
         .build();
   }
 

@@ -27,6 +27,7 @@ ServiceSpec:
         - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
         - INITIALIZATION_APPLICATIONS_0_CLIENTID=$ego.uiAppCredentials.clientId
         - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$ego.uiAppCredentials.clientSecret
+        - INITIALIZATION_APPLICATIONS_0_REDIRECTURI=$ego.uiAppCredentials.redirectUri
 #if( $ego.dmsAppCredentials )
         - INITIALIZATION_APPLICATIONS_1_NAME=$ego.dmsAppCredentials.name
         - INITIALIZATION_APPLICATIONS_1_TYPE=ADMIN

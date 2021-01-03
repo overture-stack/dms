@@ -24,4 +24,6 @@ public class DmsConfig {
   @NonNull private final String version;
 
   @NonNull private final EgoConfig ego;
+
+  @NonNull private final SongConfig song;
 }

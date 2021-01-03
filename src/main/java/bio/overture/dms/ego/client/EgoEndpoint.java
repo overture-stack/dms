@@ -15,7 +15,6 @@ public class EgoEndpoint {
   @NonNull private final String baseServerUrl;
 
   public String postAccessToken(@NonNull String clientId, @NonNull String clientSecret) {
-
     return format(
         "%s/oauth/token?client_id=%s&client_secret=%s&grant_type=client_credentials",
         baseServerUrl, encodeValue(clientId), encodeValue(clientSecret));
@@ -23,6 +22,10 @@ public class EgoEndpoint {
 
   public String getPublicKey() {
     return format("%s/oauth/token/public_key", baseServerUrl);
+  }
+
+  public String postCreateApplication() {
+    return format("%s/applications", baseServerUrl);
   }
 
   @SneakyThrows

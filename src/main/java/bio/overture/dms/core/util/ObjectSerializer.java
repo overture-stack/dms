@@ -22,23 +22,28 @@ public class ObjectSerializer {
 
   // TODO: handle JsonParseException
   @SneakyThrows
-  public JsonNode deserializeFile(@NonNull InputStream is) {
+  public JsonNode deserialize(@NonNull InputStream is) {
     return objectMapper.readTree(is);
   }
 
   @SneakyThrows
-  public JsonNode deserializeFile(@NonNull File f) {
+  public JsonNode deserialize(@NonNull File f) {
     checkFileExists(f.toPath());
     return objectMapper.readTree(f);
   }
 
   @SneakyThrows
-  public <T> T deserializeFile(@NonNull InputStream is, Class<T> tClass) {
+  public JsonNode deserialize(@NonNull String input) {
+    return objectMapper.readTree(input);
+  }
+
+  @SneakyThrows
+  public <T> T deserializeToObject(@NonNull InputStream is, Class<T> tClass) {
     return objectMapper.readValue(is, tClass);
   }
 
   @SneakyThrows
-  public <T> T deserializeFile(@NonNull File f, Class<T> tClass) {
+  public <T> T deserializeToObject(@NonNull File f, Class<T> tClass) {
     checkFileExists(f.toPath());
     return objectMapper.readValue(f, tClass);
   }

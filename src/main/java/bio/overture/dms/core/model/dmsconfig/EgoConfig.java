@@ -70,6 +70,7 @@ public class EgoConfig {
     private String name;
     private String clientId;
     private String clientSecret;
+    private String redirectUri;
 
     @JsonIgnore
     public boolean isSecretDefined() {

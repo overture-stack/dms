@@ -3,9 +3,16 @@ package bio.overture.dms.ego.client;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.model.EgoToken;
 import bio.overture.dms.rest.RestClient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 /** A api client for an externally running Ego service */
 @RequiredArgsConstructor
@@ -27,5 +34,45 @@ public class EgoClient {
   @SneakyThrows
   public String getPublicKey() {
     return restClient.getString(egoEndpoint.getPublicKey());
+  }
+
+  public EgoApplication createApplication(@NonNull CreateApplicationRequest r){
+    return restClient.post(egoEndpoint.postCreateApplication(), r,
+        x -> jsonSerializer.convertValue(x, EgoApplication.class));
+  }
+
+  public Optional<EgoApplication> findApplicationByName(@NonNull String applicationName){
+    page through everything
+    return restClient.post(egoEndpoint.postCreateApplication(), r,
+        x -> jsonSerializer.deserialize(x).path("id").textValue());
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CreateApplicationRequest{
+    @NotNull private String name;
+    @NotNull private String type;
+    @NotNull private String clientId;
+    @NotNull private String clientSecret;
+    private String redirectUri;
+    private String description;
+    @NotNull private String status;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class EgoApplication{
+    @NotNull private String id;
+    @NotNull private String name;
+    @NotNull private String type;
+    @NotNull private String clientId;
+    @NotNull private String clientSecret;
+    private String redirectUri;
+    private String description;
+    @NotNull private String status;
   }
 }

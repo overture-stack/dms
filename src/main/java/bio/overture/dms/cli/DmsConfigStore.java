@@ -51,7 +51,7 @@ public class DmsConfigStore {
     val file = getDmsConfigFilePath();
     if (isRegularFile(file)) {
       return Optional.of(
-          yamlSerializer.deserializeFile(getDmsConfigFilePath().toFile(), DmsConfig.class));
+          yamlSerializer.deserializeToObject(getDmsConfigFilePath().toFile(), DmsConfig.class));
     }
     return Optional.empty();
   }

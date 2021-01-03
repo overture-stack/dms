@@ -33,12 +33,12 @@ public class DeserializationTest {
     val tempFile = tempDir.resolve("tempFile.yaml").toFile();
     val file = getConfigYamlFile();
 
-    val obj1 = yamlSerializer.deserializeFile(file, ComposeStack.class);
+    val obj1 = yamlSerializer.deserializeToObject(file, ComposeStack.class);
 
-    val jsonNode1 = yamlSerializer.deserializeFile(file);
+    val jsonNode1 = yamlSerializer.deserialize(file);
     yamlSerializer.serializeToFile(jsonNode1, tempFile);
 
-    val obj1_1 = yamlSerializer.deserializeFile(tempFile, ComposeStack.class);
+    val obj1_1 = yamlSerializer.deserializeToObject(tempFile, ComposeStack.class);
     val obj1_2 = yamlSerializer.convertValue(jsonNode1, ComposeStack.class);
 
     val jsonString = yamlSerializer.serializeValue(jsonNode1);
@@ -55,7 +55,7 @@ public class DeserializationTest {
   @Test
   @SneakyThrows
   public void deserialization_unknownFields_fail(@TempDir Path tempDir) {
-    val jsonNode = (ObjectNode) yamlSerializer.deserializeFile(getConfigYamlFile());
+    val jsonNode = (ObjectNode) yamlSerializer.deserialize(getConfigYamlFile());
 
     jsonNode.put("someRandomField", "someRandomValue");
 
@@ -64,7 +64,7 @@ public class DeserializationTest {
     yamlSerializer.serializeToFile(jsonNode, tempFile);
 
     assertExceptionThrown(
-        () -> yamlSerializer.deserializeFile(tempFile, ComposeStack.class),
+        () -> yamlSerializer.deserializeToObject(tempFile, ComposeStack.class),
         UnrecognizedPropertyException.class);
 
     val jsonString = yamlSerializer.serializeValue(jsonNode);
