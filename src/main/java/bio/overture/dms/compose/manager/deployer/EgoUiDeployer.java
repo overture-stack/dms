@@ -18,30 +18,20 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 @Component
 public class EgoUiDeployer {
 
-  private final ServiceSpecRenderEngine serviceSpecRenderEngine;
   private final ServiceDeployer serviceDeployer;
   private final EgoClientFactory egoClientFactory;
 
   @Autowired
-  public EgoUiDeployer( @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine,
+  public EgoUiDeployer(
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull EgoClientFactory egoClientFactory){
-    this.serviceSpecRenderEngine = serviceSpecRenderEngine;
     this.serviceDeployer = serviceDeployer;
     this.egoClientFactory = egoClientFactory;
   }
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
     attemptInitialization(dmsConfig.getEgo());
-    val uiDeployType = deployUi(dmsConfig);
-  }
-
-  private DeployTypes deployUi(DmsConfig dmsConfig) {
-    val uiServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_UI)
-        .orElseThrow();
-    val dbDeployType = serviceDeployer.process(uiServiceSpec);
-    serviceDeployer.waitForServiceRunning(uiServiceSpec);
-    return dbDeployType;
+    val uiDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_UI);
   }
 
   private void attemptInitialization (EgoConfig egoConfig) {

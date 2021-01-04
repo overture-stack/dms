@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 /** Implementation of a ComposeManager that manages a Swarm cluster using ComposeStack objects */
 @Slf4j
+@Deprecated
 @Component
 public class ComposeStackManager implements ComposeManager<ComposeStack> {
 

@@ -38,6 +38,8 @@ public class VelocityConfig {
    * done if its serialized to a string.
    */
   @Bean
+  @Deprecated
+  //TODO: cleanup
   public ObjectSerializer velocitySerializer() {
     val module = new SimpleModule().addSerializer(URL.class, new CustomUrlSerializer());
     val mapper = new ObjectMapper().registerModule(module).enable(INDENT_OUTPUT);
@@ -51,6 +53,7 @@ public class VelocityConfig {
    * is required for the velocity template, then by calling `$url.full`, the fully rendered URL
    * string will be used.
    */
+  @Deprecated
   public static class CustomUrlSerializer extends JsonSerializer<URL> {
 
     @Override

@@ -37,16 +37,13 @@ public class ServiceSpecRenderEngine {
    * Dependencies
    */
   private final VelocityEngine velocityEngine;
-  private final ObjectSerializer velocitySerializer;
   private final ObjectSerializer yamlSerializer;
 
   @Autowired
   public ServiceSpecRenderEngine(
       @NonNull VelocityEngine velocityEngine,
-      @NonNull ObjectSerializer velocitySerializer,
       @NonNull ObjectSerializer yamlSerializer) {
     this.velocityEngine = velocityEngine;
-    this.velocitySerializer = velocitySerializer;
     this.yamlSerializer = yamlSerializer;
   }
 
@@ -82,8 +79,7 @@ public class ServiceSpecRenderEngine {
 
   private Map<String, Object> resolveContextMap(DmsConfig dmsConfig){
     val out = new HashMap<String, Object>();
-//    val dmsConfigMap= velocitySerializer.convertToMap(dmsConfig);
-    out.put("dmsConfig", dmsConfig);
+    out.put(DMS_CONFIG, dmsConfig);
     val composeServiceResourceMap = ComposeServiceResources.stream()
         .collect(toUnmodifiableMap(Enum::name, ComposeServiceResources::toString));
     out.put(COMPOSE_SERVICE_RESOURCES, composeServiceResourceMap);

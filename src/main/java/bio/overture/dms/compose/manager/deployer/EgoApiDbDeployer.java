@@ -30,46 +30,27 @@ public class EgoApiDbDeployer {
       .withMaxRetries(300)
       .withDelay(Duration.ofSeconds(2));
 
-  private final ServiceSpecRenderEngine serviceSpecRenderEngine;
   private final ServiceDeployer serviceDeployer;
   private final EgoClientFactory egoClientFactory;
   private final RestClientFactory basicRestClientFactory;
 
   @Autowired
   public EgoApiDbDeployer(
-      @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine,
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull EgoClientFactory egoClientFactory,
       @NonNull @Qualifier("nonRetryingRestClientFactory") RestClientFactory basicRestClientFactory) {
-    this.serviceSpecRenderEngine = serviceSpecRenderEngine;
     this.serviceDeployer = serviceDeployer;
     this.egoClientFactory = egoClientFactory;
     this.basicRestClientFactory = basicRestClientFactory;
   }
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
-    val dbDeployType = deployDb(dmsConfig);
-    val apiDeployType = deployApi(dmsConfig);
+    //TODO: DB deployment is not blocking the api deployement....fix this
+    val dbDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_DB);
+    val apiDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_API);
 
     waitForEgoApiHealthy(dmsConfig.getEgo());
     attemptFinalization(dmsConfig.getEgo());
-  }
-
-  //TODO: DB deployment is not blocking the api deployement....fix this
-  private DeployTypes deployDb(DmsConfig dmsConfig) {
-    val dbServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_DB)
-        .orElseThrow();
-    val dbDeployType = serviceDeployer.process(dbServiceSpec);
-    serviceDeployer.waitForServiceRunning(dbServiceSpec);
-    return dbDeployType;
-  }
-
-  private DeployTypes deployApi(DmsConfig dmsConfig) {
-    val apiServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_API)
-        .orElseThrow();
-    val apiDeployType = serviceDeployer.process(apiServiceSpec);
-    serviceDeployer.waitForServiceRunning(apiServiceSpec);
-    return apiDeployType;
   }
 
   private void waitForEgoApiHealthy(EgoConfig egoConfig) {
