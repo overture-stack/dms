@@ -3,7 +3,7 @@ package bio.overture.dms.ego;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static java.lang.String.format;
 
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.client.EgoClient;
 import bio.overture.dms.ego.client.EgoEndpoint;
@@ -55,7 +55,7 @@ public class EgoClientFactory {
         restClientFactory.buildBearerAuthRestClient(token));
   }
 
-  public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig2 egoConfig) {
+  public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig egoConfig) {
     val dmsAppCreds = egoConfig.getApi().getDmsAppCredentials();
     try {
       val serverUrl = egoConfig.getApi().getUrl().toString();

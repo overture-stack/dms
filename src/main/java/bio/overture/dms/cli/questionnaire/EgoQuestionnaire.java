@@ -1,5 +1,23 @@
 package bio.overture.dms.cli.questionnaire;
 
+import bio.overture.dms.cli.command.config.ConfigBuildCommand;
+import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
+import bio.overture.dms.core.util.RandomGenerator;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.net.URL;
+import java.util.function.BiConsumer;
+
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -7,29 +25,12 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.HOURS;
 
-import bio.overture.dms.cli.command.config.ConfigBuildCommand;
-import bio.overture.dms.cli.question.QuestionFactory;
-import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2.JwtConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2.JwtConfig.JwtDuration;
-import bio.overture.dms.core.util.RandomGenerator;
-import java.net.URL;
-import java.util.function.BiConsumer;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 @Component
 public class EgoQuestionnaire {
 
   /** Constants */
   private static final String DEFAULT_DMS_APP_NAME = "dms";
-
   private static final String DEFAULT_UI_APP_NAME = "ego-ui";
-
   private static final String DEFAULT_DMS_APP_CLIENT_ID = "dms";
   private static final String DEFAULT_UI_APP_CLIENT_ID = "ego-ui";
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
@@ -45,137 +46,23 @@ public class EgoQuestionnaire {
   }
 
   // TODO: add inputEgoConfig, so that an existing ego config can be updated
-  public EgoConfig2 buildEgoConfig(ClusterRunModes clusterRunMode) {
+  public EgoConfig buildEgoConfig(@NonNull ClusterRunModes clusterRunMode) {
     val apiConfig = processEgoApiConfig(clusterRunMode);
     val dbConfig = processEgoDbConfig();
     val uiConfig = processEgoUiConfig(apiConfig);
-    return EgoConfig2.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
+    return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
-  @Deprecated
-  public EgoConfig2 buildEgoConfig2(ClusterRunModes clusterRunMode) {
-    val apiBuilder = EgoConfig2.EgoApiConfig.builder();
-    val dbBuilder = EgoConfig2.EgoDbConfig.builder();
-    val uiBuilder = EgoConfig2.EgoUiConfig.builder();
 
-    val apiKeyDurationDays =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many days should api keys be valid for?", true, 30)
-            .getAnswer();
-    apiBuilder.tokenDurationDays(apiKeyDurationDays);
-
-    val jwtUserDurationHours =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many hours should USER JWTs be valid for?", true, 3)
-            .getAnswer();
-
-    val jwtAppDurationHours =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many hours should APP JWTs be valid for?", true, 3)
-            .getAnswer();
-
-    apiBuilder.jwt(
-        JwtConfig.builder()
-            .app(new JwtDuration(HOURS.toMillis(jwtUserDurationHours)))
-            .app(new JwtDuration(HOURS.toMillis(jwtAppDurationHours)))
-            .build());
-
-    val refreshTokenDurationHours =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many hours should refresh tokens be valid for?", true, 12)
-            .getAnswer();
-    apiBuilder.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
-
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the EGO api on?", true, 9000)
-            .getAnswer();
-    apiBuilder.hostPort(apiPort);
-
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the EGO server base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      serverUrl = createLocalhostUrl(apiPort);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
-    apiBuilder.url(serverUrl);
-
-    val isSetDBPassword =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Boolean.class, "Would you like to set the database password for EGO?", false, null)
-            .getAnswer();
-
-    if (isSetDBPassword) {
-      val dbPassword =
-          questionFactory.newPasswordQuestion("What should the EGO db password be?").getAnswer();
-      dbBuilder.databasePassword(dbPassword);
-    }
-
-    val dbPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the EGO db on?", true, 9001)
-            .getAnswer();
-    val dbConfig = dbBuilder.hostPort(dbPort).build();
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-
-    val apiConfig = apiBuilder.build();
-    apiConfig.setSso(new EgoConfig2.SSOConfig());
-
-    val ssoProviderSelection =
-        questionFactory
-            .newMCQuestion(
-                SSOProviders.class, "What SSO providers would you like to enable?", false, null)
-            .getAnswer();
-
-    ssoProviderSelection.forEach(
-        p -> {
-          val clientConfig = processSSOClientConfig(clusterRunMode, serverUrl, p.toString());
-          p.setClientConfig(apiConfig.getSso(), clientConfig);
-        });
-
-    apiConfig.setDmsAppCredentials(processDmsAppCreds(apiConfig));
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-
-    val uiConfig = uiBuilder.uiAppCredentials(processUiAppCreds(apiConfig)).build();
-
-    return EgoConfig2.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
-  }
-
-  private EgoConfig2.EgoUiConfig processEgoUiConfig(EgoConfig2.EgoApiConfig egoApiConfig) {
-    return EgoConfig2.EgoUiConfig.builder()
+  private EgoConfig.EgoUiConfig processEgoUiConfig(EgoConfig.EgoApiConfig egoApiConfig) {
+    return EgoConfig.EgoUiConfig.builder()
         .uiAppCredentials(processUiAppCreds(egoApiConfig))
         //        .url() //TODO: egoUi.url must be populated
         .build();
   }
 
-  private EgoConfig2.EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
-    val apiBuilder = EgoConfig2.EgoApiConfig.builder();
+  private EgoConfig.EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
+    val apiBuilder = EgoConfig.EgoApiConfig.builder();
     val apiKeyDurationDays =
         questionFactory
             .newDefaultSingleQuestion(
@@ -232,7 +119,7 @@ public class EgoQuestionnaire {
 
     val apiConfig = apiBuilder.build();
 
-    apiConfig.setSso(new EgoConfig2.SSOConfig());
+    apiConfig.setSso(new SSOConfig());
 
     val ssoProviderSelection =
         questionFactory
@@ -250,8 +137,8 @@ public class EgoQuestionnaire {
     return apiConfig;
   }
 
-  private EgoConfig2.EgoDbConfig processEgoDbConfig() {
-    val dbBuilder = EgoConfig2.EgoDbConfig.builder();
+  private EgoConfig.EgoDbConfig processEgoDbConfig() {
+    val dbBuilder = EgoConfig.EgoDbConfig.builder();
 
     val isSetDBPassword =
         questionFactory
@@ -275,9 +162,9 @@ public class EgoQuestionnaire {
     return dbBuilder.build();
   }
 
-  private EgoConfig2.SSOClientConfig processSSOClientConfig(
+  private SSOClientConfig processSSOClientConfig(
       ClusterRunModes clusterRunMode, URL serverUrl, String providerType) {
-    val clientConfigBuilder = EgoConfig2.SSOClientConfig.builder();
+    val clientConfigBuilder = SSOClientConfig.builder();
 
     val clientId =
         questionFactory
@@ -309,9 +196,9 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private EgoConfig2.AppCredentials processUiAppCreds(@NonNull EgoConfig2.EgoApiConfig apiConfig) {
-    return EgoConfig2.AppCredentials.builder()
-        .name(DEFAULT_DMS_APP_NAME)
+  private EgoConfig.AppCredentials processUiAppCreds(@NonNull EgoConfig.EgoApiConfig apiConfig) {
+    return EgoConfig.AppCredentials.builder()
+        .name(DEFAULT_UI_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
         .redirectUri(
@@ -319,7 +206,7 @@ public class EgoQuestionnaire {
         .build();
   }
 
-  private EgoConfig2.AppCredentials processDmsAppCreds(EgoConfig2.EgoApiConfig apiConfig) {
+  private EgoConfig.AppCredentials processDmsAppCreds(EgoConfig.EgoApiConfig apiConfig) {
     if (isNull(apiConfig.getDmsAppCredentials())) {
       // doesnt exist, ask questions
       val clientId =
@@ -334,7 +221,7 @@ public class EgoQuestionnaire {
               .getAnswer();
 
       val clientSecret = generateAppSecret();
-      return EgoConfig2.AppCredentials.builder()
+      return EgoConfig.AppCredentials.builder()
           .name(DEFAULT_DMS_APP_NAME)
           .clientId(clientId)
           .clientSecret(clientSecret)
@@ -377,7 +264,7 @@ public class EgoQuestionnaire {
 
         val clientSecret = generateAppSecret();
 
-        return EgoConfig2.AppCredentials.builder()
+        return EgoConfig.AppCredentials.builder()
             .name(appName)
             .clientId(clientId)
             .clientSecret(clientSecret)
@@ -406,19 +293,19 @@ public class EgoQuestionnaire {
   }
 
   public enum SSOProviders {
-    GOOGLE(EgoConfig2.SSOConfig::setGoogle),
-    LINKEDIN(EgoConfig2.SSOConfig::setLinkedin),
-    GITHUB(EgoConfig2.SSOConfig::setGithub),
-    FACEBOOK(EgoConfig2.SSOConfig::setFacebook),
-    ORCID(EgoConfig2.SSOConfig::setOrcid);
+    GOOGLE(SSOConfig::setGoogle),
+    LINKEDIN(SSOConfig::setLinkedin),
+    GITHUB(SSOConfig::setGithub),
+    FACEBOOK(SSOConfig::setFacebook),
+    ORCID(SSOConfig::setOrcid);
 
-    private final BiConsumer<EgoConfig2.SSOConfig, EgoConfig2.SSOClientConfig> setter;
+    private final BiConsumer<SSOConfig, SSOClientConfig> setter;
 
-    SSOProviders(BiConsumer<EgoConfig2.SSOConfig, EgoConfig2.SSOClientConfig> setter) {
+    SSOProviders(BiConsumer<SSOConfig, SSOClientConfig> setter) {
       this.setter = setter;
     }
 
-    public void setClientConfig(EgoConfig2.SSOConfig s, EgoConfig2.SSOClientConfig clientConfig) {
+    public void setClientConfig(SSOConfig s, SSOClientConfig clientConfig) {
       setter.accept(s, clientConfig);
     }
   }

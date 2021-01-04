@@ -4,7 +4,7 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 
 import bio.overture.dms.compose.manager.ServiceDeployer;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.ego.EgoClientFactory;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class EgoUiDeployer {
     val uiDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_UI);
   }
 
-  private void attemptInitialization(EgoConfig2 egoConfig) {
+  private void attemptInitialization(EgoConfig egoConfig) {
     val dmsEgoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
     // TODO: implement properly
     log.info("DOOOOOOOOOOOOOOOOOOOO STUFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");

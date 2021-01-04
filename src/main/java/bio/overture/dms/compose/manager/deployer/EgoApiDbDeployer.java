@@ -5,7 +5,7 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_DB;
 
 import bio.overture.dms.compose.manager.ServiceDeployer;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig2;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.ego.EgoClientFactory;
 import bio.overture.dms.rest.RestClientFactory;
 import java.time.Duration;
@@ -50,7 +50,7 @@ public class EgoApiDbDeployer {
     attemptFinalization(dmsConfig.getEgo());
   }
 
-  private void waitForEgoApiHealthy(EgoConfig2 egoConfig) {
+  private void waitForEgoApiHealthy(EgoConfig egoConfig) {
     // Build an ego client that does not have a built in retry mechanism
     val egoClient =
         EgoClientFactory.builder()
@@ -63,7 +63,7 @@ public class EgoApiDbDeployer {
     Failsafe.with(RETRY_POLICY).get(egoClient::getPublicKey);
   }
 
-  private void attemptFinalization(EgoConfig2 egoConfig) {
+  private void attemptFinalization(EgoConfig egoConfig) {
     val dmsEgoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
     // TODO: implement properly
     log.info("DOOOOOOOOOOOOOOOOOOOO STUFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");

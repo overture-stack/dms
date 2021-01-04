@@ -23,39 +23,67 @@ import lombok.NoArgsConstructor;
 @JsonInclude(NON_EMPTY)
 public class EgoConfig {
 
-  @Min(value = 1)
-  @Builder.Default
-  private int apiTokenDurationDays = 30;
+  @NotNull private EgoApiConfig api;
+  @NotNull private EgoDbConfig db;
+  @NotNull private EgoUiConfig ui;
 
-  @NotNull private JwtConfig jwt;
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class EgoApiConfig {
+    @Min(value = 1)
+    @Builder.Default
+    private int tokenDurationDays = 30;
 
-  @Min(value = 60000L)
-  @Builder.Default
-  private long refreshTokenDurationMS = 43200000L;
+    @NotNull private JwtConfig jwt;
 
-  @Min(value = 2000)
-  @Builder.Default
-  private int apiHostPort = 9000;
+    @Min(value = 60000L)
+    @Builder.Default
+    private long refreshTokenDurationMS = 43200000L;
 
-  @NotNull private EgoConfig.SSOConfig sso;
+    @Min(value = 2000)
+    @Builder.Default
+    private int hostPort = 9000;
 
-  @NotNull private URL serverUrl;
+    @NotNull private EgoConfig.SSOConfig sso;
 
-  // TODO: enable parameter validation
-  @Pattern(regexp = "^[A-Za-z0-9]+")
-  private String databasePassword;
+    @NotNull private URL url;
 
-  @Min(value = 2000)
-  @Builder.Default
-  private int dbHostPort = 9001;
-
-  @JsonIgnore
-  public boolean isDatabasePasswordDefined() {
-    return isDefined(databasePassword);
+    private AppCredentials dmsAppCredentials;
   }
 
-  private AppCredentials dmsAppCredentials;
-  private AppCredentials uiAppCredentials;
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class EgoDbConfig {
+
+    // TODO: enable parameter validation
+    @Pattern(regexp = "^[A-Za-z0-9]+")
+    private String databasePassword;
+
+    @Min(value = 2000)
+    @Builder.Default
+    private int hostPort = 9001;
+
+    @JsonIgnore
+    public boolean isDatabasePasswordDefined() {
+      return isDefined(databasePassword);
+    }
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class EgoUiConfig {
+    @NotNull private URL url;
+    private AppCredentials uiAppCredentials;
+  }
 
   /**
    * Represents the ego application credentials, that is used by this program to call any endpoint
