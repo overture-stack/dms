@@ -3,6 +3,7 @@ package bio.overture.dms.cli.config;
 import bio.overture.dms.cli.properties.TerminalProperties;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.terminal.TerminalImpl;
+import bio.overture.dms.core.Messenger;
 import lombok.NonNull;
 import lombok.val;
 import org.beryx.textio.TextIO;
@@ -51,4 +52,10 @@ public class ProdTerminalConfig {
         .textTerminal(textTerminal)
         .build();
   }
+
+  @Bean
+  public Messenger terminalStatusMessenger(@Autowired Terminal terminal){
+    return terminal::printStatus;
+  }
+
 }

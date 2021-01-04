@@ -9,7 +9,9 @@ import bio.overture.dms.cli.command.cluster.ClusterApplyCommand;
 import bio.overture.dms.cli.command.cluster.ClusterDestroyCommand;
 import bio.overture.dms.cli.terminal.TerminalImpl;
 import bio.overture.dms.compose.manager.DmsComposeManager;
+import bio.overture.dms.compose.manager.DmsComposeManager2;
 import bio.overture.dms.ego.EgoClientFactory;
+import bio.overture.dms.util.TestTextTerminal;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,6 +29,7 @@ public class DmsApplicationTests {
 
   // NOTE: https://docs.docker.com/engine/swarm/how-swarm-mode-works/swarm-task-states/
   @Autowired DmsComposeManager dmsComposeManager;
+  @Autowired DmsComposeManager2 dmsComposeManager2;
   @Autowired private DmsConfigStore dmsConfigStore;
   // TODO: add wiremocking tests for the ego client
   @Autowired private EgoClientFactory egoClientFactory;
@@ -34,26 +37,16 @@ public class DmsApplicationTests {
   @Test
   void contextLoads() {}
 
+  @Autowired private ClusterApplyCommand clusterApplyCommand;
+  @Autowired private TestTextTerminal testTextTerminal;
   @Test
   @Disabled
   @SneakyThrows
   public void testDeploy() {
-    val ttt = createTestTextTerminal();
-    val clusterApplyCommand =
-        new ClusterApplyCommand(
-            TerminalImpl.builder()
-                .ansi(true)
-                .silent(false)
-                .terminalWidth(80)
-                .textTerminal(ttt)
-                .build(),
-            dmsComposeManager,
-            dmsConfigStore);
-
     val exitCode = clusterApplyCommand.call();
     assertEquals(0, exitCode);
 
-    log.info(ttt.getOutput(false));
+    log.info(testTextTerminal.getOutputAndReset(false));
     log.info("Sdf");
   }
 
@@ -81,7 +74,7 @@ public class DmsApplicationTests {
     val exitCode = clusterDestroyCommand.call();
     assertEquals(0, exitCode);
 
-    log.info(ttt.getOutput(false));
+    log.info(ttt.getOutputAndReset(false));
     log.info("sdf");
   }
 

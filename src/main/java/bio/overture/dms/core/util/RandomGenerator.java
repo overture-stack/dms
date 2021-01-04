@@ -20,6 +20,7 @@ package bio.overture.dms.core.util;
 import static bio.overture.dms.core.util.CollectionUtils.newArrayList;
 import static bio.overture.dms.core.util.Exceptions.checkArgument;
 import static com.fasterxml.uuid.Generators.randomBasedGenerator;
+import static java.lang.Character.toLowerCase;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.toList;
@@ -73,16 +74,19 @@ public class RandomGenerator {
    * @param numCharacters to generate
    */
   public String generateRandomAsciiString(int numCharacters) {
+    callCount += 2;
     log.debug(
         "Generating RandomAsciiString for RandomGenerator[{}] with seed '{}' and callCount '{}'",
         id,
         seed,
-        ++callCount);
+        callCount);
     val total = STRING_FOR_GENERATION.length();
     val sb = new StringBuilder();
     for (int i = 0; i < numCharacters; i++) {
       val pos = random.nextInt(total);
-      sb.append(STRING_FOR_GENERATION.charAt(pos));
+      val useLowerCase = random.nextInt(total)%2 == 0;
+      val asciiCharacter = STRING_FOR_GENERATION.charAt(pos);
+      sb.append( useLowerCase ? toLowerCase(asciiCharacter) : asciiCharacter );
     }
     return sb.toString();
   }
@@ -113,7 +117,7 @@ public class RandomGenerator {
   }
 
   /**
-   * Generate a random integer between the interval [inclusiveMin, exlusiveMax)
+   * Generate a random integer between the interval [inclusiveMin, exclusiveMax)
    *
    * @param inclusiveMin inclusive lower bound
    * @param exlusiveMax exclusive upper bound

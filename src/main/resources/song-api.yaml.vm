@@ -23,6 +23,9 @@ ServiceSpec:
         - AUTH_SERVER_SCOPE_STUDY_PREFIX=dms.
         - AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
         - AUTH_SERVER_SCOPE_SYSTEM=dms.WRITE
+      # TODO: replace ego-api with $services.ego.api.name. This should be another object, not apart
+      #       of DmsConfig, that is specific to the system. This could be called $serviceNameIndex.ego.api.
+      #       The point is so that we dont bake in "ego-api", but instead reference it from outside
         - AUTH_JWT_PUBLICKEYURL=http://ego-api:8080/oauth/token/public_key
         - ID_USELOCAL=true
         - SCORE_URL=http://score-api:8080

@@ -33,10 +33,4 @@ public class ComposeStackConfig {
     return generator;
   }
 
-  @Bean
-  public ServiceDeployer serviceDeployer(){
-    //TODO: needs refactoring
-    return null;
-
-  }
 }

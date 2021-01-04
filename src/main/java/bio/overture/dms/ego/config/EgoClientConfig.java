@@ -23,17 +23,29 @@ public class EgoClientConfig {
   @Autowired private EgoClientProperties egoClientProperties;
 
   @Bean
-  public OkHttpRestClientFactory okHttpRestClientFactory(
+  public OkHttpRestClientFactory retryingRestClientFactory(
       @Autowired ObjectSerializer jsonSerializer) {
+    return getOkHttpRestClientFactoryBuilder(jsonSerializer)
+        .retryPolicy(buildRetryPolicy(egoClientProperties.getRetry()))
+        .build();
+  }
+
+  @Bean
+  public OkHttpRestClientFactory nonRetryingRestClientFactory(
+      @Autowired ObjectSerializer jsonSerializer) {
+    return getOkHttpRestClientFactoryBuilder(jsonSerializer)
+        .retryPolicy(null)
+        .build();
+  }
+
+  private OkHttpRestClientFactory.OkHttpRestClientFactoryBuilder getOkHttpRestClientFactoryBuilder( ObjectSerializer jsonSerializer) {
     val timeoutProps = egoClientProperties.getTimeoutSeconds();
     return OkHttpRestClientFactory.builder()
         .callTimeout(timeoutProps.getCallDuration())
         .connectTimeout(timeoutProps.getConnectDuration())
         .readTimeout(timeoutProps.getReadDuration())
         .writeTimeout(timeoutProps.getWriteDuration())
-        .jsonSerializer(jsonSerializer)
-        .retryPolicy(buildRetryPolicy(egoClientProperties.getRetry()))
-        .build();
+        .jsonSerializer(jsonSerializer);
   }
 
   private static RetryPolicy<String> buildRetryPolicy(RetryProperties retryProperties) {

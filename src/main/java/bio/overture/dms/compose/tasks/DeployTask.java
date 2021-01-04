@@ -1,5 +1,6 @@
 package bio.overture.dms.compose.tasks;
 
+@Deprecated
 public interface DeployTask {
 
   /**

@@ -1,18 +1,20 @@
 package bio.overture.dms.compose.manager;
 
 import bio.overture.dms.compose.model.stack.ComposeService;
+import bio.overture.dms.core.Messenger;
 import bio.overture.dms.swarm.service.SwarmService;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
 import java.util.function.Consumer;
 
+import static bio.overture.dms.compose.manager.ServiceDeployer.DeployTypes.CREATE;
+import static bio.overture.dms.compose.manager.ServiceDeployer.DeployTypes.UPDATE;
 import static java.lang.String.format;
-import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Deploys a ComposeService, as well as running pre and post deployment tasks.
@@ -21,80 +23,52 @@ import static lombok.AccessLevel.PRIVATE;
  * deploying the service. Similarly for the Post task.
  */
 @Slf4j
-@RequiredArgsConstructor(access = PRIVATE)
+@Component
 public class ServiceDeployer {
 
-  @NonNull private final SwarmService swarmService;
-  @NonNull private final Map<String, Runnable> preDeployTaskIndex;
-  @NonNull private final Map<String, Runnable> postDeployTaskIndex;
+  private static final int NUM_RETRIES = 300;
+  private static final Duration POLL_PERIOD = Duration.ofSeconds(2);
+  private final SwarmService swarmService;
+  private final Messenger messenger;
 
-  public void process(@NonNull ComposeService s, @NonNull Consumer<String> printCallback){
-    preDeployTask(s);
-    printMessage(printCallback, "Completed Pre Deployment task for service %s", s.getName());
-
-    deploySwarmService(s);
-    printMessage(printCallback, "Completed Service Deployment task for service %s", s.getName());
-
-    postDeployTask(s);
-    printMessage(printCallback, "Completed Post Deployment task for service %s", s.getName());
+  @Autowired
+  public ServiceDeployer(@NonNull SwarmService swarmService,
+     @NonNull Messenger messenger) {
+    this.swarmService = swarmService;
+    this.messenger = messenger;
   }
 
-  private void preDeployTask(ComposeService s){
-    if (preDeployTaskIndex.containsKey(s.getName())){
-      preDeployTaskIndex.get(s.getName()).run();
-    }
+  public DeployTypes process(@NonNull ComposeService s){
+    val out = deploySwarmService(s);
+    messenger.send("Completed deployment task for service %s", s.getName());
+    return out;
   }
 
-  private void postDeployTask(ComposeService s){
-    if (postDeployTaskIndex.containsKey(s.getName())){
-      postDeployTaskIndex.get(s.getName()).run();
-    }
+  //TODO: not working properly. Is not waiting for service to be RUNNING
+  public void waitForServiceRunning(@NonNull ComposeService s){
+    messenger.send("Waiting for the service '%s' to be in the RUNNING state", s.getName());
+    swarmService.waitForServiceRunning(s.getName(), NUM_RETRIES, POLL_PERIOD);
   }
 
-  private static void printMessage(@NonNull Consumer<String> printCallback, @NonNull String formattedMessage, Object...args){
-    printCallback.accept(format(formattedMessage, args));
-  }
-
-  private void deploySwarmService(ComposeService s) {
+  private DeployTypes deploySwarmService(ComposeService s) {
     swarmService.ping();
     val result = swarmService.findSwarmServiceInfo(s.getName(), true);
     if (result.isPresent()) {
       log.debug("Found service '{}' info, updating existing service spec", s.getName());
       val info = result.get();
       swarmService.updateSwarmService(info.getId(), s.getServerSpec(), info.getVersion());
+      return UPDATE;
     } else {
       log.debug("Service '{}' info was NOT found, create new service spec", s.getName());
       swarmService.createSwarmService(s.getServerSpec());
+      return CREATE;
     }
   }
 
-  public static ServiceDeployerBuilder builder(){
-    return new ServiceDeployerBuilder();
+  public enum DeployTypes{
+    UPDATE,
+    CREATE;
   }
 
-  public static class ServiceDeployerBuilder {
 
-    private SwarmService swarmService;
-    private Map<String, Runnable> preDeployTaskIndex = new HashMap<>();
-    private Map<String, Runnable> postDeployTaskIndex = new HashMap<>();
-
-    public ServiceDeployerBuilder swarmService(SwarmService swarmService) {
-      this.swarmService = swarmService;
-      return this;
-    }
-
-    public ServiceDeployerBuilder addPreDeployTask(@NonNull String serviceName, @NonNull Runnable r){
-      this.preDeployTaskIndex.put(serviceName, r);
-      return this;
-    }
-
-    public ServiceDeployerBuilder addPostDeployTask(@NonNull String serviceName, @NonNull Runnable r){
-      this.postDeployTaskIndex.put(serviceName, r);
-      return this;
-    }
-
-    public ServiceDeployer build() {
-      return new ServiceDeployer(swarmService, preDeployTaskIndex, postDeployTaskIndex);
-    }
-  }
 }

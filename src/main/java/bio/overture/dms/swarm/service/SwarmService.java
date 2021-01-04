@@ -301,13 +301,18 @@ public class SwarmService {
             .findFirst()
             .get();
 
-    long maxAttempts = service.getSpec().getTaskTemplate().getRestartPolicy().getMaxAttempts();
+    //TODO: clean this up
+    long maxAttempts = service.getSpec().getMode().getReplicated().getReplicas();
+    if (nonNull(service.getSpec().getTaskTemplate().getRestartPolicy())){
+      maxAttempts = service.getSpec().getTaskTemplate().getRestartPolicy().getMaxAttempts();
+    }
+    val resolvedMaxAttempt = maxAttempts;
     val retry =
         new RetryPolicy<DeploymentStates>()
             .abortIf(x -> x != INFLIGHT)
             .withDelay(poll)
             .withMaxRetries(numRetries);
-    return Failsafe.with(retry).get(() -> resolveServiceState(serviceName, maxAttempts));
+    return Failsafe.with(retry).get(() -> resolveServiceState(serviceName, resolvedMaxAttempt));
   }
 
   private List<String> getContainerIdsForService(String serviceName) {

@@ -4,6 +4,7 @@ import bio.overture.dms.compose.tasks.PostDeployTask;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import lombok.NonNull;
 
+@Deprecated
 public class EgoApiDeployTask implements PostDeployTask {
 
   @Override

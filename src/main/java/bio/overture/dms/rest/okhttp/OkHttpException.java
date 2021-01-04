@@ -2,16 +2,17 @@ package bio.overture.dms.rest.okhttp;
 
 import static java.lang.String.format;
 
+import bio.overture.dms.rest.RestClientHttpException;
 import lombok.Getter;
 import lombok.NonNull;
 import okhttp3.Response;
 
-public class OkHttpException extends RuntimeException {
+public class OkHttpException extends RestClientHttpException {
 
   @Getter private final Response response;
 
   public OkHttpException(@NonNull Response response) {
-    super();
+    super(response.code());
     this.response = response;
   }
 

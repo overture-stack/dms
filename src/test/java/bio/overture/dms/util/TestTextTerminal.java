@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.beryx.textio.AbstractTextTerminal;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
+@NotThreadSafe
 @RequiredArgsConstructor(access = PRIVATE)
 public class TestTextTerminal extends AbstractTextTerminal<TestTextTerminal> {
   public static final int DEFAULT_MAX_READS = 100;
@@ -62,13 +65,28 @@ public class TestTextTerminal extends AbstractTextTerminal<TestTextTerminal> {
     return inputs;
   }
 
-  public List<String> getOutputs() {
-    return outputs;
+  public List<String> getOutputLines(boolean ignoreReset) {
+    val out = List.copyOf(outputs);
+    if (!ignoreReset){
+      reset();
+    }
+    return out;
   }
 
-  public String getOutput(boolean strip) {
-    val out = NONE.join(getOutputs());
+  /**
+   * In the case that a single TestTextTerminal instance is a shared component in more than one test,
+   * the terminal output is automatically reset/erased once the outputs are fetched.
+   * This is to prevent the context of a previous test from interfering with the current test
+   * This is NOT thread safe, so test must be run synchronously.
+   * @param strip
+   * @return
+   */
+  public String getOutputAndReset(boolean strip) {
+    return getOutput(strip, false);
+  }
 
+  public String getOutput(boolean strip, boolean ignoreReset) {
+    val out = NONE.join(getOutputLines(ignoreReset));
     if (strip) {
       return stripAll(out);
     }

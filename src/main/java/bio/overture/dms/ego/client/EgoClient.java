@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -42,9 +43,10 @@ public class EgoClient {
   }
 
   public Optional<EgoApplication> findApplicationByName(@NonNull String applicationName){
-    page through everything
-    return restClient.post(egoEndpoint.postCreateApplication(), r,
-        x -> jsonSerializer.deserialize(x).path("id").textValue());
+    //TODO: ego client find app by name, needs to page through everything
+    throw new NotImplementedException();
+//    restClient.post(egoEndpoint.postCreateApplication(), null,
+//        x -> jsonSerializer.deserialize(x).path("id").textValue());
   }
 
   @Data

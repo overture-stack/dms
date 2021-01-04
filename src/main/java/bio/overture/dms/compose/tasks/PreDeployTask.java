@@ -2,6 +2,7 @@ package bio.overture.dms.compose.tasks;
 
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 
+@Deprecated
 public interface PreDeployTask extends DeployTask {
 
   /**

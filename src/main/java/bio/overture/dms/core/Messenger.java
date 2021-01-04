@@ -13,7 +13,7 @@ public interface Messenger {
     send(format(formattedMessage, args));
   }
 
-  default void send(@NonNull Object sourceObject, @NonNull String formattedMessage, Object... args) {
+  default void sendDetailed(@NonNull Object sourceObject, @NonNull String formattedMessage, Object... args) {
     send("[" + sourceObject.getClass().getSimpleName() + "]: " + formattedMessage, args);
   }
 

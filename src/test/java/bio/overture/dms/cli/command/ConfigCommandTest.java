@@ -50,7 +50,7 @@ public class ConfigCommandTest {
   public void testConfigGet() {
     val cmd = new ConfigGetCommand(dmsConfigStore, terminal);
     val exitCode = cmd.call();
-    val output = testTextTerminal.getOutput(false);
+    val output = testTextTerminal.getOutputAndReset(false);
     assertFalse(output.isBlank());
     assertEquals(0, exitCode);
   }

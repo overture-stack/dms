@@ -3,8 +3,10 @@ package bio.overture.dms.cli.command.cluster;
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.compose.manager.DmsComposeManager;
+
 import java.util.concurrent.Callable;
+
+import bio.overture.dms.compose.manager.DmsComposeManager2;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,15 @@ import picocli.CommandLine.Command;
 public class ClusterApplyCommand implements Callable<Integer> {
 
   private final Terminal t;
-  private final DmsComposeManager dmsComposeManager;
+  private final DmsComposeManager2 dmsComposeManager2;
   private final DmsConfigStore dmsConfigStore;
 
   @Autowired
   public ClusterApplyCommand(
       @NonNull Terminal terminal,
-      @NonNull DmsComposeManager dmsComposeManager,
+      @NonNull DmsComposeManager2 dmsComposeManager2,
       @NonNull DmsConfigStore dmsConfigStore) {
-    this.dmsComposeManager = dmsComposeManager;
+    this.dmsComposeManager2 = dmsComposeManager2;
     this.t = terminal;
     this.dmsConfigStore = dmsConfigStore;
   }
@@ -38,7 +40,7 @@ public class ClusterApplyCommand implements Callable<Integer> {
     val result = dmsConfigStore.findStoredConfig();
     if (result.isPresent()) {
       t.printStatusLn("Starting deployment...");
-      dmsComposeManager.deploy(result.get());
+      dmsComposeManager2.deploy(result.get());
       t.printStatusLn("Deployment completed successfully");
       return 0;
     }

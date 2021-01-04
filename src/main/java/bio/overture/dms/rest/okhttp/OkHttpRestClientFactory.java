@@ -2,6 +2,8 @@ package bio.overture.dms.rest.okhttp;
 
 import static bio.overture.dms.core.util.Joiner.WHITESPACE;
 import static bio.overture.dms.core.util.Strings.isDefined;
+import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PRIVATE;
 
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.rest.RestClient;
@@ -9,7 +11,10 @@ import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.rest.RetryingRestClientDecorator;
 import java.io.IOException;
 import java.time.Duration;
+
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +31,7 @@ import okhttp3.Response;
  */
 @Slf4j
 @Builder
+@Getter(PRIVATE)
 @RequiredArgsConstructor
 public class OkHttpRestClientFactory implements RestClientFactory {
 
@@ -39,13 +45,14 @@ public class OkHttpRestClientFactory implements RestClientFactory {
   /** Dependencies */
   @NonNull private final ObjectSerializer jsonSerializer;
 
-  /** Configuration */
+  /** Required Configuration */
   @NonNull private final Duration callTimeout;
-
   @NonNull private final Duration connectTimeout;
   @NonNull private final Duration readTimeout;
   @NonNull private final Duration writeTimeout;
-  @NonNull private final RetryPolicy<String> retryPolicy;
+
+  /** Optional Configuration */
+  private final RetryPolicy<String> retryPolicy;
 
   @Override
   public RestClient buildBearerAuthRestClient(@NonNull String bearerToken) {
@@ -63,7 +70,11 @@ public class OkHttpRestClientFactory implements RestClientFactory {
             .okHttpClient(buildOkHttpClient(bearerToken))
             .jsonSerializer(jsonSerializer)
             .build();
-    return new RetryingRestClientDecorator(internalRestClient, retryPolicy);
+    if (nonNull(retryPolicy)){
+      return new RetryingRestClientDecorator(internalRestClient, retryPolicy);
+    } else {
+      return internalRestClient;
+    }
   }
 
   private OkHttpClient buildOkHttpClient(String bearerToken) {
@@ -76,6 +87,7 @@ public class OkHttpRestClientFactory implements RestClientFactory {
         .writeTimeout(writeTimeout)
         .build();
   }
+
 
   private static Response interceptRequest(Chain chain, String bearerToken) throws IOException {
     val r = chain.request();
