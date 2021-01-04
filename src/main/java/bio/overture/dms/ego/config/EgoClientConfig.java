@@ -33,12 +33,11 @@ public class EgoClientConfig {
   @Bean
   public OkHttpRestClientFactory nonRetryingRestClientFactory(
       @Autowired ObjectSerializer jsonSerializer) {
-    return getOkHttpRestClientFactoryBuilder(jsonSerializer)
-        .retryPolicy(null)
-        .build();
+    return getOkHttpRestClientFactoryBuilder(jsonSerializer).retryPolicy(null).build();
   }
 
-  private OkHttpRestClientFactory.OkHttpRestClientFactoryBuilder getOkHttpRestClientFactoryBuilder( ObjectSerializer jsonSerializer) {
+  private OkHttpRestClientFactory.OkHttpRestClientFactoryBuilder getOkHttpRestClientFactoryBuilder(
+      ObjectSerializer jsonSerializer) {
     val timeoutProps = egoClientProperties.getTimeoutSeconds();
     return OkHttpRestClientFactory.builder()
         .callTimeout(timeoutProps.getCallDuration())

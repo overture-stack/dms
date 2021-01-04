@@ -1,7 +1,6 @@
 package bio.overture.dms.rest;
 
 import lombok.Getter;
-import lombok.NonNull;
 
 public class RestClientHttpException extends RuntimeException {
 
@@ -26,30 +25,33 @@ public class RestClientHttpException extends RuntimeException {
     this.httpStatusCode = httpStatusCode;
   }
 
-  public RestClientHttpException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace,
+  public RestClientHttpException(
+      String message,
+      Throwable cause,
+      boolean enableSuppression,
+      boolean writableStackTrace,
       int httpStatusCode) {
     super(message, cause, enableSuppression, writableStackTrace);
     this.httpStatusCode = httpStatusCode;
   }
 
-  public boolean isClientError(){
+  public boolean isClientError() {
     return httpStatusCode >= 400 && httpStatusCode < 500;
   }
 
-  public boolean isServerError(){
+  public boolean isServerError() {
     return httpStatusCode >= 500 && httpStatusCode < 600;
   }
 
-  public boolean isError(){
+  public boolean isError() {
     return isClientError() || isServerError();
   }
 
-  public boolean isUnauthorizedError(){
+  public boolean isUnauthorizedError() {
     return httpStatusCode == 401;
   }
 
-  public boolean isForbiddenError(){
+  public boolean isForbiddenError() {
     return httpStatusCode == 403;
   }
-
 }

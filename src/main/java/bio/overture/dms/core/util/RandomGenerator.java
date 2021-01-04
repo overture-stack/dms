@@ -84,9 +84,9 @@ public class RandomGenerator {
     val sb = new StringBuilder();
     for (int i = 0; i < numCharacters; i++) {
       val pos = random.nextInt(total);
-      val useLowerCase = random.nextInt(total)%2 == 0;
+      val useLowerCase = random.nextInt(total) % 2 == 0;
       val asciiCharacter = STRING_FOR_GENERATION.charAt(pos);
-      sb.append( useLowerCase ? toLowerCase(asciiCharacter) : asciiCharacter );
+      sb.append(useLowerCase ? toLowerCase(asciiCharacter) : asciiCharacter);
     }
     return sb.toString();
   }

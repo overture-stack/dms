@@ -11,8 +11,6 @@ import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.rest.RetryingRestClientDecorator;
 import java.io.IOException;
 import java.time.Duration;
-
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -47,6 +45,7 @@ public class OkHttpRestClientFactory implements RestClientFactory {
 
   /** Required Configuration */
   @NonNull private final Duration callTimeout;
+
   @NonNull private final Duration connectTimeout;
   @NonNull private final Duration readTimeout;
   @NonNull private final Duration writeTimeout;
@@ -70,7 +69,7 @@ public class OkHttpRestClientFactory implements RestClientFactory {
             .okHttpClient(buildOkHttpClient(bearerToken))
             .jsonSerializer(jsonSerializer)
             .build();
-    if (nonNull(retryPolicy)){
+    if (nonNull(retryPolicy)) {
       return new RetryingRestClientDecorator(internalRestClient, retryPolicy);
     } else {
       return internalRestClient;
@@ -87,7 +86,6 @@ public class OkHttpRestClientFactory implements RestClientFactory {
         .writeTimeout(writeTimeout)
         .build();
   }
-
 
   private static Response interceptRequest(Chain chain, String bearerToken) throws IOException {
     val r = chain.request();

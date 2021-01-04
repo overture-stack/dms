@@ -39,7 +39,7 @@ public class VelocityConfig {
    */
   @Bean
   @Deprecated
-  //TODO: cleanup
+  // TODO: cleanup
   public ObjectSerializer velocitySerializer() {
     val module = new SimpleModule().addSerializer(URL.class, new CustomUrlSerializer());
     val mapper = new ObjectMapper().registerModule(module).enable(INDENT_OUTPUT);

@@ -1,8 +1,8 @@
 package bio.overture.dms.core;
 
-import lombok.NonNull;
-
 import static java.lang.String.format;
+
+import lombok.NonNull;
 
 @FunctionalInterface
 public interface Messenger {
@@ -13,8 +13,8 @@ public interface Messenger {
     send(format(formattedMessage, args));
   }
 
-  default void sendDetailed(@NonNull Object sourceObject, @NonNull String formattedMessage, Object... args) {
+  default void sendDetailed(
+      @NonNull Object sourceObject, @NonNull String formattedMessage, Object... args) {
     send("[" + sourceObject.getClass().getSimpleName() + "]: " + formattedMessage, args);
   }
-
 }

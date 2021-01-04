@@ -9,6 +9,4 @@ public class EgoClientInstantiationException extends RuntimeException {
   public EgoClientInstantiationException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }
-

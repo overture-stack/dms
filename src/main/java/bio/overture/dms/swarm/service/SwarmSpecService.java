@@ -24,6 +24,7 @@ public class SwarmSpecService {
 
   @SneakyThrows
   public SwarmSpec getInitSwarmSpec() {
-    return yamlSerializer.deserializeToObject(readResourceStream(INIT_SWARM_SPEC_LOC), SwarmSpec.class);
+    return yamlSerializer.deserializeToObject(
+        readResourceStream(INIT_SWARM_SPEC_LOC), SwarmSpec.class);
   }
 }

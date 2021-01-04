@@ -7,10 +7,8 @@ import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-
-import java.util.concurrent.Callable;
-
 import bio.overture.dms.compose.manager.DmsComposeManager2;
+import java.util.concurrent.Callable;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Setter;

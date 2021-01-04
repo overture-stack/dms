@@ -8,11 +8,10 @@ import static lombok.AccessLevel.PRIVATE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.concurrent.NotThreadSafe;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.beryx.textio.AbstractTextTerminal;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 @NotThreadSafe
 @RequiredArgsConstructor(access = PRIVATE)
@@ -67,17 +66,18 @@ public class TestTextTerminal extends AbstractTextTerminal<TestTextTerminal> {
 
   public List<String> getOutputLines(boolean ignoreReset) {
     val out = List.copyOf(outputs);
-    if (!ignoreReset){
+    if (!ignoreReset) {
       reset();
     }
     return out;
   }
 
   /**
-   * In the case that a single TestTextTerminal instance is a shared component in more than one test,
-   * the terminal output is automatically reset/erased once the outputs are fetched.
-   * This is to prevent the context of a previous test from interfering with the current test
-   * This is NOT thread safe, so test must be run synchronously.
+   * In the case that a single TestTextTerminal instance is a shared component in more than one
+   * test, the terminal output is automatically reset/erased once the outputs are fetched. This is
+   * to prevent the context of a previous test from interfering with the current test This is NOT
+   * thread safe, so test must be run synchronously.
+   *
    * @param strip
    * @return
    */

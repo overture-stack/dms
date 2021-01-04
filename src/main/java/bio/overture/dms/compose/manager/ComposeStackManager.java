@@ -37,7 +37,7 @@ public class ComposeStackManager implements ComposeManager<ComposeStack> {
     swarmService.initializeSwarm();
     val graph = graphGenerator.generateGraph(cs);
     createConcurrentGraphTraversal(executorService, graph)
-        .traverse(x ->  x.getData().run(), () -> {});
+        .traverse(x -> x.getData().run(), () -> {});
   }
 
   @Override

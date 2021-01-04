@@ -301,9 +301,9 @@ public class SwarmService {
             .findFirst()
             .get();
 
-    //TODO: clean this up
+    // TODO: clean this up
     long maxAttempts = service.getSpec().getMode().getReplicated().getReplicas();
-    if (nonNull(service.getSpec().getTaskTemplate().getRestartPolicy())){
+    if (nonNull(service.getSpec().getTaskTemplate().getRestartPolicy())) {
       maxAttempts = service.getSpec().getTaskTemplate().getRestartPolicy().getMaxAttempts();
     }
     val resolvedMaxAttempt = maxAttempts;

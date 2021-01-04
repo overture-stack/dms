@@ -18,5 +18,4 @@ public class EgoApiDeployTask implements PostDeployTask {
     // 2 - create DMS policy, if DNE
     // 3 - create dms-admin permission, if DNE
   }
-
 }

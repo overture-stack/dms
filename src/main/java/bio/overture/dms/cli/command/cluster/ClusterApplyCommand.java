@@ -3,10 +3,8 @@ package bio.overture.dms.cli.command.cluster;
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-
-import java.util.concurrent.Callable;
-
 import bio.overture.dms.compose.manager.DmsComposeManager2;
+import java.util.concurrent.Callable;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;

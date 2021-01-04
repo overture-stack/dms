@@ -1,6 +1,9 @@
 package bio.overture.dms.ego;
 
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import static bio.overture.dms.core.util.Strings.isDefined;
+import static java.lang.String.format;
+
+import bio.overture.dms.core.model.dmsconfig.EgoConfig2;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.client.EgoClient;
 import bio.overture.dms.ego.client.EgoEndpoint;
@@ -16,9 +19,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import static bio.overture.dms.core.util.Strings.isDefined;
-import static java.lang.String.format;
 
 /** This factory is responsible for building an EgoClient using a RestClientFactory */
 @Slf4j
@@ -55,29 +55,35 @@ public class EgoClientFactory {
         restClientFactory.buildBearerAuthRestClient(token));
   }
 
-  public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig egoConfig){
+  public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig2 egoConfig) {
+    val dmsAppCreds = egoConfig.getApi().getDmsAppCredentials();
     try {
-      val serverUrl = egoConfig.getServerUrl().toString();
-      val egoToken = buildNoAuthEgoClient(serverUrl)
-          .postAccessToken(
-              egoConfig.getDmsAppCredentials().getClientId(),
-              egoConfig.getDmsAppCredentials().getClientSecret());
+      val serverUrl = egoConfig.getApi().getUrl().toString();
+      val egoToken =
+          buildNoAuthEgoClient(serverUrl)
+              .postAccessToken(dmsAppCreds.getClientId(), dmsAppCreds.getClientSecret());
       return buildBearerAuthEgoClient(serverUrl, egoToken);
     } catch (RestClientHttpException e) {
       String message = null;
       if (e.isUnauthorizedError()) {
-        message = format("The credentials for the Ego application '%s' are not valid",
-            egoConfig.getDmsAppCredentials().getName());
+        message =
+            format(
+                "The credentials for the Ego application '%s' are not valid",
+                dmsAppCreds.getName());
       } else if (e.isForbiddenError()) {
-        message = format("The credentials for the Ego application '%s' are forbidden",
-            egoConfig.getDmsAppCredentials().getName());
+        message =
+            format(
+                "The credentials for the Ego application '%s' are forbidden",
+                dmsAppCreds.getName());
       } else if (e.isError()) {
-        message = format("An unexpected error occurred while creating an access token from the application '%s'",
-            egoConfig.getDmsAppCredentials().getName());
+        message =
+            format(
+                "An unexpected error occurred while creating an access token from the application '%s'",
+                dmsAppCreds.getName());
       }
-      log.error((isDefined(message) ? message + ": " : "UnknownEgoClient Error: " ) + e.getMessage());
+      log.error(
+          (isDefined(message) ? message + ": " : "UnknownEgoClient Error: ") + e.getMessage());
       throw new EgoClientInstantiationException(message, e);
     }
   }
-
 }

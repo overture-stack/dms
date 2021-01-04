@@ -1,13 +1,10 @@
 package bio.overture.dms.compose.docker;
 
-import static bio.overture.dms.cli.question.QuestionFactory.buildQuestionFactory;
-import static bio.overture.dms.util.TestTextTerminal.createTestTextTerminal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.command.cluster.ClusterApplyCommand;
 import bio.overture.dms.cli.command.cluster.ClusterDestroyCommand;
-import bio.overture.dms.cli.terminal.TerminalImpl;
 import bio.overture.dms.compose.manager.DmsComposeManager;
 import bio.overture.dms.compose.manager.DmsComposeManager2;
 import bio.overture.dms.ego.EgoClientFactory;

@@ -1,22 +1,20 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.core.util.Strings.isDefined;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 import bio.overture.dms.core.util.Nullable;
-import bio.overture.dms.ego.client.EgoClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.net.URL;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.net.URL;
-
-import static bio.overture.dms.core.util.Strings.isDefined;
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -75,7 +73,6 @@ public class EgoConfig2 {
     public boolean isDatabasePasswordDefined() {
       return isDefined(databasePassword);
     }
-
   }
 
   @Data
@@ -87,7 +84,6 @@ public class EgoConfig2 {
     @NotNull private URL url;
     private AppCredentials uiAppCredentials;
   }
-
 
   /**
    * Represents the ego application credentials, that is used by this program to call any endpoint

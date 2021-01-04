@@ -56,26 +56,28 @@ public class QuestionnaireTest {
     this.mockTextTerminal.getInputs().addAll(inputs);
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(PRODUCTION);
 
-    assertEquals(30, egoConfig.getApiTokenDurationDays());
-    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwt().getUser().getDurationMs());
-    assertEquals(Duration.of(4, HOURS).toMillis(), egoConfig.getJwt().getApp().getDurationMs());
-    assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getRefreshTokenDurationMS());
-    assertEquals(9000, egoConfig.getApiHostPort());
-    assertEquals(new URL("https://dms.example.org:9933/hi/there"), egoConfig.getServerUrl());
-    assertNull(egoConfig.getDatabasePassword());
-    assertEquals(9001, egoConfig.getDbHostPort());
-    assertNull(egoConfig.getSso().getGithub());
-    assertNull(egoConfig.getSso().getFacebook());
-    assertNull(egoConfig.getSso().getOrcid());
-    assertNull(egoConfig.getSso().getLinkedin());
-    assertNotNull(egoConfig.getSso().getGoogle());
-    val google = egoConfig.getSso().getGoogle();
+    assertEquals(30, egoConfig.getApi().getTokenDurationDays());
+    assertEquals(
+        Duration.of(3, HOURS).toMillis(), egoConfig.getApi().getJwt().getUser().getDurationMs());
+    assertEquals(
+        Duration.of(4, HOURS).toMillis(), egoConfig.getApi().getJwt().getApp().getDurationMs());
+    assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getApi().getRefreshTokenDurationMS());
+    assertEquals(9000, egoConfig.getApi().getHostPort());
+    assertEquals(new URL("https://dms.example.org:9933/hi/there"), egoConfig.getApi().getUrl());
+    assertNull(egoConfig.getDb().getDatabasePassword());
+    assertEquals(9001, egoConfig.getDb().getHostPort());
+    assertNull(egoConfig.getApi().getSso().getGithub());
+    assertNull(egoConfig.getApi().getSso().getFacebook());
+    assertNull(egoConfig.getApi().getSso().getOrcid());
+    assertNull(egoConfig.getApi().getSso().getLinkedin());
+    assertNotNull(egoConfig.getApi().getSso().getGoogle());
+    val google = egoConfig.getApi().getSso().getGoogle();
     assertEquals("googleClientId", google.getClientId());
     assertEquals("googleClientSecret", google.getClientSecret());
     assertEquals("some.redirect.google.example.org", google.getPreEstablishedRedirectUri());
-    assertEquals("dms", egoConfig.getDmsAppCredentials().getName());
-    assertEquals("dms", egoConfig.getDmsAppCredentials().getClientId());
-    assertEquals(30, egoConfig.getDmsAppCredentials().getClientSecret().length());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getName());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getClientId());
+    assertEquals(30, egoConfig.getApi().getDmsAppCredentials().getClientSecret().length());
   }
 
   @Test
@@ -99,25 +101,27 @@ public class QuestionnaireTest {
     this.mockTextTerminal.getInputs().addAll(inputs);
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(LOCAL);
 
-    assertEquals(30, egoConfig.getApiTokenDurationDays());
-    assertEquals(Duration.of(3, HOURS).toMillis(), egoConfig.getJwt().getUser().getDurationMs());
-    assertEquals(Duration.of(5, HOURS).toMillis(), egoConfig.getJwt().getApp().getDurationMs());
-    assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getRefreshTokenDurationMS());
-    assertEquals(9000, egoConfig.getApiHostPort());
-    assertEquals(new URL("http://localhost:9000"), egoConfig.getServerUrl());
-    assertNull(egoConfig.getDatabasePassword());
-    assertEquals(9001, egoConfig.getDbHostPort());
-    assertNull(egoConfig.getSso().getGithub());
-    assertNull(egoConfig.getSso().getFacebook());
-    assertNull(egoConfig.getSso().getOrcid());
-    assertNull(egoConfig.getSso().getLinkedin());
-    assertNotNull(egoConfig.getSso().getGoogle());
-    val google = egoConfig.getSso().getGoogle();
+    assertEquals(30, egoConfig.getApi().getTokenDurationDays());
+    assertEquals(
+        Duration.of(3, HOURS).toMillis(), egoConfig.getApi().getJwt().getUser().getDurationMs());
+    assertEquals(
+        Duration.of(5, HOURS).toMillis(), egoConfig.getApi().getJwt().getApp().getDurationMs());
+    assertEquals(Duration.of(12, HOURS).toMillis(), egoConfig.getApi().getRefreshTokenDurationMS());
+    assertEquals(9000, egoConfig.getApi().getHostPort());
+    assertEquals(new URL("http://localhost:9000"), egoConfig.getApi().getUrl());
+    assertNull(egoConfig.getDb().getDatabasePassword());
+    assertEquals(9001, egoConfig.getDb().getHostPort());
+    assertNull(egoConfig.getApi().getSso().getGithub());
+    assertNull(egoConfig.getApi().getSso().getFacebook());
+    assertNull(egoConfig.getApi().getSso().getOrcid());
+    assertNull(egoConfig.getApi().getSso().getLinkedin());
+    assertNotNull(egoConfig.getApi().getSso().getGoogle());
+    val google = egoConfig.getApi().getSso().getGoogle();
     assertEquals("googleClientId", google.getClientId());
     assertEquals("googleClientSecret", google.getClientSecret());
     assertEquals("http://localhost:9000/oauth/login/google", google.getPreEstablishedRedirectUri());
-    assertEquals("dms", egoConfig.getDmsAppCredentials().getName());
-    assertEquals("dms", egoConfig.getDmsAppCredentials().getClientId());
-    assertEquals(30, egoConfig.getDmsAppCredentials().getClientSecret().length());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getName());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getClientId());
+    assertEquals(30, egoConfig.getApi().getDmsAppCredentials().getClientSecret().length());
   }
 }

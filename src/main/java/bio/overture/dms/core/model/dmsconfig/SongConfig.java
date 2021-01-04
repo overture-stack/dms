@@ -1,21 +1,18 @@
 package bio.overture.dms.core.model.dmsconfig;
 
-import bio.overture.dms.core.util.Nullable;
+import static bio.overture.dms.core.util.Strings.isDefined;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.net.URL;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.net.URL;
-
-import static bio.overture.dms.core.util.Strings.isDefined;
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 @Data
 @Builder
@@ -41,5 +38,4 @@ public class SongConfig {
   public boolean isDatabasePasswordDefined() {
     return isDefined(databasePassword);
   }
-
 }

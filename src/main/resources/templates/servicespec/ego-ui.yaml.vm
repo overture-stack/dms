@@ -7,7 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/ego-ui:release-3.0.2"
     Env:
-      - "REACT_APP_API=http://localhost:$dmsConfig.ego.apiHostPort"
+      - "REACT_APP_API=http://localhost:$dmsConfig.ego.api.hostPort"
       - REACT_APP_EGO_CLIENT_ID=ego-ui
     Mounts: null
     Duration: null

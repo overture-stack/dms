@@ -34,7 +34,9 @@ public class DmsQuestionnaire {
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
     return DmsConfig.builder()
         .clusterRunMode(clusterRunMode)
-        .version(buildProperties.getVersion()).ego(egoConfig).build();
+        .version(buildProperties.getVersion())
+        .ego(egoConfig)
+        .build();
   }
 
   public static enum ClusterRunModes {

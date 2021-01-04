@@ -54,8 +54,7 @@ public class ProdTerminalConfig {
   }
 
   @Bean
-  public Messenger terminalStatusMessenger(@Autowired Terminal terminal){
+  public Messenger terminalStatusMessenger(@Autowired Terminal terminal) {
     return terminal::printStatus;
   }
-
 }

@@ -1,10 +1,17 @@
 package bio.overture.dms.compose.manager;
 
+import static bio.overture.dms.core.util.Exceptions.checkState;
+import static java.nio.file.Files.isRegularFile;
+
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.util.Exceptions;
 import bio.overture.dms.core.util.ObjectSerializer;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Optional;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -13,28 +20,16 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-import java.util.Optional;
-
-import static bio.overture.dms.core.util.Exceptions.checkState;
-import static java.nio.file.Files.isRegularFile;
-
 @Deprecated
 @Component
 public class ComposeServiceRenderEngine {
 
-  /**
-   * Constants
-   */
+  /** Constants */
   private static final String COMPOSE_SERVICE_RESOURCES = "composeServiceResources";
 
-  /**
-   * Dependencies
-   */
+  /** Dependencies */
   private final VelocityEngine velocityEngine;
+
   private final ObjectSerializer velocitySerializer;
   private final ObjectSerializer yamlSerializer;
 
@@ -49,15 +44,17 @@ public class ComposeServiceRenderEngine {
   }
 
   @SneakyThrows
-  public Optional<ComposeService> render(@NonNull DmsConfig dmsConfig, @NonNull ComposeServiceResources composeServiceResource) {
-    if (isRegularFile(composeServiceResource.getResourcePath())){
+  public Optional<ComposeService> render(
+      @NonNull DmsConfig dmsConfig, @NonNull ComposeServiceResources composeServiceResource) {
+    if (isRegularFile(composeServiceResource.getResourcePath())) {
       return Optional.of(renderComposeService(dmsConfig, composeServiceResource));
     }
     return Optional.empty();
   }
 
   @SneakyThrows
-  private ComposeService renderComposeService(DmsConfig spec, ComposeServiceResources composeServiceResource) {
+  private ComposeService renderComposeService(
+      DmsConfig spec, ComposeServiceResources composeServiceResource) {
     val baos = new ByteArrayOutputStream();
     renderYaml(spec, baos, composeServiceResource);
     val renderedYaml = baos.toString();
@@ -67,7 +64,8 @@ public class ComposeServiceRenderEngine {
 
   @SneakyThrows
   private void renderYaml(
-      @NonNull DmsConfig dmsConfig, @NonNull OutputStream os,
+      @NonNull DmsConfig dmsConfig,
+      @NonNull OutputStream os,
       @NonNull ComposeServiceResources composeServiceResource) {
     val vmFile = composeServiceResource.getVelocityPath().toString();
     val template = velocityEngine.getTemplate(vmFile);
@@ -77,11 +75,12 @@ public class ComposeServiceRenderEngine {
     writer.flush();
   }
 
-  private Map<String, Object> resolveContextMap(DmsConfig dmsConfig){
+  private Map<String, Object> resolveContextMap(DmsConfig dmsConfig) {
     val map = velocitySerializer.convertToMap(dmsConfig);
-    checkState(!map.containsKey(COMPOSE_SERVICE_RESOURCES),
-        "Duplicate entry found for key '%s'", COMPOSE_SERVICE_RESOURCES);
+    checkState(
+        !map.containsKey(COMPOSE_SERVICE_RESOURCES),
+        "Duplicate entry found for key '%s'",
+        COMPOSE_SERVICE_RESOURCES);
     return map;
   }
-
 }

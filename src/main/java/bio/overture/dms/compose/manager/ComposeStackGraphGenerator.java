@@ -94,11 +94,16 @@ public class ComposeStackGraphGenerator {
     return gb.findNodeByName(jobName)
         .map(Node::getData)
         .orElseGet(
-            () -> ComposeJob.builder().name(jobName).deployTask(() -> {
-              processPreDeployStep(s);
-              deployService(s);
-              processPostDeployStep(s);
-            }).build());
+            () ->
+                ComposeJob.builder()
+                    .name(jobName)
+                    .deployTask(
+                        () -> {
+                          processPreDeployStep(s);
+                          deployService(s);
+                          processPostDeployStep(s);
+                        })
+                    .build());
   }
 
   private void processPreDeployStep(ComposeService s) {

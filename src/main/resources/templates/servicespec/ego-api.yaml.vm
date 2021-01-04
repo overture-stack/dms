@@ -12,56 +12,49 @@ TaskTemplate:
     - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
     - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
     - SPRING_DATASOURCE_USERNAME=postgres
-    - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.databasePassword
+    - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.db.databasePassword
     - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:5432/ego?stringtype=unspecified
-    - SWAGGER_HOST=$dmsConfig.ego.serverUrl.host:$dmsConfig.ego.serverUrl.port
-    - SWAGGER_BASEURL=#if($dmsConfig.ego.serverUrl.path == '')/#{else}$dmsConfig.ego.serverUrl.path#end
+    - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port
+    - SWAGGER_BASEURL=#if($dmsConfig.ego.api.url.path == '')/#{else}$dmsConfig.ego.api.url.path#end
 #if( $dmsConfig.clusterRunMode == 'LOCAL')
     - LOGIN_NONCE_SECURE=false
     - LOGIN_NONCE_SAMESITE=lax
 #end
     - INITIALIZATION_ENABLED=true
-    - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.uiAppCredentials.name
+    - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredentials.name
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
-    - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.uiAppCredentials.clientId
-    - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.uiAppCredentials.clientSecret
-    - INITIALIZATION_APPLICATIONS_0_REDIRECTURI=$dmsConfig.ego.uiAppCredentials.redirectUri
-#if( $dmsConfig.ego.dmsAppCredentials )
-    - INITIALIZATION_APPLICATIONS_1_NAME=$dmsConfig.ego.dmsAppCredentials.name
-    - INITIALIZATION_APPLICATIONS_1_TYPE=ADMIN
-    - INITIALIZATION_APPLICATIONS_1_CLIENTID=$dmsConfig.ego.dmsAppCredentials.clientId
-    - INITIALIZATION_APPLICATIONS_1_CLIENTSECRET=$dmsConfig.ego.dmsAppCredentials.clientSecret
-#end
+    - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredentials.clientId
+    - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredentials.clientSecret
     - REFRESHTOKEN_COOKIEISSECURE=true
-    - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.serverUrl.host
-    - APITOKEN_DURATIONDAYS=$dmsConfig.ego.apiTokenDurationDays
-    - JWT_USER_DURATIONMS=$dmsConfig.ego.jwt.user.durationMs
-    - JWT_APP_DURATIONMS=$dmsConfig.ego.jwt.app.durationMs
-    - REFRESHTOKEN_DURATIONMS=$dmsConfig.ego.refreshTokenDurationMS
-#if( $dmsConfig.ego.sso.google )
-    - GOOGLE_CLIENT_CLIENTID=$dmsConfig.ego.sso.google.clientId
-    - GOOGLE_CLIENT_CLIENTSECRET=$dmsConfig.ego.sso.google.clientSecret
-    - GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.sso.google.preEstablishedRedirectUri
+    - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.api.url.host
+    - APITOKEN_DURATIONDAYS=$dmsConfig.ego.api.tokenDurationDays
+    - JWT_USER_DURATIONMS=$dmsConfig.ego.api.jwt.user.durationMs
+    - JWT_APP_DURATIONMS=$dmsConfig.ego.api.jwt.app.durationMs
+    - REFRESHTOKEN_DURATIONMS=$dmsConfig.ego.api.refreshTokenDurationMS
+#if( $dmsConfig.ego.api.sso.google )
+    - GOOGLE_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.google.clientId
+    - GOOGLE_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.google.clientSecret
+    - GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.google.preEstablishedRedirectUri
 #end
-#if( $dmsConfig.ego.sso.github )
-    - GITHUB_CLIENT_CLIENTID=$dmsConfig.ego.sso.github.clientId
-    - GITHUB_CLIENT_CLIENTSECRET=$dmsConfig.ego.sso.github.clientSecret
-    - GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.sso.github.preEstablishedRedirectUri
+#if( $dmsConfig.ego.api.sso.github )
+    - GITHUB_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.github.clientId
+    - GITHUB_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.github.clientSecret
+    - GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.github.preEstablishedRedirectUri
 #end
-#if( $dmsConfig.ego.sso.linkedin )
-    - LINKEDIN_CLIENT_CLIENTID=$dmsConfig.ego.sso.linkedin.clientId
-    - LINKEDIN_CLIENT_CLIENTSECRET=$dmsConfig.ego.sso.linkedin.clientSecret
-    - LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.sso.linkedin.preEstablishedRedirectUri
+#if( $dmsConfig.ego.api.sso.linkedin )
+    - LINKEDIN_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.linkedin.clientId
+    - LINKEDIN_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.linkedin.clientSecret
+    - LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.linkedin.preEstablishedRedirectUri
 #end
-#if( $dmsConfig.ego.sso.facebook )
-    - FACEBOOK_CLIENT_CLIENTID=$dmsConfig.ego.sso.facebook.clientId
-    - FACEBOOK_CLIENT_CLIENTSECRET=$dmsConfig.ego.sso.facebook.clientSecret
-    - FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.sso.facebook.preEstablishedRedirectUri
+#if( $dmsConfig.ego.api.sso.facebook )
+    - FACEBOOK_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.facebook.clientId
+    - FACEBOOK_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.facebook.clientSecret
+    - FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.facebook.preEstablishedRedirectUri
 #end
-#if( $dmsConfig.ego.sso.orcid )
-    - ORCID_CLIENT_CLIENTID=$dmsConfig.ego.sso.orcid.clientId
-    - ORCID_CLIENT_CLIENTSECRET=$dmsConfig.ego.sso.orcid.clientSecret
-    - ORCID_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.sso.orcid.preEstablishedRedirectUri
+#if( $dmsConfig.ego.api.sso.orcid )
+    - ORCID_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.orcid.clientId
+    - ORCID_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.orcid.clientSecret
+    - ORCID_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.orcid.preEstablishedRedirectUri
 #end
     Mounts: null
     Duration: null
@@ -134,7 +127,7 @@ EndpointSpec:
     - Name: "api"
       Protocol: "tcp"
       TargetPort: 8080
-      PublishedPort: $dmsConfig.ego.apiHostPort
+      PublishedPort: $dmsConfig.ego.api.hostPort
       PublishMode: "ingress"
 Labels: null
 
