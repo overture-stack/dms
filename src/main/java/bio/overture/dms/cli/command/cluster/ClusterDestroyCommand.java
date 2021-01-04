@@ -7,8 +7,10 @@ import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
-import bio.overture.dms.compose.manager.DmsComposeManager;
+
 import java.util.concurrent.Callable;
+
+import bio.overture.dms.compose.manager.DmsComposeManager2;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Setter;
@@ -31,7 +33,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   private final Terminal t;
 
   private final QuestionFactory questionFactory;
-  private final DmsComposeManager dmsComposeManager;
+  private final DmsComposeManager2 dmsComposeManager;
   private final DmsConfigStore dmsConfigStore;
 
   /** CLI Options */
@@ -54,7 +56,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   public ClusterDestroyCommand(
       @NonNull Terminal terminal,
       @NonNull QuestionFactory questionFactory,
-      @NonNull DmsComposeManager dmsComposeManager,
+      @NonNull DmsComposeManager2 dmsComposeManager,
       @NonNull DmsConfigStore dmsConfigStore) {
     this.t = terminal;
     this.questionFactory = questionFactory;

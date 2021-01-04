@@ -1,8 +1,8 @@
 package bio.overture.dms.compose.manager.deployer;
 
-import bio.overture.dms.compose.manager.ComposeServiceRenderEngine;
 import bio.overture.dms.compose.manager.ServiceDeployer;
 import bio.overture.dms.compose.manager.ServiceDeployer.DeployTypes;
+import bio.overture.dms.compose.manager.ServiceSpecRenderEngine;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.ego.EgoClientFactory;
@@ -18,15 +18,15 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 @Component
 public class EgoUiDeployer {
 
-  private final ComposeServiceRenderEngine composeServiceRenderEngine;
+  private final ServiceSpecRenderEngine serviceSpecRenderEngine;
   private final ServiceDeployer serviceDeployer;
   private final EgoClientFactory egoClientFactory;
 
   @Autowired
-  public EgoUiDeployer(@NonNull ComposeServiceRenderEngine composeServiceRenderEngine,
+  public EgoUiDeployer( @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine,
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull EgoClientFactory egoClientFactory){
-    this.composeServiceRenderEngine = composeServiceRenderEngine;
+    this.serviceSpecRenderEngine = serviceSpecRenderEngine;
     this.serviceDeployer = serviceDeployer;
     this.egoClientFactory = egoClientFactory;
   }
@@ -37,10 +37,10 @@ public class EgoUiDeployer {
   }
 
   private DeployTypes deployUi(DmsConfig dmsConfig) {
-    val composeServiceUi = composeServiceRenderEngine.render(dmsConfig, EGO_UI)
+    val uiServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_UI)
         .orElseThrow();
-    val dbDeployType = serviceDeployer.process(composeServiceUi);
-    serviceDeployer.waitForServiceRunning(composeServiceUi);
+    val dbDeployType = serviceDeployer.process(uiServiceSpec);
+    serviceDeployer.waitForServiceRunning(uiServiceSpec);
     return dbDeployType;
   }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
  * Decorator that converts a DmsConfig object to a ComposeStack object before calling the internal
  * ComposeManager implementation
  */
+@Deprecated
 @Component
 public class DmsComposeManager implements ComposeManager<DmsConfig> {
 

@@ -3,6 +3,7 @@ package bio.overture.dms.compose.manager;
 import bio.overture.dms.compose.model.stack.ComposeService;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.swarm.service.SwarmService;
+import com.github.dockerjava.api.model.ServiceSpec;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,29 +39,29 @@ public class ServiceDeployer {
     this.messenger = messenger;
   }
 
-  public DeployTypes process(@NonNull ComposeService s){
+  public DeployTypes process(@NonNull ServiceSpec s){
     val out = deploySwarmService(s);
     messenger.send("Completed deployment task for service %s", s.getName());
     return out;
   }
 
   //TODO: not working properly. Is not waiting for service to be RUNNING
-  public void waitForServiceRunning(@NonNull ComposeService s){
+  public void waitForServiceRunning(@NonNull ServiceSpec s){
     messenger.send("Waiting for the service '%s' to be in the RUNNING state", s.getName());
     swarmService.waitForServiceRunning(s.getName(), NUM_RETRIES, POLL_PERIOD);
   }
 
-  private DeployTypes deploySwarmService(ComposeService s) {
+  private DeployTypes deploySwarmService(ServiceSpec s) {
     swarmService.ping();
     val result = swarmService.findSwarmServiceInfo(s.getName(), true);
     if (result.isPresent()) {
       log.debug("Found service '{}' info, updating existing service spec", s.getName());
       val info = result.get();
-      swarmService.updateSwarmService(info.getId(), s.getServerSpec(), info.getVersion());
+      swarmService.updateSwarmService(info.getId(), s, info.getVersion());
       return UPDATE;
     } else {
       log.debug("Service '{}' info was NOT found, create new service spec", s.getName());
-      swarmService.createSwarmService(s.getServerSpec());
+      swarmService.createSwarmService(s);
       return CREATE;
     }
   }

@@ -1,7 +1,8 @@
 package bio.overture.dms.compose.manager.deployer;
 
-import bio.overture.dms.compose.manager.ComposeServiceRenderEngine;
 import bio.overture.dms.compose.manager.ServiceDeployer;
+import bio.overture.dms.compose.manager.ServiceDeployer.DeployTypes;
+import bio.overture.dms.compose.manager.ServiceSpecRenderEngine;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.ego.EgoClientFactory;
@@ -19,7 +20,6 @@ import java.time.Duration;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_DB;
-import static java.lang.String.format;
 
 @Slf4j
 @Component
@@ -30,17 +30,18 @@ public class EgoApiDbDeployer {
       .withMaxRetries(300)
       .withDelay(Duration.ofSeconds(2));
 
-  private final ComposeServiceRenderEngine composeServiceRenderEngine;
+  private final ServiceSpecRenderEngine serviceSpecRenderEngine;
   private final ServiceDeployer serviceDeployer;
   private final EgoClientFactory egoClientFactory;
   private final RestClientFactory basicRestClientFactory;
 
   @Autowired
-  public EgoApiDbDeployer(@NonNull ComposeServiceRenderEngine composeServiceRenderEngine,
+  public EgoApiDbDeployer(
+      @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine,
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull EgoClientFactory egoClientFactory,
       @NonNull @Qualifier("nonRetryingRestClientFactory") RestClientFactory basicRestClientFactory) {
-    this.composeServiceRenderEngine = composeServiceRenderEngine;
+    this.serviceSpecRenderEngine = serviceSpecRenderEngine;
     this.serviceDeployer = serviceDeployer;
     this.egoClientFactory = egoClientFactory;
     this.basicRestClientFactory = basicRestClientFactory;
@@ -54,19 +55,20 @@ public class EgoApiDbDeployer {
     attemptFinalization(dmsConfig.getEgo());
   }
 
-  private ServiceDeployer.DeployTypes deployDb(DmsConfig dmsConfig) {
-    val composeServiceDb = composeServiceRenderEngine.render(dmsConfig, EGO_DB)
+  //TODO: DB deployment is not blocking the api deployement....fix this
+  private DeployTypes deployDb(DmsConfig dmsConfig) {
+    val dbServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_DB)
         .orElseThrow();
-    val dbDeployType = serviceDeployer.process(composeServiceDb);
-    serviceDeployer.waitForServiceRunning(composeServiceDb);
+    val dbDeployType = serviceDeployer.process(dbServiceSpec);
+    serviceDeployer.waitForServiceRunning(dbServiceSpec);
     return dbDeployType;
   }
 
-  private ServiceDeployer.DeployTypes deployApi(DmsConfig dmsConfig) {
-    val composeServiceApi = composeServiceRenderEngine.render(dmsConfig, EGO_API)
+  private DeployTypes deployApi(DmsConfig dmsConfig) {
+    val apiServiceSpec = serviceSpecRenderEngine.render(dmsConfig, EGO_API)
         .orElseThrow();
-    val apiDeployType = serviceDeployer.process(composeServiceApi);
-    serviceDeployer.waitForServiceRunning(composeServiceApi);
+    val apiDeployType = serviceDeployer.process(apiServiceSpec);
+    serviceDeployer.waitForServiceRunning(apiServiceSpec);
     return apiDeployType;
   }
 

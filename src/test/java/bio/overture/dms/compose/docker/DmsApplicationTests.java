@@ -38,7 +38,9 @@ public class DmsApplicationTests {
   void contextLoads() {}
 
   @Autowired private ClusterApplyCommand clusterApplyCommand;
+  @Autowired private ClusterDestroyCommand clusterDestroyCommand;
   @Autowired private TestTextTerminal testTextTerminal;
+
   @Test
   @Disabled
   @SneakyThrows
@@ -54,27 +56,13 @@ public class DmsApplicationTests {
   @Disabled
   @SneakyThrows
   public void testDestroy() {
-    val ttt = createTestTextTerminal().addInput("Y");
-    val questionFactory = buildQuestionFactory(ttt);
-    val clusterDestroyCommand =
-        ClusterDestroyCommand.builder()
-            .terminal(
-                TerminalImpl.builder()
-                    .ansi(true)
-                    .silent(false)
-                    .terminalWidth(80)
-                    .textTerminal(ttt)
-                    .build())
-            .questionFactory(questionFactory)
-            .dmsComposeManager(dmsComposeManager)
-            .dmsConfigStore(dmsConfigStore)
-            .build();
+    testTextTerminal.addInput("Y");
     clusterDestroyCommand.setDestroyVolumes(true);
 
     val exitCode = clusterDestroyCommand.call();
     assertEquals(0, exitCode);
 
-    log.info(ttt.getOutputAndReset(false));
+    log.info(testTextTerminal.getOutputAndReset(false));
     log.info("sdf");
   }
 

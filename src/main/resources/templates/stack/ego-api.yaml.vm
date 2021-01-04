@@ -15,7 +15,7 @@ ServiceSpec:
         - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://ego-db:5432/ego?stringtype=unspecified
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB}:5432/ego?stringtype=unspecified
         - SWAGGER_HOST=$ego.serverUrl.host:$ego.serverUrl.port
         - SWAGGER_BASEURL=#if($ego.serverUrl.path == '')/#{else}$ego.serverUrl.path#end
 #if( $clusterRunMode == 'LOCAL')
