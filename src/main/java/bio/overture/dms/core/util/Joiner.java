@@ -17,6 +17,7 @@ public class Joiner {
   public static final Joiner COMMA = Joiner.on(",");
   public static final Joiner WHITESPACE = Joiner.on(" ");
   public static final Joiner NEWLINE = Joiner.on(lineSeparator());
+  public static final Joiner AMPERSAND = Joiner.on("&");
   public static final Joiner EQUALS = Joiner.on("=");
   public static final Joiner COLON = Joiner.on(":");
   public static final Joiner PATH = Joiner.on(separator);

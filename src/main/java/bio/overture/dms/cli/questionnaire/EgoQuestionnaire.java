@@ -222,7 +222,7 @@ public class EgoQuestionnaire {
 
       val clientSecret = generateAppSecret();
       return EgoConfig.AppCredentials.builder()
-          .name(DEFAULT_DMS_APP_NAME)
+          .name(DEFAULT_UI_APP_NAME)
           .clientId(clientId)
           .clientSecret(clientSecret)
           .build();

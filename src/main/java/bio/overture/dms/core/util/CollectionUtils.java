@@ -1,5 +1,6 @@
 package bio.overture.dms.core.util;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
@@ -52,4 +55,13 @@ public class CollectionUtils {
       @NonNull Collection<I> inputItems, @NonNull Function<I, O> function) {
     return mapToStream(inputItems, function).collect(toSet());
   }
+
+  public static boolean isCollectionBlank(Collection values) {
+    return isNull(values) || values.isEmpty();
+  }
+
+  public static <T> boolean isArrayBlank(T[] values) {
+    return isNull(values) || values.length == 0;
+  }
+
 }

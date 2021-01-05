@@ -33,6 +33,8 @@ public class EgoConfig {
   @AllArgsConstructor
   @JsonInclude(NON_EMPTY)
   public static class EgoApiConfig {
+
+    //TODO: bean validation is not implemented yet!!! Needs to be validated by validation service
     @Min(value = 1)
     @Builder.Default
     private int tokenDurationDays = 30;

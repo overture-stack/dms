@@ -17,10 +17,13 @@
 
 package bio.overture.dms.rest;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import lombok.NonNull;
 
 public interface RestClient {
+
 
   String getString(String endpoint);
 

@@ -1,10 +1,14 @@
 package bio.overture.dms.ego.client;
 
+import bio.overture.dms.core.util.CollectionUtils;
 import bio.overture.dms.core.util.ObjectSerializer;
+import bio.overture.dms.ego.model.CreateApplicationRequest;
+import bio.overture.dms.ego.model.EgoApplication;
 import bio.overture.dms.ego.model.EgoToken;
+import bio.overture.dms.ego.model.ListApplicationRequest;
+import bio.overture.dms.ego.model.PageDTO;
+import bio.overture.dms.ego.model.UpdateApplicationRequest;
 import bio.overture.dms.rest.RestClient;
-import java.util.Optional;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +16,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang.NotImplementedException;
+import lombok.val;
+
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 /** A api client for an externally running Ego service */
 @RequiredArgsConstructor
@@ -38,44 +49,32 @@ public class EgoClient {
 
   public EgoApplication createApplication(@NonNull CreateApplicationRequest r) {
     return restClient.post(
-        egoEndpoint.postCreateApplication(),
+        egoEndpoint.createApplication(),
         r,
         x -> jsonSerializer.convertValue(x, EgoApplication.class));
   }
 
-  public Optional<EgoApplication> findApplicationByName(@NonNull String applicationName) {
-    // TODO: ego client find app by name, needs to page through everything
-    throw new NotImplementedException();
-    //    restClient.post(egoEndpoint.postCreateApplication(), null,
-    //        x -> jsonSerializer.deserialize(x).path("id").textValue());
+  public EgoApplication updateApplication(@NonNull String applicationId, @NonNull UpdateApplicationRequest r) {
+    return restClient.put(
+        egoEndpoint.updateApplication(applicationId),
+        r,
+        x -> jsonSerializer.convertValue(x, EgoApplication.class));
   }
 
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class CreateApplicationRequest {
-    @NotNull private String name;
-    @NotNull private String type;
-    @NotNull private String clientId;
-    @NotNull private String clientSecret;
-    private String redirectUri;
-    private String description;
-    @NotNull private String status;
+  public PageDTO<EgoApplication> listApplications(@NonNull ListApplicationRequest r){
+    return restClient.get(egoEndpoint.listApplications(r), x -> deserializePage(x, EgoApplication.class));
   }
 
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class EgoApplication {
-    @NotNull private String id;
-    @NotNull private String name;
-    @NotNull private String type;
-    @NotNull private String clientId;
-    @NotNull private String clientSecret;
-    private String redirectUri;
-    private String description;
-    @NotNull private String status;
+  @SuppressWarnings("unchecked")
+  private <T> PageDTO<T> deserializePage(String body, Class<T> contentType){
+    val erasedPageDTO = jsonSerializer.convertValue(body, PageDTO.class);
+    val contents = mapToUnmodifiableList(erasedPageDTO.getResultSet(), x -> jsonSerializer.convertValue(x , contentType));
+    return PageDTO.<T>builder()
+        .count(erasedPageDTO.getCount())
+        .limit(erasedPageDTO.getLimit())
+        .offset(erasedPageDTO.getOffset())
+        .resultSet(contents)
+        .build();
   }
+
 }

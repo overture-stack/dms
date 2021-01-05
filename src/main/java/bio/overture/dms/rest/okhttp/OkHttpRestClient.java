@@ -16,13 +16,20 @@
  */
 package bio.overture.dms.rest.okhttp;
 
+import static bio.overture.dms.core.util.Joiner.AMPERSAND;
+import static bio.overture.dms.core.util.Joiner.EQUALS;
+import static bio.overture.dms.core.util.Strings.isDefined;
 import static bio.overture.dms.rest.okhttp.OkHttpException.checkResponse;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.function.Function.identity;
 
+import bio.overture.dms.core.util.Joiner;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.rest.RestClient;
+
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import lombok.Builder;
 import lombok.NonNull;
@@ -66,7 +73,7 @@ public class OkHttpRestClient implements RestClient {
     return tryRequest(RequestType.PUT, endpoint, body);
   }
 
-  private String tryRequest(
+    private String tryRequest(
       @NonNull RequestType requestType, @NonNull String endpoint, Object body) {
     val requestBody = createBody(body);
     var rb = newNoAuthRequestBuilder().url(endpoint);

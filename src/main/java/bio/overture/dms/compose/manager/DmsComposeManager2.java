@@ -6,6 +6,8 @@ import bio.overture.dms.compose.manager.deployer.EgoApiDbDeployer;
 import bio.overture.dms.compose.manager.deployer.EgoUiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.ego.EgoClientFactory;
+import bio.overture.dms.ego.client.EgoClient;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -27,17 +29,20 @@ public class DmsComposeManager2 implements ComposeManager<DmsConfig> {
   private final SwarmService swarmService;
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final EgoUiDeployer egoUiDeployer;
+  private final EgoClientFactory egoClientFactory;
 
   @Autowired
   public DmsComposeManager2(
       @NonNull ExecutorService executorService,
       @NonNull SwarmService swarmService,
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
-      @NonNull EgoUiDeployer egoUiDeployer) {
+      @NonNull EgoUiDeployer egoUiDeployer,
+      @NonNull EgoClientFactory egoClientFactory) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
     this.egoUiDeployer = egoUiDeployer;
+    this.egoClientFactory = egoClientFactory;
   }
 
   @Override
@@ -45,10 +50,12 @@ public class DmsComposeManager2 implements ComposeManager<DmsConfig> {
     swarmService.initializeSwarm();
     val out =
         CompletableFuture.runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
-            .thenRunAsync(() -> egoUiDeployer.deploy(dmsConfig), executorService);
+            .thenApplyAsync(x -> egoClientFactory.buildAuthDmsEgoClient(dmsConfig.getEgo()))
+            .thenAcceptAsync(egoClient -> egoUiDeployer.deploy(egoClient, dmsConfig), executorService);
     out.join();
     log.info("sdfdsf");
   }
+
 
   @Override
   public void destroy(@NonNull DmsConfig dmsConfig, boolean destroyVolumes) {
