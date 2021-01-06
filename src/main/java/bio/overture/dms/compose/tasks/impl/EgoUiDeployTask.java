@@ -7,7 +7,7 @@ import bio.overture.dms.compose.tasks.PreDeployTask;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.util.RandomGenerator;
 import bio.overture.dms.ego.EgoClientFactory;
-import bio.overture.dms.ego.model.CreateApplicationRequest;
+import bio.overture.dms.ego.model.ApplicationRequest;
 import bio.overture.dms.ego.client.EgoService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class EgoUiDeployTask implements PreDeployTask {
     } else {
       val app =
           egoClient.createApplication(
-              CreateApplicationRequest.builder()
+              ApplicationRequest.builder()
                   .name(getTaskName())
                   .clientId(getTaskName())
                   .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(50))

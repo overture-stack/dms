@@ -5,19 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateApplicationRequest {
-  @NotNull private String name;
-  @NotNull private String type;
-  @NotNull private String clientId;
-  @NotNull private String clientSecret;
-  private String redirectUri;
+public class EgoGroup {
+
+  @NotBlank private String id;
+  @NotBlank private String name;
+  @NotBlank private String status;
   private String description;
-  @NotNull private String status;
 
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -21,21 +22,43 @@ import lombok.NoArgsConstructor;
 @JsonInclude(NON_EMPTY)
 public class SongConfig {
 
-  @Min(value = 2000)
-  @Builder.Default
-  private int apiHostPort = 9010;
+  @NotNull private SongDbConfig db;
+  @NotNull private SongApiConfig api;
 
-  @NotNull private URL serverUrl;
 
-  @Pattern(regexp = "^[A-Za-z0-9]+")
-  private String databasePassword;
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class SongDbConfig {
 
-  @Min(value = 2000)
-  @Builder.Default
-  private int dbHostPort = 9011;
+    @Pattern(regexp = "^[A-Za-z0-9]+")
+    private String databasePassword;
 
-  @JsonIgnore
-  public boolean isDatabasePasswordDefined() {
-    return isDefined(databasePassword);
+    @Min(value = 2000)
+    @Builder.Default
+    private int hostPort = 9011;
+
+    @JsonIgnore
+    public boolean isDatabasePasswordDefined() {
+      return isDefined(databasePassword);
+    }
+
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @JsonInclude(NON_EMPTY)
+  public static class SongApiConfig {
+
+    @NotBlank private URL url;
+
+    @Min(value = 2000)
+    @Builder.Default
+    private int hostPort = 9010;
+
   }
 }

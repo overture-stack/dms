@@ -2,8 +2,10 @@ package bio.overture.dms.compose.manager.deployer;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_DB;
+import static bio.overture.dms.ego.client.EgoService.createEgoService;
 
 import bio.overture.dms.compose.manager.ServiceDeployer;
+import bio.overture.dms.compose.model.EgoDmsProvisionSpec;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.ego.EgoClientFactory;
@@ -22,9 +24,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class EgoApiDbDeployer {
 
+  private static final String DMS_ADMIN_GROUP_NAME = "dms-admin";
+  private static final String APPROVED = "APPROVED";
+  private static final String DMS_POLICY_NAME = "DMS";
+
   // 10 minute retry policy
   private static final RetryPolicy<String> RETRY_POLICY =
       new RetryPolicy<String>().withMaxRetries(300).withDelay(Duration.ofSeconds(2));
+  private static final String SONG_POLICY_NAME = "SONG";
+  private static final String SCORE_POLICY_NAME = "SCORE";
 
   private final ServiceDeployer serviceDeployer;
   private final EgoClientFactory egoClientFactory;
@@ -47,7 +55,7 @@ public class EgoApiDbDeployer {
     val apiDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_API);
 
     waitForEgoApiHealthy(dmsConfig.getEgo());
-    attemptFinalization(dmsConfig.getEgo());
+    provision(dmsConfig);
   }
 
   private void waitForEgoApiHealthy(EgoConfig egoConfig) {
@@ -63,9 +71,27 @@ public class EgoApiDbDeployer {
     Failsafe.with(RETRY_POLICY).get(egoClient::getPublicKey);
   }
 
-  private void attemptFinalization(EgoConfig egoConfig) {
-    val dmsEgoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
-    // TODO: implement properly
-    log.info("DOOOOOOOOOOOOOOOOOOOO STUFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+  private void provision(DmsConfig dmsConfig) {
+    val provisioner = buildEgoDmsProvisioner(dmsConfig.getEgo());
+    val spec = buildDefaultProvisionSpec(dmsConfig);
+    provisioner.provision(spec);
   }
+
+  private EgoDMSProvisioner buildEgoDmsProvisioner(EgoConfig egoConfig){
+    val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
+    val egoService = createEgoService(egoClient);
+    return new EgoDMSProvisioner(egoService);
+  }
+
+  private EgoDmsProvisionSpec buildDefaultProvisionSpec(DmsConfig dmsConfig){
+    return EgoDmsProvisionSpec.builder()
+        .dmsGroupName(DMS_ADMIN_GROUP_NAME)
+        .dmsPolicyName(DMS_POLICY_NAME)
+        .egoUiAppCredential(dmsConfig.getEgo().getUi().getUiAppCredential())
+        //        .songPolicyName(SONG_POLICY_NAME)
+        //        .scorePolicyName(SCORE_POLICY_NAME)
+        //        .dmsUiAppCredential()
+        .build();
+  }
+
 }

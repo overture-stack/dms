@@ -12,14 +12,10 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EgoApplication {
+public class GroupPermission {
 
   @NotBlank private String id;
-  @NotBlank private String name;
-  @NotBlank private String type;
-  @NotBlank private String clientId;
-  @NotBlank private String clientSecret;
-  private String redirectUri;
-  private String description;
-  @NotBlank private String status;
+  @NotBlank private PermissionMasks accessLevel;
+  @NotNull private EgoGroup group;
+  @NotNull private EgoPolicy policy;
 }

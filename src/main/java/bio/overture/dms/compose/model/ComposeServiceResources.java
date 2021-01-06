@@ -12,7 +12,11 @@ import lombok.RequiredArgsConstructor;
 public enum ComposeServiceResources {
   EGO_API("ego-api"),
   EGO_DB("ego-db"),
-  EGO_UI("ego-ui");
+  EGO_UI("ego-ui"),
+  SONG_DB("song-db"),
+  SONG_API("song-api"),
+  SCORE_API("score-api");
+
 
   private static final Path RESOURCES_DIR = Paths.get("src/main/resources");
   private static final Path COMPOSE_STACK_TEMPLATE_DIR =

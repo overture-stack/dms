@@ -56,7 +56,7 @@ public class EgoClientFactory {
   }
 
   public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig egoConfig) {
-    val dmsAppCreds = egoConfig.getApi().getDmsAppCredentials();
+    val dmsAppCreds = egoConfig.getApi().getDmsAppCredential();
     try {
       val serverUrl = egoConfig.getApi().getUrl().toString();
       val egoToken =

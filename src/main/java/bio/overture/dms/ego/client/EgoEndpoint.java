@@ -6,6 +6,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.nonNull;
 
 import bio.overture.dms.ego.model.ListApplicationRequest;
+import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
+import bio.overture.dms.ego.model.ListGroupRequest;
+import bio.overture.dms.ego.model.ListPolicyRequest;
 import bio.overture.dms.rest.params.RequestParamBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,51 @@ public class EgoEndpoint {
         .optionalQuerySingleParam(LIMIT, request.getLimit())
         .optionalQuerySingleParam(QUERY, request.getQuery())
         .build(format("%s/applications", baseServerUrl));
+  }
+
+  public String createGroup() {
+    return format("%s/groups", baseServerUrl);
+  }
+
+  public String listGroups(@NonNull ListGroupRequest request) {
+    return new RequestParamBuilder()
+        .optionalQuerySingleParam(OFFSET, request.getOffset())
+        .optionalQuerySingleParam(LIMIT, request.getLimit())
+        .optionalQuerySingleParam(QUERY, request.getQuery())
+        .build(format("%s/groups", baseServerUrl));
+  }
+
+  public String updateGroup(@NonNull String groupId) {
+    return format("%s/groups/%s", baseServerUrl, groupId);
+  }
+
+  public String createPolicy() {
+    return format("%s/policies", baseServerUrl);
+  }
+
+  public String updatePolicy(@NonNull String policyId) {
+    return format("%s/policies/%s", baseServerUrl, policyId);
+  }
+
+  public String listPolicies(@NonNull ListPolicyRequest request) {
+    return new RequestParamBuilder()
+        .optionalQuerySingleParam(OFFSET, request.getOffset())
+        .optionalQuerySingleParam(LIMIT, request.getLimit())
+        .optionalQuerySingleParam(QUERY, request.getQuery())
+        .build(format("%s/policies", baseServerUrl));
+  }
+
+
+  public String createGroupPermission(@NonNull String groupId){
+    return format("%s/groups/%s/permissions", baseServerUrl, groupId);
+
+  }
+
+  public String listGroupPermissions(@NonNull ListGroupPermissionsRequest request) {
+    return new RequestParamBuilder()
+        .optionalQuerySingleParam(OFFSET, request.getOffset())
+        .optionalQuerySingleParam(LIMIT, request.getLimit())
+        .build(format("%s/groups/%s/permissions", baseServerUrl, request.getId()));
   }
 
   @SneakyThrows

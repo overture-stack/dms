@@ -2,14 +2,18 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: ego-ui
+Name: song-db
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego-ui:release-3.0.2"
+    Image: "postgres:11.1"
     Env:
-      - "REACT_APP_API=http://localhost:$dmsConfig.ego.api.hostPort"
-      - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
-    Mounts: null
+      - POSTGRES_DB=song
+      - POSTGRES_PASSWORD=$dmsConfig.song.db.databasePassword
+    Mounts:
+      - Type: volume
+        Source: song-db-data
+        Target: /var/lib/postgresql/data
+        ReadOnly: false
     Duration: null
     StopGracePeriod: 120000000000
     DNSConfig: null
@@ -18,37 +22,41 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
-    HealthCheck: null
+    HealthCheck:
+      # 30s
+      Interval: 30000000000
+      # 30s
+      Timeout: 30000000000
+      Test:
+        - "CMD-SHELL"
+        - "pg_isready -U postgres"
+      Retries: 5
+      # 20s
+      StartPeriod: 20000000000
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
   Resources:
     Limits:
-      #2 GiB
-      MemoryBytes: 2147483648
+      #200 MiB
+      MemoryBytes: 209715200
       #unlimited.
       NanoCPUs: 0
     Reservations:
-      #1.5 GiB
-      MemoryBytes: 1610612736
+      #100 MiB
+      MemoryBytes: 104857600
       #unlimited.
       NanoCPUs: 0
-  RestartPolicy:
-    Condition: "on-failure"
-    # 10s
-    Delay: 10000000000
-##          MaxAttempts: 10
-    MaxAttempts: 0
-    # unbounded
-    Window: 0
+  # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
+  # when the restartpolicy is defined, postgres cannot restart normally.
+  RestartPolicy: null
   Placement: null
   LogDriver:
     Name: "json-file"
     Options: null
   ForceUpdate: 0
   Networks:
-    #TODO: may need to change this to dms-network later
-    - Target: "host"
+    - Target: "dms-network"
       Aliases: null
   Runtime: null
 Mode:
@@ -59,7 +67,7 @@ UpdateConfig:
   FailureAction: "rollback"
   #Since there is a shared volume, containing process information
   # need to ensure its stopped first
-  Order: "start-first"
+  Order: "stop-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: null
@@ -68,16 +76,21 @@ RollbackConfig:
   FailureAction: "continue"
   #Since there is a shared volume, containing process information
   # need to ensure its stopped first
-  Order: "start-first"
+  Order: "stop-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
-  #TODO: may need to change this to dms-network later
-  - Target: "host"
+  - Target: "dms-network"
     Aliases: null
 EndpointSpec:
   Mode: "vip"
+  Ports:
+    - Name: "psql"
+      Protocol: "tcp"
+      TargetPort: 5432
+      PublishedPort: $dmsConfig.song.db.hostPort
+      PublishMode: "ingress"
 Labels: null
 

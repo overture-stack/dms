@@ -21,10 +21,10 @@ TaskTemplate:
     - LOGIN_NONCE_SAMESITE=lax
 #end
     - INITIALIZATION_ENABLED=true
-    - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredentials.name
+    - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredential.name
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
-    - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredentials.clientId
-    - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredentials.clientSecret
+    - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredential.clientId
+    - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredential.clientSecret
     - REFRESHTOKEN_COOKIEISSECURE=true
     - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.api.url.host
     - APITOKEN_DURATIONDAYS=$dmsConfig.ego.api.tokenDurationDays

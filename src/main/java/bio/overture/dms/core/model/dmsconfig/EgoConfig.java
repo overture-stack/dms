@@ -53,7 +53,7 @@ public class EgoConfig {
 
     @NotNull private URL url;
 
-    private AppCredentials dmsAppCredentials;
+    private AppCredential dmsAppCredential;
   }
 
   @Data
@@ -84,28 +84,7 @@ public class EgoConfig {
   @JsonInclude(NON_EMPTY)
   public static class EgoUiConfig {
     @NotNull private URL url;
-    private AppCredentials uiAppCredentials;
-  }
-
-  /**
-   * Represents the ego application credentials, that is used by this program to call any endpoint
-   * on the ego service. This implies, the app credential is of role ADMIN
-   */
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @JsonInclude(NON_EMPTY)
-  public static class AppCredentials {
-    private String name;
-    private String clientId;
-    private String clientSecret;
-    private String redirectUri;
-
-    @JsonIgnore
-    public boolean isSecretDefined() {
-      return isDefined(clientSecret);
-    }
+    private AppCredential uiAppCredential;
   }
 
   @Data

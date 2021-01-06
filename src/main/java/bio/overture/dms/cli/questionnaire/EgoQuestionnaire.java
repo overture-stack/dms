@@ -3,6 +3,7 @@ package bio.overture.dms.cli.questionnaire;
 import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
+import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
@@ -56,7 +57,7 @@ public class EgoQuestionnaire {
 
   private EgoConfig.EgoUiConfig processEgoUiConfig(EgoConfig.EgoApiConfig egoApiConfig) {
     return EgoConfig.EgoUiConfig.builder()
-        .uiAppCredentials(processUiAppCreds(egoApiConfig))
+        .uiAppCredential(processUiAppCreds(egoApiConfig))
         //        .url() //TODO: egoUi.url must be populated
         .build();
   }
@@ -133,7 +134,7 @@ public class EgoQuestionnaire {
           p.setClientConfig(apiConfig.getSso(), clientConfig);
         });
 
-    apiConfig.setDmsAppCredentials(processDmsAppCreds(apiConfig));
+    apiConfig.setDmsAppCredential(processDmsAppCreds(apiConfig));
     return apiConfig;
   }
 
@@ -196,8 +197,8 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private EgoConfig.AppCredentials processUiAppCreds(@NonNull EgoConfig.EgoApiConfig apiConfig) {
-    return EgoConfig.AppCredentials.builder()
+  private AppCredential processUiAppCreds(@NonNull EgoConfig.EgoApiConfig apiConfig) {
+    return AppCredential.builder()
         .name(DEFAULT_UI_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
@@ -206,8 +207,8 @@ public class EgoQuestionnaire {
         .build();
   }
 
-  private EgoConfig.AppCredentials processDmsAppCreds(EgoConfig.EgoApiConfig apiConfig) {
-    if (isNull(apiConfig.getDmsAppCredentials())) {
+  private AppCredential processDmsAppCreds(EgoConfig.EgoApiConfig apiConfig) {
+    if (isNull(apiConfig.getDmsAppCredential())) {
       // doesnt exist, ask questions
       val clientId =
           questionFactory
@@ -221,7 +222,7 @@ public class EgoQuestionnaire {
               .getAnswer();
 
       val clientSecret = generateAppSecret();
-      return EgoConfig.AppCredentials.builder()
+      return AppCredential.builder()
           .name(DEFAULT_UI_APP_NAME)
           .clientId(clientId)
           .clientSecret(clientSecret)
@@ -237,7 +238,7 @@ public class EgoQuestionnaire {
                   false)
               .getAnswer();
       if (doUpdate) {
-        val creds = apiConfig.getDmsAppCredentials();
+        val creds = apiConfig.getDmsAppCredential();
         // Do the update
         val appName =
             questionFactory
@@ -264,13 +265,13 @@ public class EgoQuestionnaire {
 
         val clientSecret = generateAppSecret();
 
-        return EgoConfig.AppCredentials.builder()
+        return AppCredential.builder()
             .name(appName)
             .clientId(clientId)
             .clientSecret(clientSecret)
             .build();
       }
-      return apiConfig.getDmsAppCredentials();
+      return apiConfig.getDmsAppCredential();
     }
   }
 

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateApplicationRequest {
+public class ApplicationRequest {
 
   @NotNull private String name;
   @NotNull private String type;

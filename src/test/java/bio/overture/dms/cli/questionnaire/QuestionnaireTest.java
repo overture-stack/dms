@@ -75,9 +75,9 @@ public class QuestionnaireTest {
     assertEquals("googleClientId", google.getClientId());
     assertEquals("googleClientSecret", google.getClientSecret());
     assertEquals("some.redirect.google.example.org", google.getPreEstablishedRedirectUri());
-    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getName());
-    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getClientId());
-    assertEquals(30, egoConfig.getApi().getDmsAppCredentials().getClientSecret().length());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getName());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getClientId());
+    assertEquals(30, egoConfig.getApi().getDmsAppCredential().getClientSecret().length());
   }
 
   @Test
@@ -120,8 +120,8 @@ public class QuestionnaireTest {
     assertEquals("googleClientId", google.getClientId());
     assertEquals("googleClientSecret", google.getClientSecret());
     assertEquals("http://localhost:9000/oauth/login/google", google.getPreEstablishedRedirectUri());
-    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getName());
-    assertEquals("dms", egoConfig.getApi().getDmsAppCredentials().getClientId());
-    assertEquals(30, egoConfig.getApi().getDmsAppCredentials().getClientSecret().length());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getName());
+    assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getClientId());
+    assertEquals(30, egoConfig.getApi().getDmsAppCredential().getClientSecret().length());
   }
 }
