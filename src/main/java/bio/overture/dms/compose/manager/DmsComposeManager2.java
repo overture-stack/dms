@@ -1,20 +1,20 @@
 package bio.overture.dms.compose.manager;
 
+import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 import bio.overture.dms.compose.manager.deployer.EgoApiDbDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
+import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.swarm.service.SwarmService;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-
-import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 /**
  * Decorator that converts a DmsConfig object to a ComposeStack object before calling the internal
@@ -28,29 +28,33 @@ public class DmsComposeManager2 implements ComposeManager<DmsConfig> {
   private final SwarmService swarmService;
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final ServiceDeployer serviceDeployer;
+  private final ComposeProperties composeProperties;
 
   @Autowired
   public DmsComposeManager2(
       @NonNull ExecutorService executorService,
       @NonNull SwarmService swarmService,
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
-      @NonNull ServiceDeployer serviceDeployer) {
+      @NonNull ServiceDeployer serviceDeployer,
+      @NonNull ComposeProperties composeProperties) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
     this.serviceDeployer = serviceDeployer;
+    this.composeProperties = composeProperties;
   }
 
   @Override
   public void deploy(@NonNull DmsConfig dmsConfig) {
     swarmService.initializeSwarm();
+    swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
+
     val out =
         CompletableFuture.runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
             .thenRunAsync(() -> serviceDeployer.deployAndWait(dmsConfig, EGO_UI), executorService);
     out.join();
     log.info("sdfdsf");
   }
-
 
   @Override
   public void destroy(@NonNull DmsConfig dmsConfig, boolean destroyVolumes) {

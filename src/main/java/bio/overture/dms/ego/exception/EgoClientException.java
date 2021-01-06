@@ -1,10 +1,10 @@
 package bio.overture.dms.ego.exception;
 
-import lombok.NonNull;
-
 import static java.lang.String.format;
 
-public class EgoClientException extends RuntimeException{
+import lombok.NonNull;
+
+public class EgoClientException extends RuntimeException {
 
   public EgoClientException(String message) {
     super(message);
@@ -14,13 +14,14 @@ public class EgoClientException extends RuntimeException{
     super(message, cause);
   }
 
-  public static void checkEgoClient(boolean expression, String formattedMessage, Object ... args){
-    if (!expression){
+  public static void checkEgoClient(boolean expression, String formattedMessage, Object... args) {
+    if (!expression) {
       throw buildEgoClientException(formattedMessage, args);
     }
   }
-  public static EgoClientException buildEgoClientException(@NonNull String formattedMessage, Object ... args){
+
+  public static EgoClientException buildEgoClientException(
+      @NonNull String formattedMessage, Object... args) {
     return new EgoClientException(format(formattedMessage, args));
   }
-
 }

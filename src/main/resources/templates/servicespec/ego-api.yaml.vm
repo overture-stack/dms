@@ -93,7 +93,7 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: "dms-network"
+    - Target: $dmsConfig.network
       Aliases: null
   Runtime: null
 Mode:
@@ -119,7 +119,7 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
-  - Target: "dms-network"
+  - Target: $dmsConfig.network
     Aliases: null
 EndpointSpec:
   Mode: "vip"

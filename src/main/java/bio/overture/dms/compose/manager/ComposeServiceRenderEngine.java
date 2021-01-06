@@ -1,7 +1,6 @@
 package bio.overture.dms.compose.manager;
 
 import static bio.overture.dms.core.util.Exceptions.checkState;
-import static java.nio.file.Files.isRegularFile;
 
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.compose.model.stack.ComposeService;
@@ -46,7 +45,7 @@ public class ComposeServiceRenderEngine {
   @SneakyThrows
   public Optional<ComposeService> render(
       @NonNull DmsConfig dmsConfig, @NonNull ComposeServiceResources composeServiceResource) {
-    if (isRegularFile(composeServiceResource.getResourcePath())) {
+    if (composeServiceResource.exists()) {
       return Optional.of(renderComposeService(dmsConfig, composeServiceResource));
     }
     return Optional.empty();

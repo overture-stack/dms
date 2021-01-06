@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
@@ -63,5 +61,4 @@ public class CollectionUtils {
   public static <T> boolean isArrayBlank(T[] values) {
     return isNull(values) || values.length == 0;
   }
-
 }

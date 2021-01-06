@@ -1,7 +1,7 @@
 package bio.overture.dms.compose.config;
 
 import bio.overture.dms.compose.manager.ComposeStackGraphGenerator;
-import bio.overture.dms.compose.properties.ComposeStackProperties;
+import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.swarm.service.SwarmService;
 import lombok.NonNull;
 import lombok.val;
@@ -10,22 +10,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ComposeStackConfig {
+public class ComposeConfig {
 
-  private final ComposeStackProperties composeStackProperties;
+  private final ComposeProperties composeProperties;
   private final SwarmService swarmService;
 
   @Autowired
-  public ComposeStackConfig(
-      @NonNull ComposeStackProperties composeStackProperties, @NonNull SwarmService swarmService) {
-    this.composeStackProperties = composeStackProperties;
+  public ComposeConfig(
+      @NonNull ComposeProperties composeProperties, @NonNull SwarmService swarmService) {
+    this.composeProperties = composeProperties;
     this.swarmService = swarmService;
   }
 
   @Bean
   public ComposeStackGraphGenerator composeStackGraphGenerator() {
-    val generator =
-        new ComposeStackGraphGenerator(composeStackProperties.getNetwork(), swarmService);
+    val generator = new ComposeStackGraphGenerator(composeProperties.getNetwork(), swarmService);
     generator.init();
     return generator;
   }

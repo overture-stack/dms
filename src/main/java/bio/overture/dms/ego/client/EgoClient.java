@@ -1,5 +1,7 @@
 package bio.overture.dms.ego.client;
 
+import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
+
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.model.ApplicationRequest;
 import bio.overture.dms.ego.model.EgoApplication;
@@ -16,14 +18,11 @@ import bio.overture.dms.ego.model.PageDTO;
 import bio.overture.dms.ego.model.PermissionRequest;
 import bio.overture.dms.ego.model.PolicyRequest;
 import bio.overture.dms.rest.RestClient;
+import java.util.Collection;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
-
-import java.util.Collection;
-
-import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
 
 /** A api client for an externally running Ego service */
 @RequiredArgsConstructor
@@ -47,14 +46,12 @@ public class EgoClient {
     return restClient.getString(egoEndpoint.getPublicKey());
   }
 
-  public EgoPolicy createPolicy(@NonNull PolicyRequest r){
+  public EgoPolicy createPolicy(@NonNull PolicyRequest r) {
     return restClient.post(
-        egoEndpoint.createPolicy(),
-        r,
-        x -> jsonSerializer.convertValue(x, EgoPolicy.class));
+        egoEndpoint.createPolicy(), r, x -> jsonSerializer.convertValue(x, EgoPolicy.class));
   }
 
-  public EgoPolicy updatePolicy(@NonNull String policyId, @NonNull PolicyRequest r){
+  public EgoPolicy updatePolicy(@NonNull String policyId, @NonNull PolicyRequest r) {
     return restClient.put(
         egoEndpoint.updatePolicy(policyId),
         r,
@@ -68,43 +65,44 @@ public class EgoClient {
         x -> jsonSerializer.convertValue(x, EgoApplication.class));
   }
 
-  public EgoApplication updateApplication(@NonNull String applicationId, @NonNull ApplicationRequest r) {
+  public EgoApplication updateApplication(
+      @NonNull String applicationId, @NonNull ApplicationRequest r) {
     return restClient.put(
         egoEndpoint.updateApplication(applicationId),
         r,
         x -> jsonSerializer.convertValue(x, EgoApplication.class));
   }
 
-  public PageDTO<EgoApplication> listApplications(@NonNull ListApplicationRequest r){
-    return restClient.get(egoEndpoint.listApplications(r), x -> deserializePage(x, EgoApplication.class));
+  public PageDTO<EgoApplication> listApplications(@NonNull ListApplicationRequest r) {
+    return restClient.get(
+        egoEndpoint.listApplications(r), x -> deserializePage(x, EgoApplication.class));
   }
 
-  public PageDTO<EgoGroup> listGroups(@NonNull ListGroupRequest r){
+  public PageDTO<EgoGroup> listGroups(@NonNull ListGroupRequest r) {
     return restClient.get(egoEndpoint.listGroups(r), x -> deserializePage(x, EgoGroup.class));
   }
 
-  public PageDTO<EgoPolicy> listPolicies(@NonNull ListPolicyRequest r){
+  public PageDTO<EgoPolicy> listPolicies(@NonNull ListPolicyRequest r) {
     return restClient.get(egoEndpoint.listPolicies(r), x -> deserializePage(x, EgoPolicy.class));
   }
 
-  public PageDTO<GroupPermission> listGroupPermissions(@NonNull ListGroupPermissionsRequest r){
-    return restClient.get(egoEndpoint.listGroupPermissions(r), x -> deserializePage(x, GroupPermission.class));
+  public PageDTO<GroupPermission> listGroupPermissions(@NonNull ListGroupPermissionsRequest r) {
+    return restClient.get(
+        egoEndpoint.listGroupPermissions(r), x -> deserializePage(x, GroupPermission.class));
   }
 
-  public EgoGroup createGroup(@NonNull GroupRequest r){
-    return restClient.post(egoEndpoint.createGroup(), r, x -> jsonSerializer.convertValue(x, EgoGroup.class));
+  public EgoGroup createGroup(@NonNull GroupRequest r) {
+    return restClient.post(
+        egoEndpoint.createGroup(), r, x -> jsonSerializer.convertValue(x, EgoGroup.class));
   }
 
   public EgoGroup updateGroup(String groupId, GroupRequest r) {
     return restClient.put(
-        egoEndpoint.updateGroup(groupId),
-        r,
-        x -> jsonSerializer.convertValue(x, EgoGroup.class));
+        egoEndpoint.updateGroup(groupId), r, x -> jsonSerializer.convertValue(x, EgoGroup.class));
   }
 
-
-  public EgoGroup createGroupPermission(@NonNull String groupId,
-      @NonNull Collection<PermissionRequest> permissionRequests){
+  public EgoGroup createGroupPermission(
+      @NonNull String groupId, @NonNull Collection<PermissionRequest> permissionRequests) {
     return restClient.post(
         egoEndpoint.createGroupPermission(groupId),
         permissionRequests,
@@ -112,9 +110,11 @@ public class EgoClient {
   }
 
   @SuppressWarnings("unchecked")
-  private <T> PageDTO<T> deserializePage(String body, Class<T> contentType){
+  private <T> PageDTO<T> deserializePage(String body, Class<T> contentType) {
     val erasedPageDTO = jsonSerializer.convertValue(body, PageDTO.class);
-    val contents = mapToUnmodifiableList(erasedPageDTO.getResultSet(), x -> jsonSerializer.convertValue(x , contentType));
+    val contents =
+        mapToUnmodifiableList(
+            erasedPageDTO.getResultSet(), x -> jsonSerializer.convertValue(x, contentType));
     return PageDTO.<T>builder()
         .count(erasedPageDTO.getCount())
         .limit(erasedPageDTO.getLimit())
@@ -122,5 +122,4 @@ public class EgoClient {
         .resultSet(contents)
         .build();
   }
-
 }

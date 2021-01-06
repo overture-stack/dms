@@ -77,13 +77,13 @@ public class EgoApiDbDeployer {
     provisioner.provision(spec);
   }
 
-  private EgoDMSProvisioner buildEgoDmsProvisioner(EgoConfig egoConfig){
+  private EgoDMSProvisioner buildEgoDmsProvisioner(EgoConfig egoConfig) {
     val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
     val egoService = createEgoService(egoClient);
     return new EgoDMSProvisioner(egoService);
   }
 
-  private EgoDmsProvisionSpec buildDefaultProvisionSpec(DmsConfig dmsConfig){
+  private EgoDmsProvisionSpec buildDefaultProvisionSpec(DmsConfig dmsConfig) {
     return EgoDmsProvisionSpec.builder()
         .dmsGroupName(DMS_ADMIN_GROUP_NAME)
         .dmsPolicyName(DMS_POLICY_NAME)
@@ -93,5 +93,4 @@ public class EgoApiDbDeployer {
         //        .dmsUiAppCredential()
         .build();
   }
-
 }

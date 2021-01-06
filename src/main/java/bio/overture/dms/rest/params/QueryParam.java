@@ -1,13 +1,12 @@
 package bio.overture.dms.rest.params;
 
+import static bio.overture.dms.core.util.Joiner.COMMA;
+import static java.lang.String.format;
+
+import java.util.Collection;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
-
-import java.util.Collection;
-
-import static bio.overture.dms.core.util.Joiner.COMMA;
-import static java.lang.String.format;
 
 @Value
 @Builder

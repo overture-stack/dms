@@ -25,7 +25,6 @@ public class SongConfig {
   @NotNull private SongDbConfig db;
   @NotNull private SongApiConfig api;
 
-
   @Data
   @Builder
   @NoArgsConstructor
@@ -44,7 +43,6 @@ public class SongConfig {
     public boolean isDatabasePasswordDefined() {
       return isDefined(databasePassword);
     }
-
   }
 
   @Data
@@ -59,6 +57,5 @@ public class SongConfig {
     @Min(value = 2000)
     @Builder.Default
     private int hostPort = 9010;
-
   }
 }

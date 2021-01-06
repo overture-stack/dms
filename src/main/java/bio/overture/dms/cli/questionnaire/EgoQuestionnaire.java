@@ -1,24 +1,5 @@
 package bio.overture.dms.cli.questionnaire;
 
-import bio.overture.dms.cli.command.config.ConfigBuildCommand;
-import bio.overture.dms.cli.question.QuestionFactory;
-import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
-import bio.overture.dms.core.model.dmsconfig.AppCredential;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
-import bio.overture.dms.core.util.RandomGenerator;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.net.URL;
-import java.util.function.BiConsumer;
-
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -26,11 +7,33 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.HOURS;
 
+import bio.overture.dms.cli.command.config.ConfigBuildCommand;
+import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
+import bio.overture.dms.core.model.dmsconfig.AppCredential;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoDbConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoUiConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
+import bio.overture.dms.core.util.RandomGenerator;
+import java.net.URL;
+import java.util.function.BiConsumer;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Component
 public class EgoQuestionnaire {
 
   /** Constants */
   private static final String DEFAULT_DMS_APP_NAME = "dms";
+
   private static final String DEFAULT_UI_APP_NAME = "ego-ui";
   private static final String DEFAULT_DMS_APP_CLIENT_ID = "dms";
   private static final String DEFAULT_UI_APP_CLIENT_ID = "ego-ui";
@@ -54,16 +57,15 @@ public class EgoQuestionnaire {
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
-
-  private EgoConfig.EgoUiConfig processEgoUiConfig(EgoConfig.EgoApiConfig egoApiConfig) {
-    return EgoConfig.EgoUiConfig.builder()
+  private EgoUiConfig processEgoUiConfig(EgoApiConfig egoApiConfig) {
+    return EgoUiConfig.builder()
         .uiAppCredential(processUiAppCreds(egoApiConfig))
         //        .url() //TODO: egoUi.url must be populated
         .build();
   }
 
-  private EgoConfig.EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
-    val apiBuilder = EgoConfig.EgoApiConfig.builder();
+  private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
+    val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
         questionFactory
             .newDefaultSingleQuestion(
@@ -138,8 +140,8 @@ public class EgoQuestionnaire {
     return apiConfig;
   }
 
-  private EgoConfig.EgoDbConfig processEgoDbConfig() {
-    val dbBuilder = EgoConfig.EgoDbConfig.builder();
+  private EgoDbConfig processEgoDbConfig() {
+    val dbBuilder = EgoDbConfig.builder();
 
     val isSetDBPassword =
         questionFactory
@@ -197,7 +199,7 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private AppCredential processUiAppCreds(@NonNull EgoConfig.EgoApiConfig apiConfig) {
+  private AppCredential processUiAppCreds(@NonNull EgoApiConfig apiConfig) {
     return AppCredential.builder()
         .name(DEFAULT_UI_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
@@ -207,7 +209,7 @@ public class EgoQuestionnaire {
         .build();
   }
 
-  private AppCredential processDmsAppCreds(EgoConfig.EgoApiConfig apiConfig) {
+  private AppCredential processDmsAppCreds(EgoApiConfig apiConfig) {
     if (isNull(apiConfig.getDmsAppCredential())) {
       // doesnt exist, ask questions
       val clientId =
@@ -223,7 +225,7 @@ public class EgoQuestionnaire {
 
       val clientSecret = generateAppSecret();
       return AppCredential.builder()
-          .name(DEFAULT_UI_APP_NAME)
+          .name(DEFAULT_DMS_APP_NAME)
           .clientId(clientId)
           .clientSecret(clientSecret)
           .build();

@@ -44,14 +44,14 @@ public class QuestionnaireTest {
             "12",
             "9000",
             "https://dms.example.org:9933/hi/there",
-            "N",
-            "9001",
             "1",
             "googleClientId",
             "googleClientSecret",
             "some.redirect.google.example.org",
             "dms",
-            "30");
+            "30",
+            "N",
+            "9001");
 
     this.mockTextTerminal.getInputs().addAll(inputs);
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(PRODUCTION);
@@ -90,13 +90,13 @@ public class QuestionnaireTest {
             "5",
             "12",
             "9000",
-            "N",
-            "9001",
             "1",
             "googleClientId",
             "googleClientSecret",
             "dms",
-            "30");
+            "30",
+            "N",
+            "9001");
 
     this.mockTextTerminal.getInputs().addAll(inputs);
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(LOCAL);

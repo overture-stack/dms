@@ -20,7 +20,7 @@ ego:
       max-seconds: 256
       multiplier: 2.0
 
-compose-stack:
+compose:
   network: dms-swarm-network
 
 docker:

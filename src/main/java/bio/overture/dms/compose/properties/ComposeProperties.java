@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties("compose-stack")
-public class ComposeStackProperties {
+@ConfigurationProperties("compose")
+public class ComposeProperties {
 
   @NotBlank private String network;
 }

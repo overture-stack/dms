@@ -1,5 +1,6 @@
 package bio.overture.dms.compose.model;
 
+import static bio.overture.dms.core.util.FileUtils.isResourceExist;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.nio.file.Path;
@@ -17,10 +18,7 @@ public enum ComposeServiceResources {
   SONG_API("song-api"),
   SCORE_API("score-api");
 
-
-  private static final Path RESOURCES_DIR = Paths.get("src/main/resources");
-  private static final Path COMPOSE_STACK_TEMPLATE_DIR =
-      RESOURCES_DIR.resolve("templates/servicespec/");
+  private static final Path TEMPLATE_DIR = Paths.get("templates/servicespec");
 
   private final String text;
 
@@ -33,12 +31,12 @@ public enum ComposeServiceResources {
     return Arrays.stream(values());
   }
 
-  public Path getResourcePath() {
-    return COMPOSE_STACK_TEMPLATE_DIR.resolve(getFilename());
+  public boolean exists() {
+    return isResourceExist(getVelocityPath().toString());
   }
 
   public Path getVelocityPath() {
-    return RESOURCES_DIR.relativize(getResourcePath());
+    return TEMPLATE_DIR.resolve(getFilename());
   }
 
   private String getFilename() {

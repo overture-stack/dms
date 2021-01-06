@@ -3,7 +3,6 @@ package bio.overture.dms.ego.client;
 import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.nonNull;
 
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
@@ -13,7 +12,6 @@ import bio.overture.dms.rest.params.RequestParamBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.val;
 
 /** Resolves the endpoints for a specific api function */
 @RequiredArgsConstructor
@@ -83,10 +81,8 @@ public class EgoEndpoint {
         .build(format("%s/policies", baseServerUrl));
   }
 
-
-  public String createGroupPermission(@NonNull String groupId){
+  public String createGroupPermission(@NonNull String groupId) {
     return format("%s/groups/%s/permissions", baseServerUrl, groupId);
-
   }
 
   public String listGroupPermissions(@NonNull ListGroupPermissionsRequest request) {

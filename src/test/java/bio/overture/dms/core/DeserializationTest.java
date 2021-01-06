@@ -31,11 +31,10 @@ public class DeserializationTest {
   @SneakyThrows
   public void deserialization_noUnknownFields_success(@TempDir Path tempDir) {
     val tempFile = tempDir.resolve("tempFile.yaml").toFile();
-    val file = getConfigYamlFile();
 
-    val obj1 = yamlSerializer.deserializeToObject(file, ComposeStack.class);
+    val obj1 = yamlSerializer.deserializeToObject(getConfigYamlFileStream(), ComposeStack.class);
 
-    val jsonNode1 = yamlSerializer.deserialize(file);
+    val jsonNode1 = yamlSerializer.deserialize(getConfigYamlFileStream());
     yamlSerializer.serializeToFile(jsonNode1, tempFile);
 
     val obj1_1 = yamlSerializer.deserializeToObject(tempFile, ComposeStack.class);
@@ -55,7 +54,7 @@ public class DeserializationTest {
   @Test
   @SneakyThrows
   public void deserialization_unknownFields_fail(@TempDir Path tempDir) {
-    val jsonNode = (ObjectNode) yamlSerializer.deserialize(getConfigYamlFile());
+    val jsonNode = (ObjectNode) yamlSerializer.deserialize(getConfigYamlFileStream());
 
     jsonNode.put("someRandomField", "someRandomValue");
 
@@ -79,7 +78,7 @@ public class DeserializationTest {
   }
 
   @SneakyThrows
-  private static InputStream getConfigYamlFile() {
-    return readResourceStream("/example.compose-stack.yaml");
+  private static InputStream getConfigYamlFileStream() {
+    return readResourceStream("example.compose-stack.yaml");
   }
 }

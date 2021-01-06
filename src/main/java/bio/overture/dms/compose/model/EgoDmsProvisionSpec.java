@@ -11,8 +11,8 @@ public class EgoDmsProvisionSpec {
 
   @NonNull private final String dmsGroupName;
   @NonNull private final String dmsPolicyName;
-//  @NonNull private final String songPolicyName;
-//  @NonNull private final String scorePolicyName;
+  //  @NonNull private final String songPolicyName;
+  //  @NonNull private final String scorePolicyName;
   @NonNull private final AppCredential egoUiAppCredential;
-//  @NonNull private final AppCredential dmsUiAppCredential;
+  //  @NonNull private final AppCredential dmsUiAppCredential;
 }

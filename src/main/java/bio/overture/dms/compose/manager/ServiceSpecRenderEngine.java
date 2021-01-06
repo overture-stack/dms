@@ -1,6 +1,5 @@
 package bio.overture.dms.compose.manager;
 
-import static java.nio.file.Files.isRegularFile;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import bio.overture.dms.compose.model.ComposeServiceResources;
@@ -44,7 +43,7 @@ public class ServiceSpecRenderEngine {
   @SneakyThrows
   public Optional<ServiceSpec> render(
       @NonNull DmsConfig dmsConfig, @NonNull ComposeServiceResources composeServiceResource) {
-    if (isRegularFile(composeServiceResource.getResourcePath())) {
+    if (composeServiceResource.exists()) {
       return Optional.of(renderServiceSpec(dmsConfig, composeServiceResource));
     }
     return Optional.empty();

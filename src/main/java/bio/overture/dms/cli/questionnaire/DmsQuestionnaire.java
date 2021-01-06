@@ -1,6 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import lombok.NonNull;
 import lombok.val;
@@ -14,15 +15,18 @@ public class DmsQuestionnaire {
   private final QuestionFactory questionFactory;
   private final BuildProperties buildProperties;
   private final EgoQuestionnaire egoQuestionnaire;
+  private final ComposeProperties composeProperties;
 
   @Autowired
   public DmsQuestionnaire(
       @NonNull QuestionFactory questionFactory,
       @NonNull BuildProperties buildProperties,
-      @NonNull EgoQuestionnaire egoQuestionnaire) {
+      @NonNull EgoQuestionnaire egoQuestionnaire,
+      @NonNull ComposeProperties composeProperties) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
     this.egoQuestionnaire = egoQuestionnaire;
+    this.composeProperties = composeProperties;
   }
 
   public DmsConfig buildDmsConfig() {
@@ -35,6 +39,7 @@ public class DmsQuestionnaire {
     return DmsConfig.builder()
         .clusterRunMode(clusterRunMode)
         .version(buildProperties.getVersion())
+        .network(composeProperties.getNetwork())
         .ego(egoConfig)
         .build();
   }

@@ -29,9 +29,18 @@ import org.springframework.core.io.Resource;
 public class FileUtils {
 
   public static InputStream readResourceStream(@NonNull String filename) {
-    val is = FileUtils.class.getClassLoader().getResourceAsStream(filename);
+    val is = getResourceInputStream(filename);
     checkNotFound(nonNull(is), "Could not find file '%s' on the classpath", filename);
     return is;
+  }
+
+  public static boolean isResourceExist(@NonNull String filename) {
+    return nonNull(getResourceInputStream(filename));
+  }
+
+  @SneakyThrows
+  public static String readResourceAsString(@NonNull String filename) {
+    return new String(readResourceStream(filename).readAllBytes());
   }
 
   @Deprecated
@@ -74,5 +83,9 @@ public class FileUtils {
       checkDirectoryExists(dir);
       Files.walk(dir).sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);
     }
+  }
+
+  private static InputStream getResourceInputStream(String filename) {
+    return FileUtils.class.getClassLoader().getResourceAsStream(filename);
   }
 }
