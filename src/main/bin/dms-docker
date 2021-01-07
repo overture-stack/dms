@@ -119,7 +119,7 @@ function provisionConfig {
 		echo "[ERROR]:  The config file \"$DMS_CONFIG_FILE\" was not created"
 		exit 1
 	fi
-	dms_version=$(cat $DMS_CONFIG_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' 2>&1)
+	dms_version=$(cat $DMS_CONFIG_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' | sed  's/"//g' 2>&1)
 
 	# Return the version
 	echo $dms_version
@@ -152,18 +152,22 @@ function main {
 	#################################
 	# This is done so that unix line endings are output. Otherwise, with the -t option, 
 	# dos line endings are present and the script cannot be sourced
+	docker_opts=""
 	if [ "${DMS_DEBUG:-}" != "true" ]; then
 		docker_opts='--rm'
 	fi
-	docker_opts="$docker_opts -i -e \"DOCKER_MODE=true\""
+	docker_opts="$docker_opts -i --network=host -e \"DOCKER_MODE=true\""
 	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
 	fi
 	docker_opts="$docker_opts -v /var/run/docker.sock:/var/run/docker.sock:ro"
 	docker_opts="$docker_opts -v /usr/bin/docker:/usr/bin/docker:ro"
+	docker_opts="$docker_opts -v $DMS_HOME:/root/.dms"
 
 	if [ "${DMS_DEBUG:-}" == "true" ]; then
+		docker_opts="$docker_opts -e JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+		docker_opts="$docker_opts -p 5005:5005"
 		set -x
 	fi
 	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
