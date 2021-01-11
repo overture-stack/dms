@@ -64,6 +64,12 @@ help:
 package:
 	@mvn clean package
 
+package-no-tests:
+	@rm -rf ./target/dms-*
+	@mvn package -DskipTests
+	@tar zxvf ./target/dms-*-dist.tar.gz
+	
+
 #############################################################
 #  Docker targets
 #############################################################

@@ -1,0 +1,146 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+name: ego-api
+ServiceSpec:
+  Name: ego-api
+  TaskTemplate:
+    ContainerSpec:
+      Image: "overture/ego:3.6.0"
+      Env:
+        - SERVER_PORT=8080
+        - SPRING_FLYWAY_ENABLED=true
+        - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
+        - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=$ego.databasePassword
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB}:5432/ego?stringtype=unspecified
+        - SWAGGER_HOST=$ego.serverUrl.host:$ego.serverUrl.port
+        - SWAGGER_BASEURL=#if($ego.serverUrl.path == '')/#{else}$ego.serverUrl.path#end
+#if( $clusterRunMode == 'LOCAL')
+        - LOGIN_NONCE_SECURE=false
+        - LOGIN_NONCE_SAMESITE=lax
+#end
+        - INITIALIZATION_ENABLED=true
+        - INITIALIZATION_APPLICATIONS_0_NAME=$ego.uiAppCredentials.name
+        - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
+        - INITIALIZATION_APPLICATIONS_0_CLIENTID=$ego.uiAppCredentials.clientId
+        - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$ego.uiAppCredentials.clientSecret
+        - INITIALIZATION_APPLICATIONS_0_REDIRECTURI=$ego.uiAppCredentials.redirectUri
+#if( $ego.dmsAppCredentials )
+        - INITIALIZATION_APPLICATIONS_1_NAME=$ego.dmsAppCredentials.name
+        - INITIALIZATION_APPLICATIONS_1_TYPE=ADMIN
+        - INITIALIZATION_APPLICATIONS_1_CLIENTID=$ego.dmsAppCredentials.clientId
+        - INITIALIZATION_APPLICATIONS_1_CLIENTSECRET=$ego.dmsAppCredentials.clientSecret
+#end
+        - REFRESHTOKEN_COOKIEISSECURE=true
+        - REFRESHTOKEN_DOMAIN=$ego.serverUrl.host
+        - APITOKEN_DURATIONDAYS=$ego.apiTokenDurationDays
+        - JWT_USER_DURATIONMS=$ego.jwt.user.durationMs
+        - JWT_APP_DURATIONMS=$ego.jwt.app.durationMs
+        - REFRESHTOKEN_DURATIONMS=$ego.refreshTokenDurationMS
+#if( $ego.sso.google )
+        - GOOGLE_CLIENT_CLIENTID=$ego.sso.google.clientId
+        - GOOGLE_CLIENT_CLIENTSECRET=$ego.sso.google.clientSecret
+        - GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.google.preEstablishedRedirectUri
+#end
+#if( $ego.sso.github )
+        - GITHUB_CLIENT_CLIENTID=$ego.sso.github.clientId
+        - GITHUB_CLIENT_CLIENTSECRET=$ego.sso.github.clientSecret
+        - GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.github.preEstablishedRedirectUri
+#end
+#if( $ego.sso.linkedin )
+        - LINKEDIN_CLIENT_CLIENTID=$ego.sso.linkedin.clientId
+        - LINKEDIN_CLIENT_CLIENTSECRET=$ego.sso.linkedin.clientSecret
+        - LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.linkedin.preEstablishedRedirectUri
+#end
+#if( $ego.sso.facebook )
+        - FACEBOOK_CLIENT_CLIENTID=$ego.sso.facebook.clientId
+        - FACEBOOK_CLIENT_CLIENTSECRET=$ego.sso.facebook.clientSecret
+        - FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.facebook.preEstablishedRedirectUri
+#end
+#if( $ego.sso.orcid )
+        - ORCID_CLIENT_CLIENTID=$ego.sso.orcid.clientId
+        - ORCID_CLIENT_CLIENTSECRET=$ego.sso.orcid.clientSecret
+        - ORCID_CLIENT_PREESTABLISHEDREDIRECTURI=$ego.sso.orcid.preEstablishedRedirectUri
+#end
+      Mounts: null
+      Duration: null
+      StopGracePeriod: 120000000000
+      DNSConfig: null
+      OpenStdin: false
+      ReadOnly: false
+      Hosts: null
+      Hostname: null
+      Secrets: null
+      HealthCheck: null
+      StopSignal: "SIGINT"
+      Privileges: null
+      Configs: null
+    Resources:
+      Limits:
+        #2 GiB
+        MemoryBytes: 2147483648
+        #unlimited.
+        NanoCPUs: 0
+      Reservations:
+        #1.5 GiB
+        MemoryBytes: 1610612736
+        #unlimited.
+        NanoCPUs: 0
+    RestartPolicy:
+      Condition: "on-failure"
+      # 10s
+      Delay: 10000000000
+##          MaxAttempts: 10
+      MaxAttempts: 0
+      # unbounded
+      Window: 0
+    Placement: null
+    LogDriver:
+      Name: "json-file"
+      Options: null
+    ForceUpdate: 0
+    Networks:
+      - Target: "dms-network"
+        Aliases: null
+    Runtime: null
+  Mode:
+    Replicated:
+      Replicas: 1
+    Global: null
+  UpdateConfig:
+    FailureAction: "rollback"
+    #Since there is a shared volume, containing process information
+    # need to ensure its stopped first
+    Order: "start-first"
+    Parallelism: null
+    Delay: null
+    MaxFailureRatio: null
+    Monitor: null
+  RollbackConfig:
+    FailureAction: "continue"
+    #Since there is a shared volume, containing process information
+    # need to ensure its stopped first
+    Order: "start-first"
+    Parallelism: null
+    Delay: null
+    MaxFailureRatio: 0.8
+    Monitor: null
+  Networks:
+    - Target: "dms-network"
+      Aliases: null
+  EndpointSpec:
+    Mode: "vip"
+    Ports:
+      - Name: "api"
+        Protocol: "tcp"
+        TargetPort: 8080
+        PublishedPort: $ego.apiHostPort
+        PublishMode: "ingress"
+  Labels: null
+dependencies:
+  - name: ego-db
+    type: "service_healthy"
+
