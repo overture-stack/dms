@@ -1,0 +1,28 @@
+terminal:
+  ansi: true
+  silent: false
+  width: 80
+
+async:
+  threadCount: -1
+  timeoutSeconds: 14400
+
+ego:
+  client:
+    timeout-seconds:
+      call: 10
+      connect: 10
+      read: 10
+      write: 10
+    retry:
+      max-attempts: 5
+      initial-seconds: 2
+      max-seconds: 256
+      multiplier: 2.0
+
+compose:
+  network: dms-swarm-network
+
+docker:
+  # If blank, will use the system default docker daemon
+  host: ""

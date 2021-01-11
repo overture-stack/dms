@@ -1,0 +1,177 @@
+#!/bin/bash
+set -euo pipefail
+
+DEFAULT_DOCKER_EXE=/usr/bin/docker
+export DOCKER_EXE=$DEFAULT_DOCKER_EXE
+export CONFIG_FILENAME=config.yaml
+export TEMP_CONFIG_FILE=/tmp/$CONFIG_FILENAME
+
+export DMS_HOME=$HOME/.dms
+export DMS_CONFIG_FILE=$DMS_HOME/$CONFIG_FILENAME
+
+MIN_VERSION=19.03.00
+
+function isVersionGTE {
+	input_version=$1
+	min_version=$2
+
+	input_major_version=$(parseMajorVersion $input_version)
+	input_minor_version=$(parseMinorVersion $input_version)
+	input_patch_version=$(parsePatchVersion $input_version)
+
+	min_major_version=$(parseMajorVersion $min_version)
+	min_minor_version=$(parseMinorVersion $min_version)
+	min_patch_version=$(parsePatchVersion $min_version)
+
+	result=true
+	if [ $input_major_version -lt $min_major_version ];then
+		result=false
+	elif [ $input_major_version -eq $min_major_version ];then
+		if [ $input_minor_version -lt $min_minor_version ];then
+			result=false
+		elif [ $input_minor_version -eq $min_minor_version ];then
+			if [ $input_patch_version -lt $min_patch_version ];then
+				result=false
+			fi
+		fi
+	fi
+	echo $result
+}
+
+function parseMajorVersion {
+	echo $1 | sed 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\1/g'
+}
+
+function parseMinorVersion {
+	echo $1 | sed 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\2/g'
+}
+
+function parsePatchVersion {
+	echo $1 | sed 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\3/g'
+}
+
+function checkDocker {
+	# check docker exists: show instructions 
+	result_output=$($DOCKER_EXE version -f '{{ .Server.Version }}' 2>&1)
+	result_code=$?
+	if [ $result_code -ne 0  ]; then
+		echo "Could not execute the docker command. Message: $result_output"
+		exit 1
+	else
+		version_result=$(isVersionGTE $result_output $MIN_VERSION 2>&1)
+		if [ "$version_result" == "false" ]; then
+			echo "[ERROR]: The installed docker version $result_output is not >= $MIN_VERSION"
+			exit 1
+		fi
+	fi
+}
+
+
+function setupDockerExecutable {
+	if [ ! -f $DEFAULT_DOCKER_EXE ]; then
+		result=$(which docker)
+		if [ $? -ne 0 ]; then
+			#TODO: rtisma -- add instructions
+			echo "Docker is not installed. Please refer to ...."
+			exit 1
+		else
+			export DOCKER_EXE=$result
+		fi
+	else
+		export DOCKER_EXE=$DEFAULT_DOCKER_EXE
+	fi
+}
+
+function getLatestVersion {
+	docker_engine_arch=$($DOCKER_EXE version -f '{{ .Server.Arch }}' 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: Could not find the docker engine server architecture. Message: $docker_engine_arch"
+		exit 1
+	fi
+	$DOCKER_EXE run --rm -i overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
+}
+
+function genLatestConfig {
+	output_path=$1
+
+	$DOCKER_EXE pull overture/dms-version-helper:latest > /dev/null
+	result=$(getLatestVersion 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: Could not find the latest dms version. Try again later."
+		echo "$result"
+		exit 1
+	fi
+	echo -n "version: $result" > $output_path
+}
+
+function provisionConfig {
+	config_filename=$1
+
+	if [ ! -d $DMS_HOME ];then
+		mkdir -p $DMS_HOME
+	fi
+
+	if [ ! -f $DMS_CONFIG_FILE ];then
+		genLatestConfig $DMS_CONFIG_FILE
+	fi
+
+	if [ ! -f $DMS_CONFIG_FILE ];then
+		echo "[ERROR]:  The config file \"$DMS_CONFIG_FILE\" was not created"
+		exit 1
+	fi
+	dms_version=$(cat $DMS_CONFIG_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' | sed  's/"//g' 2>&1)
+
+	# Return the version
+	echo $dms_version
+}
+
+function main {
+	# If DMS_DEBUG is true, dump the command that is run
+	# Arguments
+	command_name=${1:-}
+	all_dms_params=$@
+
+	# Constants
+	repo_name="overture/dms"
+	volume_name="dms-config"
+	config_filename=$CONFIG_FILENAME
+
+	setupDockerExecutable
+	checkDocker
+
+	# Get dms version from config
+	dms_version=$(provisionConfig $config_filename 2>&1)
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: There was an error obtaining the dms version"
+		echo "$dms_version"
+		exit 1
+	fi
+
+	#################################
+	# Define the docker options
+	#################################
+	# This is done so that unix line endings are output. Otherwise, with the -t option, 
+	# dos line endings are present and the script cannot be sourced
+	docker_opts=""
+	if [ "${DMS_DEBUG:-}" != "true" ]; then
+		docker_opts='--rm'
+	fi
+	docker_opts="$docker_opts -i --network=host -e \"DOCKER_MODE=true\""
+	if [ "$command_name" != "bash-completion" ];then
+		# Output colour to the terminal
+		docker_opts="$docker_opts -t"
+	fi
+	docker_opts="$docker_opts -v /var/run/docker.sock:/var/run/docker.sock:ro"
+	docker_opts="$docker_opts -v /usr/bin/docker:/usr/bin/docker:ro"
+	docker_opts="$docker_opts -v $DMS_HOME:/root/.dms"
+
+	if [ "${DMS_DEBUG:-}" == "true" ]; then
+		docker_opts="$docker_opts -e JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+		docker_opts="$docker_opts -p 5005:5005"
+		set -x
+	fi
+	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
+	set +x
+}
+
+main $@

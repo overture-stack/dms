@@ -1,0 +1,133 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+Name: ego-api
+TaskTemplate:
+  ContainerSpec:
+    Image: "overture/ego:3.6.0"
+    Env:
+    - SERVER_PORT=8080
+    - SPRING_FLYWAY_ENABLED=true
+    - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
+    - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
+    - SPRING_DATASOURCE_USERNAME=postgres
+    - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.db.databasePassword
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:5432/ego?stringtype=unspecified
+    - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port
+    - SWAGGER_BASEURL=#if($dmsConfig.ego.api.url.path == '')/#{else}$dmsConfig.ego.api.url.path#end
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - LOGIN_NONCE_SECURE=false
+    - LOGIN_NONCE_SAMESITE=lax
+#end
+    - INITIALIZATION_ENABLED=true
+    - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredential.name
+    - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
+    - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredential.clientId
+    - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredential.clientSecret
+    - REFRESHTOKEN_COOKIEISSECURE=true
+    - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.api.url.host
+    - APITOKEN_DURATIONDAYS=$dmsConfig.ego.api.tokenDurationDays
+    - JWT_USER_DURATIONMS=$dmsConfig.ego.api.jwt.user.durationMs
+    - JWT_APP_DURATIONMS=$dmsConfig.ego.api.jwt.app.durationMs
+    - REFRESHTOKEN_DURATIONMS=$dmsConfig.ego.api.refreshTokenDurationMS
+#if( $dmsConfig.ego.api.sso.google )
+    - GOOGLE_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.google.clientId
+    - GOOGLE_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.google.clientSecret
+    - GOOGLE_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.google.preEstablishedRedirectUri
+#end
+#if( $dmsConfig.ego.api.sso.github )
+    - GITHUB_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.github.clientId
+    - GITHUB_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.github.clientSecret
+    - GITHUB_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.github.preEstablishedRedirectUri
+#end
+#if( $dmsConfig.ego.api.sso.linkedin )
+    - LINKEDIN_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.linkedin.clientId
+    - LINKEDIN_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.linkedin.clientSecret
+    - LINKEDIN_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.linkedin.preEstablishedRedirectUri
+#end
+#if( $dmsConfig.ego.api.sso.facebook )
+    - FACEBOOK_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.facebook.clientId
+    - FACEBOOK_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.facebook.clientSecret
+    - FACEBOOK_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.facebook.preEstablishedRedirectUri
+#end
+#if( $dmsConfig.ego.api.sso.orcid )
+    - ORCID_CLIENT_CLIENTID=$dmsConfig.ego.api.sso.orcid.clientId
+    - ORCID_CLIENT_CLIENTSECRET=$dmsConfig.ego.api.sso.orcid.clientSecret
+    - ORCID_CLIENT_PREESTABLISHEDREDIRECTURI=$dmsConfig.ego.api.sso.orcid.preEstablishedRedirectUri
+#end
+    Mounts: null
+    Duration: null
+    StopGracePeriod: 120000000000
+    DNSConfig: null
+    OpenStdin: false
+    ReadOnly: false
+    Hosts: null
+    Hostname: null
+    Secrets: null
+    HealthCheck: null
+    StopSignal: "SIGINT"
+    Privileges: null
+    Configs: null
+  Resources:
+    Limits:
+      #2 GiB
+      MemoryBytes: 2147483648
+      #unlimited.
+      NanoCPUs: 0
+    Reservations:
+      #1.5 GiB
+      MemoryBytes: 1610612736
+      #unlimited.
+      NanoCPUs: 0
+  RestartPolicy:
+    Condition: "on-failure"
+    # 10s
+    Delay: 10000000000
+    MaxAttempts: 0
+    # unbounded
+    Window: 0
+  Placement: null
+  LogDriver:
+    Name: "json-file"
+    Options: null
+  ForceUpdate: 0
+  Networks:
+    - Target: $dmsConfig.network
+      Aliases: null
+  Runtime: null
+Mode:
+  Replicated:
+    Replicas: 1
+  Global: null
+UpdateConfig:
+  FailureAction: "rollback"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: null
+  Monitor: null
+RollbackConfig:
+  FailureAction: "continue"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: 0.8
+  Monitor: null
+Networks:
+  - Target: $dmsConfig.network
+    Aliases: null
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "api"
+      Protocol: "tcp"
+      TargetPort: 8080
+      PublishedPort: $dmsConfig.ego.api.hostPort
+      PublishMode: "ingress"
+Labels: null
+

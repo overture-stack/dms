@@ -1,0 +1,45 @@
+# Name MUST be default otherwise docker engine throws an error
+Name: default
+Orchestration:
+  # The number of historic tasks to keep per instance or node. If
+  #negative, never remove completed or failed tasks.
+  TaskHistoryRetentionLimit: 10
+# Raft:
+#   # The number of log entries between snapshots.
+#   SnapshotInterval: 10000
+#
+#   # The number of log entries to keep around to sync up slow followers after a snapshot is created.
+#   #LogEntriesForSlowFollowers: 500
+#
+#   # The number of ticks that a follower will wait for a message from
+#   # the leader before becoming a candidate and starting an election.
+#   # ElectionTick must be greater than HeartbeatTick.
+#   # A tick currently defaults to one second, so these translate
+#   # directly to seconds currently, but this is NOT guaranteed.
+#   #ElectionTick: 3
+#
+#
+#   # The number of ticks between heartbeats. Every HeartbeatTick ticks,
+#   # the leader will send a heartbeat to the followers.
+#
+#   # A tick currently defaults to one second, so these translate
+#   # directly to seconds currently, but this is NOT guaranteed.
+#   #HeartbeatTick: 1
+
+# Dispatcher:
+  # The delay for an agent to send a heartbeat to the dispatcher
+  # HeartbeatPeriod: 5000000000
+
+# Defaults for creating tasks in this cluster.
+TaskDefaults:
+  # The log driver to use for tasks created in the orchestrator if unspecified by a service.
+  # Updating this value only affects new tasks. Existing tasks continue
+  # to use their previously configured log driver until recreated.
+  LogDriver:
+    # The log driver to use as a default for new tasks.
+    Name: json-file
+    # Driver-specific options for the selected log driver, specified
+    #as key/value pairs.
+    # Options:
+
+
