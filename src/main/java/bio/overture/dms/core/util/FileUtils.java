@@ -3,8 +3,11 @@ package bio.overture.dms.core.util;
 import static bio.overture.dms.core.exception.NotFoundException.checkNotFound;
 import static bio.overture.dms.core.util.Joiner.COMMA;
 import static java.lang.String.format;
+import static java.nio.file.Files.copy;
+import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isReadable;
 import static java.nio.file.Files.isRegularFile;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.reverseOrder;
@@ -21,10 +24,12 @@ import java.util.List;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
+@Slf4j
 @NoArgsConstructor(access = PRIVATE)
 public class FileUtils {
 
@@ -82,6 +87,20 @@ public class FileUtils {
     if (exists(dir)) {
       checkDirectoryExists(dir);
       Files.walk(dir).sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);
+    }
+  }
+
+  @SneakyThrows
+  public static void copyPath(Path path, Path sourceDir, Path targetDir) {
+    log.info("file: {}", path.toString());
+    val relativePath = sourceDir.relativize(path);
+    val newPath = targetDir.resolve(relativePath);
+    if (isDirectory(path)) {
+      createDirectories(newPath);
+    } else if (isRegularFile(path) && isReadable(path)) {
+      copy(path, newPath);
+    } else {
+      throw new IllegalStateException("could not process assets");
     }
   }
 

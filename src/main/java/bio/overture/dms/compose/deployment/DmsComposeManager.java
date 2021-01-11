@@ -1,11 +1,10 @@
-package bio.overture.dms.compose.manager;
+package bio.overture.dms.compose.deployment;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
-import bio.overture.dms.compose.manager.deployer.EgoApiDbDeployer;
+import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
-import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.concurrent.CompletableFuture;
@@ -16,32 +15,26 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Decorator that converts a DmsConfig object to a ComposeStack object before calling the internal
- * ComposeManager implementation
- */
+/** Composes DMS services in a swarm cluster */
 @Slf4j
 @Component
-public class DmsComposeManager2 implements ComposeManager<DmsConfig> {
+public class DmsComposeManager implements ComposeManager<DmsConfig> {
 
   private final ExecutorService executorService;
   private final SwarmService swarmService;
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final ServiceDeployer serviceDeployer;
-  private final ComposeProperties composeProperties;
 
   @Autowired
-  public DmsComposeManager2(
+  public DmsComposeManager(
       @NonNull ExecutorService executorService,
       @NonNull SwarmService swarmService,
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
-      @NonNull ServiceDeployer serviceDeployer,
-      @NonNull ComposeProperties composeProperties) {
+      @NonNull ServiceDeployer serviceDeployer) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
     this.serviceDeployer = serviceDeployer;
-    this.composeProperties = composeProperties;
   }
 
   @Override
@@ -51,7 +44,7 @@ public class DmsComposeManager2 implements ComposeManager<DmsConfig> {
 
     val out =
         CompletableFuture.runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
-            .thenRunAsync(() -> serviceDeployer.deployAndWait(dmsConfig, EGO_UI), executorService);
+            .thenRunAsync(() -> serviceDeployer.deploy(dmsConfig, EGO_UI, true), executorService);
     out.join();
     log.info("sdfdsf");
   }

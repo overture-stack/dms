@@ -1,10 +1,11 @@
-package bio.overture.dms.compose.manager.deployer;
+package bio.overture.dms.compose.deployment.ego;
 
+import static bio.overture.dms.compose.deployment.ego.EgoDMSProvisioner.createEgoDMSProvisioner;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_DB;
 import static bio.overture.dms.ego.client.EgoService.createEgoService;
 
-import bio.overture.dms.compose.manager.ServiceDeployer;
+import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.compose.model.EgoDmsProvisionSpec;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
@@ -51,9 +52,8 @@ public class EgoApiDbDeployer {
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
     // TODO: DB deployment is not blocking the api deployement....fix this
-    val dbDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_DB);
-    val apiDeployType = serviceDeployer.deployAndWait(dmsConfig, EGO_API);
-
+    serviceDeployer.deploy(dmsConfig, EGO_DB, true);
+    serviceDeployer.deploy(dmsConfig, EGO_API, true);
     waitForEgoApiHealthy(dmsConfig.getEgo());
     provision(dmsConfig);
   }
@@ -80,7 +80,7 @@ public class EgoApiDbDeployer {
   private EgoDMSProvisioner buildEgoDmsProvisioner(EgoConfig egoConfig) {
     val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
     val egoService = createEgoService(egoClient);
-    return new EgoDMSProvisioner(egoService);
+    return createEgoDMSProvisioner(egoService);
   }
 
   private EgoDmsProvisionSpec buildDefaultProvisionSpec(DmsConfig dmsConfig) {

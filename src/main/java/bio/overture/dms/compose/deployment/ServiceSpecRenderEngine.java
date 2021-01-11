@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.manager;
+package bio.overture.dms.compose.deployment;
 
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
@@ -20,6 +20,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/** Renders a DMS ServiceSpec */
 @Component
 public class ServiceSpecRenderEngine {
 

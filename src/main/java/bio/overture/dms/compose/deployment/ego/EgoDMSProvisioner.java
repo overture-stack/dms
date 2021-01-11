@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.manager.deployer;
+package bio.overture.dms.compose.deployment.ego;
 
 import static bio.overture.dms.ego.model.PermissionMasks.WRITE;
 
@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+/** Provisions necessary DMS groups, application and permissions in EGO in an idempotent manner */
 @RequiredArgsConstructor
 public class EgoDMSProvisioner {
 
@@ -68,5 +69,9 @@ public class EgoDMSProvisioner {
     //
     //    // Create SCORE permissions for the dms-admin group, if it doesnt already exist
     //    egoService.createGroupPermission(dmsAdminGroup.getName(), scorePolicy.getName(), WRITE);
+  }
+
+  public static EgoDMSProvisioner createEgoDMSProvisioner(@NonNull EgoService egoService) {
+    return new EgoDMSProvisioner(egoService);
   }
 }

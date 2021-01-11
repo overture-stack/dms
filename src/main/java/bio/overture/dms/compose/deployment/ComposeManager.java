@@ -1,4 +1,4 @@
-package bio.overture.dms.compose.manager;
+package bio.overture.dms.compose.deployment;
 
 public interface ComposeManager<T> {
 
