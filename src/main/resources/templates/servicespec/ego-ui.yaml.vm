@@ -7,7 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/ego-ui:release-3.0.2"
     Env:
-      - "REACT_APP_API=http://localhost:$dmsConfig.ego.api.hostPort"
+      - REACT_APP_API=$dmsConfig.ego.api.url
       - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
     Mounts: null
     Duration: null
@@ -24,13 +24,23 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-      #2 GiB
-      MemoryBytes: 2147483648
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      #0.125 GiB
+      MemoryBytes: 134217728
+#else
+      #1 GiB
+      MemoryBytes: 1073741824
+#end
       #unlimited.
       NanoCPUs: 0
     Reservations:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      #0.1875 GiB
+      MemoryBytes: 201326592
+#else
       #1.5 GiB
       MemoryBytes: 1610612736
+#end
       #unlimited.
       NanoCPUs: 0
   RestartPolicy:
@@ -47,8 +57,7 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    #TODO: may need to change this to dms-network later
-    - Target: "host"
+    - Target: $dmsConfig.network
       Aliases: null
   Runtime: null
 Mode:
@@ -74,10 +83,16 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
-  #TODO: may need to change this to dms-network later
-  - Target: "host"
+  - Target: $dmsConfig.network
     Aliases: null
 EndpointSpec:
   Mode: "vip"
+  Ports:
+    - Name: "ego-ui"
+      Protocol: "tcp"
+      TargetPort: 8080
+      #TODO: make this configurable
+      PublishedPort: 9002
+      PublishMode: "ingress"
 Labels: null
 
