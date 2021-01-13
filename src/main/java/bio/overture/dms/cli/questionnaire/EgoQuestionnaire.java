@@ -53,15 +53,29 @@ public class EgoQuestionnaire {
   public EgoConfig buildEgoConfig(@NonNull ClusterRunModes clusterRunMode) {
     val apiConfig = processEgoApiConfig(clusterRunMode);
     val dbConfig = processEgoDbConfig();
-    val uiConfig = processEgoUiConfig(apiConfig);
+    val uiConfig = processEgoUiConfig(clusterRunMode);
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
-  private EgoUiConfig processEgoUiConfig(EgoApiConfig egoApiConfig) {
-    return EgoUiConfig.builder()
-        .uiAppCredential(processUiAppCreds(egoApiConfig))
-        //        .url() //TODO: egoUi.url must be populated
-        .build();
+  @SneakyThrows
+  private EgoUiConfig processEgoUiConfig(ClusterRunModes clusterRunMode) {
+    val egoUiConfig = new EgoUiConfig();
+    URL serverUrl;
+    if (clusterRunMode == PRODUCTION) {
+      serverUrl =
+          questionFactory
+              .newUrlSingleQuestion("What will the EGO-UI base url be?", false, null)
+              .getAnswer();
+    } else if (clusterRunMode == LOCAL) {
+      serverUrl = createLocalhostUrl(egoUiConfig.getHostPort());
+    } else {
+      throw new IllegalStateException(
+          format(
+              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
+    }
+    egoUiConfig.setUrl(serverUrl);
+    egoUiConfig.setUiAppCredential(processUiAppCreds(serverUrl));
+    return egoUiConfig;
   }
 
   private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
@@ -199,13 +213,15 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private AppCredential processUiAppCreds(@NonNull EgoApiConfig apiConfig) {
+  private AppCredential processUiAppCreds(@NonNull URL redirectUri) {
     return AppCredential.builder()
         .name(DEFAULT_UI_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
-        .redirectUri(
-            "http://localhost:8080") // TODO: ego-ui url is baked in!!!! needs to be dynamic
+        .redirectUri(redirectUri.toString())
+
+        //            "http://localhost:8080") // TODO: ego-ui url is baked in!!!! needs to be
+        // dynamic
         .build();
   }
 

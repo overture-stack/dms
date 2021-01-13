@@ -51,7 +51,8 @@ public class QuestionnaireTest {
             "dms",
             "30",
             "N",
-            "9001");
+            "9001",
+            "some.redirect.google.example.org/ui");
 
     this.mockTextTerminal.getInputs().addAll(inputs);
     val egoConfig = this.egoQuestionnaire.buildEgoConfig(PRODUCTION);

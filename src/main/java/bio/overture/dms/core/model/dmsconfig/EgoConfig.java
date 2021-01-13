@@ -83,7 +83,13 @@ public class EgoConfig {
   @AllArgsConstructor
   @JsonInclude(NON_EMPTY)
   public static class EgoUiConfig {
+
     @NotNull private URL url;
+
+    @Min(value = 2000)
+    @Builder.Default
+    private int hostPort = 9002;
+
     private AppCredential uiAppCredential;
   }
 
