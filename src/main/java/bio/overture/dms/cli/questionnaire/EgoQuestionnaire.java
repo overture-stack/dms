@@ -205,7 +205,7 @@ public class EgoQuestionnaire {
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
         .redirectUri(
-            "http://localhost:8080") // TODO: ego-ui url is baked in!!!! needs to be dynamic
+            "http://localhost:9002") // TODO: ego-ui url is baked in!!!! needs to be dynamic
         .build();
   }
 
