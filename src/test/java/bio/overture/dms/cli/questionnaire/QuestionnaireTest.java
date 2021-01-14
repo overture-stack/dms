@@ -10,11 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.util.TestTextTerminal;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
-
-import bio.overture.dms.util.TestTextTerminal;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -60,10 +59,14 @@ public class QuestionnaireTest {
 
     this.testTextTerminal.getInputs().addAll(inputs);
     log.info("sdfsdf");
-    val egoConfig = handleCall(() -> this.egoQuestionnaire.buildEgoConfig(PRODUCTION), Throwable.class, e -> {
-      log.error(e.getMessage());
-      log.info("Terminal Output: "+ testTextTerminal.getOutputAndReset(false));
-    });
+    val egoConfig =
+        handleCall(
+            () -> this.egoQuestionnaire.buildEgoConfig(PRODUCTION),
+            Throwable.class,
+            e -> {
+              log.error(e.getMessage());
+              log.info("Terminal Output: " + testTextTerminal.getOutputAndReset(false));
+            });
 
     assertEquals(30, egoConfig.getApi().getTokenDurationDays());
     assertEquals(
@@ -111,10 +114,14 @@ public class QuestionnaireTest {
             "9002");
 
     this.testTextTerminal.getInputs().addAll(inputs);
-    val egoConfig = handleCall(() -> this.egoQuestionnaire.buildEgoConfig(LOCAL), Throwable.class, e -> {
-      log.error(e.getMessage());
-      log.info("Terminal Output: "+ testTextTerminal.getOutputAndReset(false));
-    });
+    val egoConfig =
+        handleCall(
+            () -> this.egoQuestionnaire.buildEgoConfig(LOCAL),
+            Throwable.class,
+            e -> {
+              log.error(e.getMessage());
+              log.info("Terminal Output: " + testTextTerminal.getOutputAndReset(false));
+            });
 
     assertEquals(30, egoConfig.getApi().getTokenDurationDays());
     assertEquals(

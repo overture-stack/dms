@@ -5,11 +5,10 @@ import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
 import bio.overture.dms.core.util.Nullable;
-import lombok.*;
-import org.junit.jupiter.api.Assertions;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.*;
+import org.junit.jupiter.api.Assertions;
 
 /** Contains useful utilities for testing */
 @NoArgsConstructor(access = PRIVATE)
@@ -20,18 +19,17 @@ public class Tester {
     assertExceptionThrown(runnable, exceptionClass, null);
   }
 
-  /**
-   * Try to execute the supplier and return the result.
-   */
+  /** Try to execute the supplier and return the result. */
   @SuppressWarnings("unchecked")
-  public static <T, E extends Throwable> T handleCall(@NonNull Supplier<T> supplier,
+  public static <T, E extends Throwable> T handleCall(
+      @NonNull Supplier<T> supplier,
       @NonNull Class<E> errorClass,
-      @NonNull Consumer<E> onExceptionFunction){
-    try{
+      @NonNull Consumer<E> onExceptionFunction) {
+    try {
       return supplier.get();
-    } catch (Throwable e){
-      if (errorClass.isInstance(e)){
-        val exception = (E)e;
+    } catch (Throwable e) {
+      if (errorClass.isInstance(e)) {
+        val exception = (E) e;
         onExceptionFunction.accept(exception);
       }
       throw e;
