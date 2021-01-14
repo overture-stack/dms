@@ -60,6 +60,14 @@ public class EgoQuestionnaire {
   @SneakyThrows
   private EgoUiConfig processEgoUiConfig(ClusterRunModes clusterRunMode) {
     val egoUiConfig = new EgoUiConfig();
+
+    val apiPort =
+        questionFactory
+            .newDefaultSingleQuestion(
+                Integer.class, "What port would you like to expose the EGO ui on?", true, 9002)
+            .getAnswer();
+    egoUiConfig.setHostPort(apiPort);
+
     URL serverUrl;
     if (clusterRunMode == PRODUCTION) {
       serverUrl =
@@ -219,9 +227,6 @@ public class EgoQuestionnaire {
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
         .redirectUri(redirectUri.toString())
-
-        //            "http://localhost:8080") // TODO: ego-ui url is baked in!!!! needs to be
-        // dynamic
         .build();
   }
 
