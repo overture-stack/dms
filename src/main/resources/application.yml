@@ -24,5 +24,7 @@ compose:
   network: dms-swarm-network
 
 docker:
+  #NOTE: Indicates if this application is RUNNING-AS a docker container on the host machine, or running on baremetal on the host machine. This is mostly to help resolve the what URLs the DMS uses to interact with the services. If its RUNNING-AS a docker container, then it will be in the dms dswarm network, and so it can use the service names as the domain in the urls, since docker will resolve the IP. If its not, then the url for the service will be used.
+  run-as: false
   # If blank, will use the system default docker daemon
   host: ""

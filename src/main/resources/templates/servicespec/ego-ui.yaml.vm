@@ -24,20 +24,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
-      #0.125 GiB
-      MemoryBytes: 134217728
-#else
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #1 GiB
       MemoryBytes: 1073741824
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
-      #0.1875 GiB
-      MemoryBytes: 201326592
-#else
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -91,8 +85,7 @@ EndpointSpec:
     - Name: "ego-ui"
       Protocol: "tcp"
       TargetPort: 8080
-      #TODO: make this configurable
-      PublishedPort: 9002
+      PublishedPort: $dmsConfig.ego.ui.hostPort
       PublishMode: "ingress"
 Labels: null
 

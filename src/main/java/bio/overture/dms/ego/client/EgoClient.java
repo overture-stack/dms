@@ -8,7 +8,6 @@ import bio.overture.dms.ego.model.EgoApplication;
 import bio.overture.dms.ego.model.EgoGroup;
 import bio.overture.dms.ego.model.EgoPolicy;
 import bio.overture.dms.ego.model.EgoToken;
-import bio.overture.dms.ego.model.GroupPermission;
 import bio.overture.dms.ego.model.GroupRequest;
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
@@ -17,6 +16,7 @@ import bio.overture.dms.ego.model.ListPolicyRequest;
 import bio.overture.dms.ego.model.PageDTO;
 import bio.overture.dms.ego.model.PermissionRequest;
 import bio.overture.dms.ego.model.PolicyRequest;
+import bio.overture.dms.ego.model.PolicyResponse;
 import bio.overture.dms.rest.RestClient;
 import java.util.Collection;
 import lombok.NonNull;
@@ -86,9 +86,9 @@ public class EgoClient {
     return restClient.get(egoEndpoint.listPolicies(r), x -> deserializePage(x, EgoPolicy.class));
   }
 
-  public PageDTO<GroupPermission> listGroupPermissions(@NonNull ListGroupPermissionsRequest r) {
+  public PageDTO<PolicyResponse> listGroupPermissions(@NonNull ListGroupPermissionsRequest r) {
     return restClient.get(
-        egoEndpoint.listGroupPermissions(r), x -> deserializePage(x, GroupPermission.class));
+        egoEndpoint.listGroupPermissions(r), x -> deserializePage(x, PolicyResponse.class));
   }
 
   public EgoGroup createGroup(@NonNull GroupRequest r) {

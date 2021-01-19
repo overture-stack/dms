@@ -89,7 +89,8 @@ public class EgoEndpoint {
     return new RequestParamBuilder()
         .optionalQuerySingleParam(OFFSET, request.getOffset())
         .optionalQuerySingleParam(LIMIT, request.getLimit())
-        .build(format("%s/groups/%s/permissions", baseServerUrl, request.getId()));
+        .optionalQuerySingleParam(QUERY, request.getQuery())
+        .build(format("%s/policies/%s/groups", baseServerUrl, request.getPolicyId()));
   }
 
   @SneakyThrows

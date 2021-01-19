@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -9,7 +9,6 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
-import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
@@ -19,6 +18,7 @@ import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import java.util.function.BiConsumer;
@@ -53,15 +53,37 @@ public class EgoQuestionnaire {
   public EgoConfig buildEgoConfig(@NonNull ClusterRunModes clusterRunMode) {
     val apiConfig = processEgoApiConfig(clusterRunMode);
     val dbConfig = processEgoDbConfig();
-    val uiConfig = processEgoUiConfig(apiConfig);
+    val uiConfig = processEgoUiConfig(clusterRunMode);
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
-  private EgoUiConfig processEgoUiConfig(EgoApiConfig egoApiConfig) {
-    return EgoUiConfig.builder()
-        .uiAppCredential(processUiAppCreds(egoApiConfig))
-        //        .url() //TODO: egoUi.url must be populated
-        .build();
+  @SneakyThrows
+  private EgoUiConfig processEgoUiConfig(ClusterRunModes clusterRunMode) {
+    val egoUiConfig = new EgoUiConfig();
+
+    val apiPort =
+        questionFactory
+            .newDefaultSingleQuestion(
+                Integer.class, "What port would you like to expose the EGO ui on?", true, 9002)
+            .getAnswer();
+    egoUiConfig.setHostPort(apiPort);
+
+    URL serverUrl;
+    if (clusterRunMode == PRODUCTION) {
+      serverUrl =
+          questionFactory
+              .newUrlSingleQuestion("What will the EGO-UI base url be?", false, null)
+              .getAnswer();
+    } else if (clusterRunMode == LOCAL) {
+      serverUrl = createLocalhostUrl(egoUiConfig.getHostPort());
+    } else {
+      throw new IllegalStateException(
+          format(
+              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
+    }
+    egoUiConfig.setUrl(serverUrl);
+    egoUiConfig.setUiAppCredential(processUiAppCreds(serverUrl));
+    return egoUiConfig;
   }
 
   private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
@@ -199,13 +221,12 @@ public class EgoQuestionnaire {
     return clientConfigBuilder.build();
   }
 
-  private AppCredential processUiAppCreds(@NonNull EgoApiConfig apiConfig) {
+  private AppCredential processUiAppCreds(@NonNull URL redirectUri) {
     return AppCredential.builder()
         .name(DEFAULT_UI_APP_NAME)
         .clientId(DEFAULT_UI_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
-        .redirectUri(
-            "http://localhost:9002") // TODO: ego-ui url is baked in!!!! needs to be dynamic
+        .redirectUri(redirectUri.toString())
         .build();
   }
 

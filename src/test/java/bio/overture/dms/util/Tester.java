@@ -5,6 +5,8 @@ import static java.lang.String.format;
 import static lombok.AccessLevel.PRIVATE;
 
 import bio.overture.dms.core.util.Nullable;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import lombok.*;
 import org.junit.jupiter.api.Assertions;
 
@@ -15,6 +17,23 @@ public class Tester {
   public static void assertExceptionThrown(
       Runnable runnable, Class<? extends Exception> exceptionClass) {
     assertExceptionThrown(runnable, exceptionClass, null);
+  }
+
+  /** Try to execute the supplier and return the result. */
+  @SuppressWarnings("unchecked")
+  public static <T, E extends Throwable> T handleCall(
+      @NonNull Supplier<T> supplier,
+      @NonNull Class<E> errorClass,
+      @NonNull Consumer<E> onExceptionFunction) {
+    try {
+      return supplier.get();
+    } catch (Throwable e) {
+      if (errorClass.isInstance(e)) {
+        val exception = (E) e;
+        onExceptionFunction.accept(exception);
+      }
+      throw e;
+    }
   }
 
   public static void assertExceptionThrown(

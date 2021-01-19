@@ -71,19 +71,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
-      #256 MB
-      MemoryBytes: 268435456
-#else
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #2 GiB
       MemoryBytes: 2147483648
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
-      MemoryBytes: 201326592
-#else
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end

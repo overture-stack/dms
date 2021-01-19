@@ -1,13 +1,16 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.util.TestTextTerminal.createTestTextTerminal;
+import static bio.overture.dms.util.Tester.handleCall;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.util.TestTextTerminal;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
@@ -15,7 +18,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.beryx.textio.TextIO;
-import org.beryx.textio.mock.MockTextTerminal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,14 +25,14 @@ import org.junit.jupiter.api.Test;
 public class QuestionnaireTest {
 
   /** State */
-  private MockTextTerminal mockTextTerminal;
+  private TestTextTerminal testTextTerminal;
 
   private EgoQuestionnaire egoQuestionnaire;
 
   @BeforeEach
   public void beforeTest() {
-    this.mockTextTerminal = new MockTextTerminal();
-    this.egoQuestionnaire = new EgoQuestionnaire(new QuestionFactory(new TextIO(mockTextTerminal)));
+    this.testTextTerminal = createTestTextTerminal();
+    this.egoQuestionnaire = new EgoQuestionnaire(new QuestionFactory(new TextIO(testTextTerminal)));
   }
 
   @Test
@@ -51,10 +53,20 @@ public class QuestionnaireTest {
             "dms",
             "30",
             "N",
-            "9001");
+            "9001",
+            "9002",
+            "https://dms.example.org:9933/hi/there/ui");
 
-    this.mockTextTerminal.getInputs().addAll(inputs);
-    val egoConfig = this.egoQuestionnaire.buildEgoConfig(PRODUCTION);
+    this.testTextTerminal.getInputs().addAll(inputs);
+    log.info("sdfsdf");
+    val egoConfig =
+        handleCall(
+            () -> this.egoQuestionnaire.buildEgoConfig(PRODUCTION),
+            Throwable.class,
+            e -> {
+              log.error(e.getMessage());
+              log.info("Terminal Output: " + testTextTerminal.getOutputAndReset(false));
+            });
 
     assertEquals(30, egoConfig.getApi().getTokenDurationDays());
     assertEquals(
@@ -78,6 +90,8 @@ public class QuestionnaireTest {
     assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getName());
     assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getClientId());
     assertEquals(30, egoConfig.getApi().getDmsAppCredential().getClientSecret().length());
+    assertEquals(9002, egoConfig.getUi().getHostPort());
+    assertEquals(new URL("https://dms.example.org:9933/hi/there/ui"), egoConfig.getUi().getUrl());
   }
 
   @Test
@@ -96,10 +110,18 @@ public class QuestionnaireTest {
             "dms",
             "30",
             "N",
-            "9001");
+            "9001",
+            "9002");
 
-    this.mockTextTerminal.getInputs().addAll(inputs);
-    val egoConfig = this.egoQuestionnaire.buildEgoConfig(LOCAL);
+    this.testTextTerminal.getInputs().addAll(inputs);
+    val egoConfig =
+        handleCall(
+            () -> this.egoQuestionnaire.buildEgoConfig(LOCAL),
+            Throwable.class,
+            e -> {
+              log.error(e.getMessage());
+              log.info("Terminal Output: " + testTextTerminal.getOutputAndReset(false));
+            });
 
     assertEquals(30, egoConfig.getApi().getTokenDurationDays());
     assertEquals(
@@ -123,5 +145,7 @@ public class QuestionnaireTest {
     assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getName());
     assertEquals("dms", egoConfig.getApi().getDmsAppCredential().getClientId());
     assertEquals(30, egoConfig.getApi().getDmsAppCredential().getClientSecret().length());
+    assertEquals(9002, egoConfig.getUi().getHostPort());
+    assertEquals(new URL("http://localhost:9002"), egoConfig.getUi().getUrl());
   }
 }
