@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ListGroupPermissionsRequest {
 
-  @NotNull private String id;
+  @NotNull private String policyId;
+  private String query;
   private Integer limit;
   private Integer offset;
 }

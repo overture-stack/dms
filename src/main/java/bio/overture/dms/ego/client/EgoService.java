@@ -8,7 +8,6 @@ import bio.overture.dms.ego.model.ApplicationRequest;
 import bio.overture.dms.ego.model.EgoApplication;
 import bio.overture.dms.ego.model.EgoGroup;
 import bio.overture.dms.ego.model.EgoPolicy;
-import bio.overture.dms.ego.model.GroupPermission;
 import bio.overture.dms.ego.model.GroupRequest;
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
@@ -17,12 +16,16 @@ import bio.overture.dms.ego.model.ListPolicyRequest;
 import bio.overture.dms.ego.model.PermissionMasks;
 import bio.overture.dms.ego.model.PermissionRequest;
 import bio.overture.dms.ego.model.PolicyRequest;
+import bio.overture.dms.ego.model.PolicyResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
 
 /**
  * Convenience service that simplifies popular interaction with a running ego server, using the
@@ -31,7 +34,15 @@ import lombok.val;
 @RequiredArgsConstructor
 public class EgoService {
 
+  // 10 minute retry policy
+  private static final RetryPolicy<String> RETRY_POLICY =
+      new RetryPolicy<String>().withMaxRetries(300).withDelay(Duration.ofSeconds(2));
+
   @NonNull private final EgoClient client;
+
+  public void waitForEgoApiHealthy() {
+    Failsafe.with(RETRY_POLICY).get(client::getPublicKey);
+  }
 
   /**
    * For an existing group and policy, creates a GroupPermission only if a permission was not
@@ -62,9 +73,10 @@ public class EgoService {
     val group = groupResult.get();
     val policy = policyResult.get();
     val groupId = group.getId();
+    val policyId = policy.getId();
 
     // If the groupPermission already exists do nothing, otherwise, create the permission
-    findGroupPermissionByPolicyName(groupId, policyName)
+    findGroupPermission(policyId, groupId)
         .ifPresentOrElse(
             x -> {},
             () ->
@@ -155,18 +167,21 @@ public class EgoService {
     return saveApplication(r.getName(), r);
   }
 
-  public Optional<GroupPermission> findGroupPermissionByPolicyName(
-      @NonNull String groupId, @NonNull String policyName) {
-    val listRequest = ListGroupPermissionsRequest.builder().id(groupId).offset(0).limit(30).build();
+  public Optional<PolicyResponse> findGroupPermission(
+      @NonNull String policyId, @NonNull String groupId) {
+    val listRequest =
+        ListGroupPermissionsRequest.builder()
+            .query(groupId)
+            .policyId(policyId)
+            .offset(0)
+            .limit(30)
+            .build();
     while (true) {
       val page = client.listGroupPermissions(listRequest);
       if (page.getResultSet().isEmpty()) {
         return Optional.empty();
       }
-      val result =
-          page.getResultSet().stream()
-              .filter(x -> x.getPolicy().getName().equals(policyName))
-              .findFirst();
+      val result = page.getResultSet().stream().filter(x -> x.getId().equals(groupId)).findFirst();
       if (result.isPresent()) {
         return result;
       } else {

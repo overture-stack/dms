@@ -80,7 +80,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
 
   private boolean resolveDestroyVolumes() {
     boolean askQuestion = !force && destroyVolumes;
-    boolean resolvedDestroyVolumes = force;
+    boolean resolvedDestroyVolumes = force && destroyVolumes;
     if (askQuestion) {
       resolvedDestroyVolumes =
           questionFactory
@@ -95,7 +95,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
         t.printStatus("Volumes will NOT be destroyed!");
       }
     }
-    if (force) {
+    if (resolvedDestroyVolumes) {
       t.printStatus("Forcefully destroying all volumes!");
     }
     return resolvedDestroyVolumes;

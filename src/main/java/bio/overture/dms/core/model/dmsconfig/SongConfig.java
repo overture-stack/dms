@@ -57,5 +57,8 @@ public class SongConfig {
     @Min(value = 2000)
     @Builder.Default
     private int hostPort = 9010;
+
+    private AppCredential songAppCredential;
+    private AppCredential scoreAppCredential;
   }
 }

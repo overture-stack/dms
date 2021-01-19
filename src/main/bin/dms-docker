@@ -170,6 +170,7 @@ function main {
 		docker_opts="$docker_opts -p 5005:5005"
 		set -x
 	fi
+	docker_opts="$docker_opts -e DOCKER_RUNAS=true"
 	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
 	set +x
 }
