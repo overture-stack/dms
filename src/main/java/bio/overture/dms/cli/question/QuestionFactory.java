@@ -89,6 +89,7 @@ public class QuestionFactory {
     return new SingleQuestion<>(question, buildPasswordInputReader());
   }
 
+  /** An MC Question is one that has multiple options and multiple selections can be made */
   public <T> SelectionQuestion<T> newMCQuestion(
       @NonNull Class<T> answerType,
       @NonNull String question,
@@ -105,6 +106,7 @@ public class QuestionFactory {
         question, buildEnumSelectionInputReader(answerType, optional, defaultValue));
   }
 
+  /** An OneHot Question is one that has multiple options and only ONE selection can be made */
   public <T> SingleQuestion<T> newOneHotQuestion(
       @NonNull Class<T> answerType,
       @NonNull String question,

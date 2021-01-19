@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -9,7 +9,6 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
-import bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
@@ -19,6 +18,7 @@ import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import java.util.function.BiConsumer;

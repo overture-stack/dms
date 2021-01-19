@@ -19,8 +19,13 @@ public class Exceptions {
 
   public static void checkState(boolean expr, @NonNull String formattedString, Object... args) {
     if (!expr) {
-      throw new IllegalStateException(format(formattedString, args));
+      throw buildIllegalStateException(formattedString, args);
     }
+  }
+
+  public static IllegalStateException buildIllegalStateException(
+      @NonNull String formattedString, Object... args) {
+    return new IllegalStateException(format(formattedString, args));
   }
 
   public static String joinStackTrace(Throwable t) {

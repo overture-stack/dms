@@ -10,27 +10,39 @@ TaskTemplate:
       - SERVER_PORT=8080
       - SPRING_FLYWAY_ENABLED=true
       - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
-      - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
+      - SPRING_PROFILES_ACTIVE=prod,secure,jwt,score-client-cred,default
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=$dmsConfig.song.db.databasePassword
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.SONG_DB.toString()}:5432/song?stringtype=unspecified
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      - AUTH_SERVER_URL=${dmsConfig.ego.api.url}/o/check_api_key
+#else
       - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
+#end
       - AUTH_SERVER_TOKENNAME=apiKey
-      - AUTH_SERVER_CLIENTID=
-      - AUTH_SERVER_CLIENTSECRET=
-      - AUTH_SERVER_SCOPE_STUDY_PREFIX=dms.
+      - AUTH_SERVER_CLIENTID=$dmsConfig.song.api.songAppCredential.clientId
+      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.song.api.songAppCredential.clientSecret
+      #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
+      - AUTH_SERVER_SCOPE_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
-      - AUTH_SERVER_SCOPE_SYSTEM=dms.WRITE
-    # TODO: replace ego-api with $services.ego.api.name. This should be another object, not apart
-    #       of DmsConfig, that is specific to the system. This could be called $serviceNameIndex.ego.api.
-    #       The point is so that we dont bake in "ego-api", but instead reference it from outside
+      #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
+      - AUTH_SERVER_SCOPE_SYSTEM=DMS.WRITE
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key
+#else
       - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
+#end
       - ID_USELOCAL=true
+      # TODO: replace this with dmsConfig.score.api.url when score is implemented
       - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:8080
-      - SCORE_CLIENTCREDENTIALS_SECRET=
-      - SCORE_CLIENTCREDENTIALS_ID=
-      - SCORE_CLIENTCREDENTIALS_TOKENURL=
-      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=
+      - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.scoreAppCredential.clientId
+      - SCORE_CLIENTCREDENTIALS_SECRET=$dmsConfig.song.api.scoreAppCredential.clientSecret
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      - SCORE_CLIENTCREDENTIALS_TOKENURL=${dmsConfig.ego.api.url}/oauth/token
+#else
+      - SCORE_CLIENTCREDENTIALS_TOKENURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token
+#end
+      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=score.WRITE
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -46,20 +58,23 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #2 GiB
       MemoryBytes: 2147483648
+#end
       #unlimited.
       NanoCPUs: 0
     Reservations:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #1.5 GiB
       MemoryBytes: 1610612736
+#end
       #unlimited.
       NanoCPUs: 0
   RestartPolicy:
     Condition: "on-failure"
     # 10s
     Delay: 10000000000
-          MaxAttempts: 10
     MaxAttempts: 0
     # unbounded
     Window: 0
@@ -69,7 +84,7 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: "dms-network"
+    - Target: $dmsConfig.network
       Aliases: null
   Runtime: null
 Mode:
@@ -95,7 +110,7 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
-  - Target: "dms-network"
+  - Target: $dmsConfig.network
     Aliases: null
 EndpointSpec:
   Mode: "vip"

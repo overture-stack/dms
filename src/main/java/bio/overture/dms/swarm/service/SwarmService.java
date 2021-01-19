@@ -147,6 +147,7 @@ public class SwarmService {
   }
 
   @SneakyThrows
+  @SuppressWarnings("unchecked")
   private void concurrentlyDeletedServicesAndWait(
       Map<String, Collection<String>> idx, int numRetries, Duration poll) {
     val executors = newFixedThreadPool(idx.keySet().size());
@@ -158,14 +159,7 @@ public class SwarmService {
                   val containerIds = e.getValue();
                   return executors.submit(
                       () -> {
-                        client.removeServiceCmd(serviceName).exec();
-                        // We want several threads to be able to call this stateless wait method
-                        // concurrently,
-                        // and so we create a unique monitor per thread. For more info, refer to
-                        // Guarded Blocks
-                        // https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html
-                        val lock = new Object();
-                        waitForContainerDeletion(lock, containerIds, numRetries, poll);
+                        deleteServiceAndWait(serviceName, containerIds, numRetries, poll);
                       });
                 })
             .collect(toUnmodifiableList());
@@ -173,6 +167,18 @@ public class SwarmService {
     executors.shutdown();
     // Timeout to 1.5 times the expected retry period
     executors.awaitTermination((numRetries + (numRetries / 2)) * poll.toMillis(), MILLISECONDS);
+  }
+
+  private void deleteServiceAndWait(
+      String serviceName, Collection<String> containerIds, int numRetries, Duration poll) {
+    client.removeServiceCmd(serviceName).exec();
+    // We want several threads to be able to call this stateless wait method
+    // concurrently,
+    // and so we create a unique monitor per thread. For more info, refer to
+    // Guarded Blocks
+    // https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html
+    val lock = new Object();
+    waitForContainerDeletion(lock, containerIds, numRetries, poll);
   }
 
   private void deleteContainersByVolumes(Collection<String> volumeNames) {
@@ -253,12 +259,6 @@ public class SwarmService {
                     .exec()
                     .getId());
   }
-
-  // TODO: there should be 2 modes of deployment. A) is probably the best
-  // a) Blocking the deployment of a dependency until its parents is READY
-  // b) Not blocking any dependency, and deploy all. Once deployed, run a separate command to poll
-  // and check status.
-  //    If something didnt start or is not ready, it should report it
 
   /** Idempotent method that initializes a swarm cluster */
   @SneakyThrows

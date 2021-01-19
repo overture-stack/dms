@@ -3,6 +3,7 @@ package bio.overture.dms.ego;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static java.lang.String.format;
 
+import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.util.ObjectSerializer;
 import bio.overture.dms.ego.client.EgoClient;
@@ -56,30 +57,34 @@ public class EgoClientFactory {
   }
 
   public EgoClient buildAuthDmsEgoClient(@NonNull EgoConfig egoConfig) {
-    val dmsAppCreds = egoConfig.getApi().getDmsAppCredential();
+    return buildAuthDmsEgoClient(
+        egoConfig.getApi().getDmsAppCredential(), egoConfig.getApi().getUrl().toString());
+  }
+
+  public EgoClient buildAuthDmsEgoClient(
+      @NonNull AppCredential dmsAppCredential, @NonNull String egoServerUrl) {
     try {
-      val serverUrl = egoConfig.getApi().getUrl().toString();
       val egoToken =
-          buildNoAuthEgoClient(serverUrl)
-              .postAccessToken(dmsAppCreds.getClientId(), dmsAppCreds.getClientSecret());
-      return buildBearerAuthEgoClient(serverUrl, egoToken);
+          buildNoAuthEgoClient(egoServerUrl)
+              .postAccessToken(dmsAppCredential.getClientId(), dmsAppCredential.getClientSecret());
+      return buildBearerAuthEgoClient(egoServerUrl, egoToken);
     } catch (RestClientHttpException e) {
       String message = null;
       if (e.isUnauthorizedError()) {
         message =
             format(
                 "The credentials for the Ego application '%s' are not valid",
-                dmsAppCreds.getName());
+                dmsAppCredential.getName());
       } else if (e.isForbiddenError()) {
         message =
             format(
                 "The credentials for the Ego application '%s' are forbidden",
-                dmsAppCreds.getName());
+                dmsAppCredential.getName());
       } else if (e.isError()) {
         message =
             format(
                 "An unexpected error occurred while creating an access token from the application '%s'",
-                dmsAppCreds.getName());
+                dmsAppCredential.getName());
       }
       log.error(
           (isDefined(message) ? message + ": " : "UnknownEgoClient Error: ") + e.getMessage());

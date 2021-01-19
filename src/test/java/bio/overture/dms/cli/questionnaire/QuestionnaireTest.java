@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.LOCAL;
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.util.TestTextTerminal.createTestTextTerminal;
 import static bio.overture.dms.util.Tester.handleCall;
 import static java.time.temporal.ChronoUnit.HOURS;

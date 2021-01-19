@@ -85,7 +85,6 @@ EndpointSpec:
     - Name: "ego-ui"
       Protocol: "tcp"
       TargetPort: 8080
-      #TODO: make this configurable
       PublishedPort: $dmsConfig.ego.ui.hostPort
       PublishMode: "ingress"
 Labels: null
