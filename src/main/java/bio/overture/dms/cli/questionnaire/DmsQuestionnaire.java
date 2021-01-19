@@ -25,7 +25,7 @@ public class DmsQuestionnaire {
       @NonNull BuildProperties buildProperties,
       @NonNull EgoQuestionnaire egoQuestionnaire,
       @NonNull ComposeProperties composeProperties,
-      SongQuestionnaire songQuestionnaire) {
+      @NonNull SongQuestionnaire songQuestionnaire) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
     this.egoQuestionnaire = egoQuestionnaire;
