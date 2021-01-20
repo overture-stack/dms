@@ -18,6 +18,7 @@ public class DmsQuestionnaire {
   private final EgoQuestionnaire egoQuestionnaire;
   private final ComposeProperties composeProperties;
   private final SongQuestionnaire songQuestionnaire;
+  private final ScoreQuestionnaire scoreQuestionnaire;
 
   @Autowired
   public DmsQuestionnaire(
@@ -25,12 +26,14 @@ public class DmsQuestionnaire {
       @NonNull BuildProperties buildProperties,
       @NonNull EgoQuestionnaire egoQuestionnaire,
       @NonNull ComposeProperties composeProperties,
-      @NonNull SongQuestionnaire songQuestionnaire) {
+      @NonNull SongQuestionnaire songQuestionnaire,
+      ScoreQuestionnaire scoreQuestionnaire) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
     this.egoQuestionnaire = egoQuestionnaire;
     this.composeProperties = composeProperties;
     this.songQuestionnaire = songQuestionnaire;
+    this.scoreQuestionnaire = scoreQuestionnaire;
   }
 
   public DmsConfig buildDmsConfig() {
@@ -41,12 +44,14 @@ public class DmsQuestionnaire {
             .getAnswer();
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
     val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode);
+    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode);
     return DmsConfig.builder()
         .clusterRunMode(clusterRunMode)
         .version(buildProperties.getVersion())
         .network(composeProperties.getNetwork())
         .ego(egoConfig)
         .song(songConfig)
+        .score(scoreConfig)
         .build();
   }
 }

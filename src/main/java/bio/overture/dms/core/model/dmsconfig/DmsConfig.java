@@ -27,4 +27,6 @@ public class DmsConfig {
   @NonNull private final EgoConfig ego;
 
   @NonNull private final SongConfig song;
+
+  @NonNull private final ScoreConfig score;
 }

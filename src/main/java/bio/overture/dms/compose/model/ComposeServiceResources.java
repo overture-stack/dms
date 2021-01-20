@@ -16,7 +16,8 @@ public enum ComposeServiceResources {
   EGO_UI("ego-ui"),
   SONG_DB("song-db"),
   SONG_API("song-api"),
-  SCORE_API("score-api");
+  SCORE_API("score-api"),
+  MINIO_API("minio-api");
 
   private static final Path TEMPLATE_DIR = Paths.get("templates/servicespec");
 
