@@ -1,9 +1,12 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
+import java.net.URL;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +45,19 @@ public class DmsQuestionnaire {
             .newOneHotQuestion(
                 ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
             .getAnswer();
+
+    URL dmsGatewayUrl = null;
+    if (clusterRunMode == PRODUCTION) {
+      dmsGatewayUrl =
+          questionFactory
+              .newUrlSingleQuestion("What is the DMS Gateway URL?", false, null)
+              .getAnswer();
+    }
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
     val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode);
-    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode);
+    val scoreConfig = scoreQuestionnaire.buildScoreConfig(dmsGatewayUrl, clusterRunMode);
     return DmsConfig.builder()
+        .gatewayUrl(dmsGatewayUrl)
         .clusterRunMode(clusterRunMode)
         .version(buildProperties.getVersion())
         .network(composeProperties.getNetwork())

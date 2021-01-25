@@ -5,6 +5,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.net.URL;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ import lombok.Value;
 @NoArgsConstructor(force = true, access = PRIVATE)
 @JsonInclude(NON_EMPTY)
 public class DmsConfig {
+
+  private final URL gatewayUrl;
 
   @NonNull private final ClusterRunModes clusterRunMode;
 

@@ -35,7 +35,7 @@ public class ScoreConfig {
 
     // These are optional
     private boolean useMinio;
-    private Integer hostPort = 9021;
+    private Integer hostPort;
   }
 
   @Data

@@ -1,6 +1,5 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
@@ -13,6 +12,7 @@ import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
+import bio.overture.dms.core.util.Nullable;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import lombok.NonNull;
@@ -42,8 +42,9 @@ public class ScoreQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ScoreConfig buildScoreConfig(@NonNull ClusterRunModes clusterRunMode) {
-    val s3Config = processScoreS3Config(clusterRunMode);
+  public ScoreConfig buildScoreConfig(
+      @Nullable URL dmsGatewayUrl, @NonNull ClusterRunModes clusterRunMode) {
+    val s3Config = processScoreS3Config(dmsGatewayUrl, clusterRunMode);
     val apiConfig = processScoreApiConfig(clusterRunMode);
     return ScoreConfig.builder().api(apiConfig).s3(s3Config).build();
   }
@@ -105,7 +106,7 @@ public class ScoreQuestionnaire {
   }
 
   @SneakyThrows
-  private ScoreS3Config processScoreS3Config(ClusterRunModes clusterRunModes) {
+  private ScoreS3Config processScoreS3Config(URL dmsGatewayUrl, ClusterRunModes clusterRunMode) {
     val s3Builder = ScoreS3Config.builder();
 
     val useExternalS3 =
@@ -187,7 +188,7 @@ public class ScoreQuestionnaire {
       s3Builder.secretKey(minioSecretKey);
 
       // Only portforward when in local mode
-      if (clusterRunModes == LOCAL) {
+      if (clusterRunMode == LOCAL) {
         val s3Port =
             questionFactory
                 .newDefaultSingleQuestion(
@@ -197,10 +198,23 @@ public class ScoreQuestionnaire {
                     9021)
                 .getAnswer();
         s3Builder.hostPort(s3Port);
+        s3Builder.url(createLocalhostUrl(s3Port));
+      } else if (clusterRunMode == PRODUCTION) {
+        s3Builder.hostPort(null);
+        s3Builder.url(resolveMinioProdUrl(dmsGatewayUrl));
+      } else {
+        throw new IllegalStateException(
+            format(
+                "The clusterRunMode '%s' is unknown and cannot be processed",
+                clusterRunMode.name()));
       }
-      s3Builder.url(new URL("http://" + MINIO_API.toString() + ":9000"));
     }
     return s3Builder.build();
+  }
+
+  @SneakyThrows
+  private static URL resolveMinioProdUrl(@NonNull URL dmsGatewayUrl) {
+    return new URL(dmsGatewayUrl.toString() + "/minio");
   }
 
   @SneakyThrows

@@ -71,7 +71,8 @@ public class Concurrency {
     trySubmit(e, r, () -> {});
   }
 
-  public static void waitForCompletableFutures(Collection<? extends CompletableFuture<?>> completableFutures){
+  public static void waitForCompletableFutures(
+      Collection<? extends CompletableFuture<?>> completableFutures) {
     CompletableFuture.allOf(completableFutures.toArray(CompletableFuture<?>[]::new)).join();
   }
 

@@ -11,7 +11,6 @@ import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
 import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.util.Concurrency;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;

@@ -105,6 +105,7 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
 EndpointSpec:
   Mode: "vip"
   Ports:
@@ -113,5 +114,8 @@ EndpointSpec:
       TargetPort: 8080
       PublishedPort: $dmsConfig.score.api.hostPort
       PublishMode: "ingress"
+#else
+EndpointSpec: null
+#end
 Labels: null
 

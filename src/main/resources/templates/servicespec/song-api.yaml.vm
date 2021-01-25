@@ -42,7 +42,7 @@ TaskTemplate:
 #else
       - SCORE_CLIENTCREDENTIALS_TOKENURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token
 #end
-      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=score.WRITE
+      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=SCORE.WRITE
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
