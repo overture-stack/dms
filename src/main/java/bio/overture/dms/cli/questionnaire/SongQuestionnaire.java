@@ -59,6 +59,7 @@ public class SongQuestionnaire {
         .build();
   }
 
+  // TODO: use the song client creds with right permissions.
   private static AppCredential processScoreAppCreds() {
     return AppCredential.builder()
         .name(DEFAULT_SONG_SCORE_APP_NAME)
