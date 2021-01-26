@@ -46,14 +46,12 @@ public class DmsQuestionnaire {
             .newOneHotQuestion(
                 ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
             .getAnswer();
-    terminal.println();
-    terminal.println("===============\nEGO\n===============");
+
+    printHeader("EGO");
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
-    terminal.println();
-    terminal.println("===============\nSONG\n===============");
+    printHeader("SONG");
     val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode);
-    terminal.println();
-    terminal.println("===============\nElasticsearch\n===============");
+    printHeader("ELASTICSEARCH");
     val elasticConfig = elasticsearchQuestionnaire.buildConfig();
 
     return DmsConfig.builder()
@@ -64,5 +62,11 @@ public class DmsQuestionnaire {
         .song(songConfig)
         .elasticsearch(elasticConfig)
         .build();
+  }
+
+  private void printHeader(@NonNull String title) {
+    val line = "===============";
+    terminal.println();
+    terminal.println(line + "\n" + title + "\n" + line);
   }
 }
