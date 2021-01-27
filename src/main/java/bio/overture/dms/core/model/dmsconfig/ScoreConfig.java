@@ -3,6 +3,7 @@ package bio.overture.dms.core.model.dmsconfig;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
 import javax.validation.constraints.Min;
@@ -39,6 +40,7 @@ public class ScoreConfig {
     private Integer hostPort;
     private String s3Region;
 
+    @JsonIgnore
     public boolean isS3RegionDefined() {
       return isDefined(s3Region);
     }
@@ -60,6 +62,6 @@ public class ScoreConfig {
     @Builder.Default
     private int hostPort = 9020;
 
-    private AppCredential scoreAppCredential;
+    private AppCredential appCredential;
   }
 }

@@ -9,6 +9,7 @@ import lombok.Value;
 public class S3ObjectUploadRequest {
 
   private final boolean autoCreateBucket;
+  private final boolean overwriteData;
   @NonNull private final String bucketName;
   @NonNull private final String objectKey;
   @NonNull private final byte[] data;

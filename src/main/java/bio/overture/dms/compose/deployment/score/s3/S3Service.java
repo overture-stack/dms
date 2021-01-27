@@ -11,6 +11,7 @@ import lombok.val;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -22,15 +23,20 @@ public class S3Service {
 
   /** Provisions the request bucket followed by uploading data to the specified object key path */
   @SneakyThrows
-  public PutObjectResponse uploadData(@NonNull S3ObjectUploadRequest request) {
+  public void uploadData(@NonNull S3ObjectUploadRequest request) {
     provisionBucket(request.getBucketName(), request.isAutoCreateBucket());
     log.info(
         "Uploading data to bucket '{}' with objectKey '{}'",
         request.getBucketName(),
         request.getObjectKey());
-    val resp = putObject(request.getBucketName(), request.getObjectKey(), request.getData());
-    log.info("- Done uploading data to bucket");
-    return resp;
+    val objectExists = isObjectExist(request.getBucketName(), request.getObjectKey());
+    if (objectExists && !request.isOverwriteData()){
+      log.info("The object already exists and overwriteData=false, skipping upload.");
+    } else {
+      putObject(request.getBucketName(), request.getObjectKey(), request.getData());
+      log.info("- Done uploading data to bucket");
+    }
+
   }
 
   /**
@@ -56,6 +62,14 @@ public class S3Service {
     return s3.putObject(
         PutObjectRequest.builder().bucket(bucketName).key(objectKey).build(),
         RequestBody.fromBytes(data));
+  }
+
+  private boolean isObjectExist(String bucketName, String objectKey){
+    val result = s3.listObjects(ListObjectsRequest.builder()
+        .bucket(bucketName)
+        .prefix(objectKey)
+        .build());
+    return result.contents().stream().anyMatch(x -> x.key().equals(objectKey));
   }
 
   private boolean isBucketExist(@NonNull String bucketName) {

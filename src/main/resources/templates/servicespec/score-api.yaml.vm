@@ -26,12 +26,12 @@ TaskTemplate:
       - S3_SIGV4ENABLED=true
       - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
       - AUTH_SERVER_TOKENNAME=apiKey
-      - AUTH_SERVER_CLIENTID=$dmsConfig.score.api.scoreAppCredential.clientId
-      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.score.api.scoreAppCredential.clientSecret
-      - AUTH_SERVER_SCOPE_DOWNLOAD_SYSTEM=DMS.READ
+      - AUTH_SERVER_CLIENTID=$dmsConfig.score.api.appCredential.clientId
+      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.score.api.appCredential.clientSecret
+      - AUTH_SERVER_SCOPE_DOWNLOAD_SYSTEM=SCORE.READ
       - AUTH_SERVER_SCOPE_DOWNLOAD_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_DOWNLOAD_STUDY_SUFFIX=.READ
-      - AUTH_SERVER_SCOPE_UPLOAD_SYSTEM=DMS.WRITE
+      - AUTH_SERVER_SCOPE_UPLOAD_SYSTEM=SCORE.WRITE
       - AUTH_SERVER_SCOPE_UPLOAD_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_UPLOAD_STUDY_SUFFIX=.WRITE
       - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key

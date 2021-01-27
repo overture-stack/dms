@@ -5,6 +5,7 @@ import static bio.overture.dms.compose.deployment.score.s3.S3ServiceFactory.buil
 import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
+import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static java.lang.String.format;
@@ -34,9 +35,8 @@ import software.amazon.awssdk.regions.Region;
 public class ScoreApiDeployer {
 
   /** Constants */
-  private static final String SCORE_POLICY_NAME = "SCORE";
-
   private static final String HELIOGRAPH_CONTENT = "DMS Score Heliograph Object";
+
   private static final Region DEFAULT_S3_REGION = US_EAST_1;
 
   // NOTE: the DEFAULT_OBJECT_PATH is baked into the score-api.yaml.vm
@@ -86,6 +86,7 @@ public class ScoreApiDeployer {
             .bucketName(scoreConfig.getApi().getObjectBucket())
             .objectKey(resolveObjectKey())
             .data(HELIOGRAPH_CONTENT.getBytes())
+            .overwriteData(false)
             .build());
   }
 
@@ -119,7 +120,7 @@ public class ScoreApiDeployer {
         .simpleProvisionService(simpleProvisionService)
         .dmsGroupName(DMS_ADMIN_GROUP_NAME)
         .scorePolicyName(SCORE_POLICY_NAME)
-        .scoreAppCredential(scoreApiConfig.getScoreAppCredential())
+        .scoreAppCredential(scoreApiConfig.getAppCredential())
         .build();
   }
 

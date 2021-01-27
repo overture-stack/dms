@@ -30,8 +30,6 @@ public class SongQuestionnaire {
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
   private static final RandomGenerator RANDOM_GENERATOR =
       createRandomGenerator(SongQuestionnaire.class.getSimpleName());
-  private static final String DEFAULT_SONG_SCORE_APP_NAME = "score-for-song";
-  private static final String DEFAULT_SONG_SCORE_APP_CLIENT_ID = DEFAULT_SONG_SCORE_APP_NAME;
 
   /** Dependencies */
   private final QuestionFactory questionFactory;
@@ -51,14 +49,6 @@ public class SongQuestionnaire {
     return AppCredential.builder()
         .name(DEFAULT_SONG_APP_NAME)
         .clientId(DEFAULT_SONG_APP_CLIENT_ID)
-        .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
-        .build();
-  }
-
-  private static AppCredential processScoreAppCreds() {
-    return AppCredential.builder()
-        .name(DEFAULT_SONG_SCORE_APP_NAME)
-        .clientId(DEFAULT_SONG_SCORE_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
         .build();
   }
@@ -87,8 +77,7 @@ public class SongQuestionnaire {
               "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
     }
     apiBuilder.url(serverUrl);
-    apiBuilder.songAppCredential(processSongAppCreds());
-    apiBuilder.scoreAppCredential(processScoreAppCreds());
+    apiBuilder.appCredential(processSongAppCreds());
     return apiBuilder.build();
   }
 

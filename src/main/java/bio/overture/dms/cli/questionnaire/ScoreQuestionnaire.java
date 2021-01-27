@@ -101,7 +101,7 @@ public class ScoreQuestionnaire {
               "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
     }
     apiBuilder.url(serverUrl);
-    apiBuilder.scoreAppCredential(processScoreAppCreds());
+    apiBuilder.appCredential(processScoreAppCreds());
     return apiBuilder.build();
   }
 
