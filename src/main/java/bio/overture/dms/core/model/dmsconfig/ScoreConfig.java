@@ -1,5 +1,6 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,6 +37,11 @@ public class ScoreConfig {
     // These are optional
     private boolean useMinio;
     private Integer hostPort;
+    private String s3Region;
+
+    public boolean isS3RegionDefined(){
+      return isDefined(s3Region);
+    }
   }
 
   @Data

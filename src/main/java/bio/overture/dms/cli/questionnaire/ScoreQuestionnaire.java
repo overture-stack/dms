@@ -135,6 +135,7 @@ public class ScoreQuestionnaire {
 
         // https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
         val awsS3Url = new URL("https://s3." + awsS3Region + ".amazonaws.com");
+        s3Builder.s3Region(awsS3Region);
         s3Builder.url(awsS3Url);
       } else {
         val externalS3Url =

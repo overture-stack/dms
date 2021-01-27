@@ -6,3 +6,4 @@ Makefile
 .*
 !.mvn
 run.sh
+jwt.txt
