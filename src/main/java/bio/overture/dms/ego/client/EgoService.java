@@ -250,7 +250,9 @@ public class EgoService {
         return Optional.empty();
       }
       val result =
-          page.getResultSet().stream().filter(x -> x.getOwner().getId().equals(applicationId)).findFirst();
+          page.getResultSet().stream()
+              .filter(x -> x.getOwner().getId().equals(applicationId))
+              .findFirst();
       if (result.isPresent()) {
         return result;
       } else {

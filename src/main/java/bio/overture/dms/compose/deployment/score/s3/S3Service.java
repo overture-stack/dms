@@ -30,13 +30,12 @@ public class S3Service {
         request.getBucketName(),
         request.getObjectKey());
     val objectExists = isObjectExist(request.getBucketName(), request.getObjectKey());
-    if (objectExists && !request.isOverwriteData()){
+    if (objectExists && !request.isOverwriteData()) {
       log.info("The object already exists and overwriteData=false, skipping upload.");
     } else {
       putObject(request.getBucketName(), request.getObjectKey(), request.getData());
       log.info("- Done uploading data to bucket");
     }
-
   }
 
   /**
@@ -64,11 +63,9 @@ public class S3Service {
         RequestBody.fromBytes(data));
   }
 
-  private boolean isObjectExist(String bucketName, String objectKey){
-    val result = s3.listObjects(ListObjectsRequest.builder()
-        .bucket(bucketName)
-        .prefix(objectKey)
-        .build());
+  private boolean isObjectExist(String bucketName, String objectKey) {
+    val result =
+        s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).prefix(objectKey).build());
     return result.contents().stream().anyMatch(x -> x.key().equals(objectKey));
   }
 
