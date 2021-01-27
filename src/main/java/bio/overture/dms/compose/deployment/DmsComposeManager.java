@@ -1,19 +1,16 @@
 package bio.overture.dms.compose.deployment;
 
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_DB;
 import static bio.overture.dms.core.util.Concurrency.waitForCompletableFutures;
-import static java.util.stream.Collectors.toUnmodifiableList;
-
-import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
-import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
-import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
 import bio.overture.dms.compose.deployment.elasticsearch.ElasticsearchDeployer;
+import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
 import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
@@ -98,7 +95,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
     completableFutures.add(scoreApiFuture);
 
-    val elasticsearchFuture = runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService);
+    val elasticsearchFuture =
+        runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService);
     completableFutures.add(elasticsearchFuture);
 
     // Wait for all completable futures to complete
