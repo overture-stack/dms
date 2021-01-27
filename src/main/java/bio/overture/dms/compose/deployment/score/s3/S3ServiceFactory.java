@@ -3,7 +3,6 @@ package bio.overture.dms.compose.deployment.score.s3;
 import static lombok.AccessLevel.PRIVATE;
 import static software.amazon.awssdk.core.client.config.SdkAdvancedClientOption.SIGNER;
 import static software.amazon.awssdk.core.retry.RetryMode.STANDARD;
-import static software.amazon.awssdk.regions.Region.US_EAST_1;
 
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
 import java.net.URI;
@@ -25,6 +24,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class S3ServiceFactory {
 
   private static final Duration API_CALL_TIMEOUT_DURATION = Duration.ofMillis(15000);
+
   public static S3Service buildS3Service(
       @NonNull ScoreS3Config scoreS3Config, @NonNull URI s3EndpointUri, Region region) {
     val s3 = buildS3Client(scoreS3Config, s3EndpointUri, region);
@@ -32,7 +32,8 @@ public class S3ServiceFactory {
   }
 
   @SneakyThrows
-  private static S3Client buildS3Client(ScoreS3Config scoreS3Config, URI s3EndpointUri, Region region) {
+  private static S3Client buildS3Client(
+      ScoreS3Config scoreS3Config, URI s3EndpointUri, Region region) {
     val b = S3Client.builder();
     b.region(region);
     b.endpointOverride(s3EndpointUri);

@@ -1,25 +1,5 @@
 package bio.overture.dms.compose.deployment.score;
 
-import bio.overture.dms.compose.deployment.ServiceDeployer;
-import bio.overture.dms.compose.deployment.ego.EgoHelper;
-import bio.overture.dms.compose.model.S3ObjectUploadRequest;
-import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
-import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
-import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
-import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
-import bio.overture.dms.core.model.enums.ClusterRunModes;
-import bio.overture.dms.swarm.properties.DockerProperties;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import software.amazon.awssdk.regions.Region;
-
-import java.net.URI;
-
 import static bio.overture.dms.compose.deployment.SimpleProvisionService.createSimpleProvisionService;
 import static bio.overture.dms.compose.deployment.score.s3.S3ServiceFactory.buildS3Service;
 import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
@@ -30,13 +10,32 @@ import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static java.lang.String.format;
 import static software.amazon.awssdk.regions.Region.US_EAST_1;
 
+import bio.overture.dms.compose.deployment.ServiceDeployer;
+import bio.overture.dms.compose.deployment.ego.EgoHelper;
+import bio.overture.dms.compose.model.S3ObjectUploadRequest;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.EgoConfig;
+import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
+import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
+import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
+import bio.overture.dms.swarm.properties.DockerProperties;
+import java.net.URI;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import software.amazon.awssdk.regions.Region;
+
 @Slf4j
 @Component
 public class ScoreApiDeployer {
 
-
   /** Constants */
   private static final String SCORE_POLICY_NAME = "SCORE";
+
   private static final String HELIOGRAPH_CONTENT = "DMS Score Heliograph Object";
   private static final Region DEFAULT_S3_REGION = US_EAST_1;
 
@@ -48,11 +47,14 @@ public class ScoreApiDeployer {
 
   /** Dependencies */
   private final ServiceDeployer serviceDeployer;
+
   private final EgoHelper egoHelper;
   private final DockerProperties dockerProperties;
 
   @Autowired
-  public ScoreApiDeployer(@NonNull ServiceDeployer serviceDeployer, @NonNull EgoHelper egoHelper,
+  public ScoreApiDeployer(
+      @NonNull ServiceDeployer serviceDeployer,
+      @NonNull EgoHelper egoHelper,
       @NonNull DockerProperties dockerProperties) {
     this.serviceDeployer = serviceDeployer;
     this.egoHelper = egoHelper;
@@ -88,8 +90,7 @@ public class ScoreApiDeployer {
   }
 
   @SneakyThrows
-  private URI resolveS3Endpoint(
-      ClusterRunModes clusterRunMode, ScoreS3Config scoreS3Config) {
+  private URI resolveS3Endpoint(ClusterRunModes clusterRunMode, ScoreS3Config scoreS3Config) {
     if (clusterRunMode == PRODUCTION) {
       return scoreS3Config.getUrl().toURI();
     } else if (clusterRunMode == LOCAL) {
@@ -103,7 +104,7 @@ public class ScoreApiDeployer {
 
   @SneakyThrows
   private URI resolveMinioContainerUri(ScoreS3Config scoreS3Config) {
-    if(dockerProperties.getRunAs()){
+    if (dockerProperties.getRunAs()) {
       return new URI("http://" + MINIO_API.toString() + ":" + MINIO_API_CONTAINER_PORT);
     } else {
       return scoreS3Config.getUrl().toURI();
@@ -122,8 +123,8 @@ public class ScoreApiDeployer {
         .build();
   }
 
-  private static Region resolveS3Region(ScoreS3Config scoreS3Config){
-    if (scoreS3Config.isS3RegionDefined()){
+  private static Region resolveS3Region(ScoreS3Config scoreS3Config) {
+    if (scoreS3Config.isS3RegionDefined()) {
       return Region.of(scoreS3Config.getS3Region());
     } else {
       return DEFAULT_S3_REGION;
@@ -133,5 +134,4 @@ public class ScoreApiDeployer {
   private static String resolveObjectKey() {
     return DEFAULT_OBJECT_PATH + "/" + DEFAULT_OBJECT_SENTINEL;
   }
-
 }

@@ -39,7 +39,7 @@ public class ScoreConfig {
     private Integer hostPort;
     private String s3Region;
 
-    public boolean isS3RegionDefined(){
+    public boolean isS3RegionDefined() {
       return isDefined(s3Region);
     }
   }
