@@ -46,7 +46,8 @@ WORKDIR $APP_HOME/bin
 
 # CMD ["java", "-ea", "-jar", "/srv/dms.jar", "/var/scratch"]
 #
-################################################# Genomic Transfer Helper
+################################################# 
+# Genomic Transfer Helper
 # A helper that contains the song and score clients
 #################################################
 FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine as genomic-transfer-helper
