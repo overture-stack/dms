@@ -7,7 +7,6 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.HOURS;
 
-import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
@@ -39,7 +38,7 @@ public class EgoQuestionnaire {
   private static final String DEFAULT_UI_APP_CLIENT_ID = "ego-ui";
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
   private static final RandomGenerator RANDOM_GENERATOR =
-      createRandomGenerator(ConfigBuildCommand.class.getSimpleName());
+      createRandomGenerator(EgoQuestionnaire.class.getSimpleName());
 
   /** Dependencies */
   private final QuestionFactory questionFactory;

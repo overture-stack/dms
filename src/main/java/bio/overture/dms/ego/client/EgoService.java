@@ -4,11 +4,13 @@ import static bio.overture.dms.ego.exception.EgoClientException.checkEgoClient;
 import static com.google.common.base.Preconditions.checkState;
 
 import bio.overture.dms.ego.exception.EgoClientException;
+import bio.overture.dms.ego.model.ApplicationPermission;
 import bio.overture.dms.ego.model.ApplicationRequest;
 import bio.overture.dms.ego.model.EgoApplication;
 import bio.overture.dms.ego.model.EgoGroup;
 import bio.overture.dms.ego.model.EgoPolicy;
 import bio.overture.dms.ego.model.GroupRequest;
+import bio.overture.dms.ego.model.ListApplicationPermissionsRequest;
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
 import bio.overture.dms.ego.model.ListGroupRequest;
@@ -42,6 +44,51 @@ public class EgoService {
 
   public void waitForEgoApiHealthy() {
     Failsafe.with(RETRY_POLICY).get(client::getPublicKey);
+  }
+
+  /**
+   * For an existing application and policy, creates an ApplicationPermission only if a permission
+   * was not already created. * If a permission already exists, nothing happens.
+   *
+   * @param applicationName name of an existing application
+   * @param policyName name of an existing policy
+   * @param permissionMask accessLevel or mask of the permission
+   * @throws EgoClientException if group or policy does not already exist
+   */
+  public void createApplicationPermission(
+      @NonNull String applicationName,
+      @NonNull String policyName,
+      @NonNull PermissionMasks permissionMask) {
+    val appResult = findApplicationByName(applicationName);
+    val policyResult = findPolicyByName(policyName);
+
+    // Check applications and policy exist
+    checkEgoClient(
+        appResult.isPresent(),
+        "Cannot create application permission since the application '%s' does not exist",
+        applicationName);
+    checkEgoClient(
+        policyResult.isPresent(),
+        "Cannot create application permission since the policy '%s' does not exist",
+        policyName);
+
+    val application = appResult.get();
+    val policy = policyResult.get();
+    val applicationId = application.getId();
+    val policyId = policy.getId();
+
+    // If the groupPermission already exists do nothing, otherwise, create the permission
+    findApplicationPermission(applicationId)
+        .ifPresentOrElse(
+            x -> {},
+            () ->
+                client.createApplicationPermission(
+                    applicationId,
+                    List.of(
+                        PermissionRequest.builder()
+                            .policyId(policyId)
+                            .mask(permissionMask)
+                            .build())));
   }
 
   /**
@@ -84,7 +131,7 @@ public class EgoService {
                     groupId,
                     List.of(
                         PermissionRequest.builder()
-                            .policyId(policy.getId())
+                            .policyId(policyId)
                             .mask(permissionMask)
                             .build())));
   }
@@ -182,6 +229,30 @@ public class EgoService {
         return Optional.empty();
       }
       val result = page.getResultSet().stream().filter(x -> x.getId().equals(groupId)).findFirst();
+      if (result.isPresent()) {
+        return result;
+      } else {
+        listRequest.setOffset(listRequest.getOffset() + listRequest.getLimit());
+      }
+    }
+  }
+
+  public Optional<ApplicationPermission> findApplicationPermission(@NonNull String applicationId) {
+    val listRequest =
+        ListApplicationPermissionsRequest.builder()
+            .applicationId(applicationId)
+            .offset(0)
+            .limit(30)
+            .build();
+    while (true) {
+      val page = client.listApplicationPermissions(listRequest);
+      if (page.getResultSet().isEmpty()) {
+        return Optional.empty();
+      }
+      val result =
+          page.getResultSet().stream()
+              .filter(x -> x.getOwner().getId().equals(applicationId))
+              .findFirst();
       if (result.isPresent()) {
         return result;
       } else {
