@@ -1,0 +1,101 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+Name: maestro
+TaskTemplate:
+  ContainerSpec:
+    Image: "ghcr.io/overture-stack/maestro:3.6.0"
+    Env:
+      - management.health.elasticsearch.enabled=false
+      - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
+      - MAESTRO_REPOSITORIES_0_CODE=song.overture
+      - MAESTRO_DISABLEEVENTINDEXING=true
+      - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
+      - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:8080
+      - MAESTRO_REPOSITORIES_0_NAME=song.overture
+      - SPRING_CODEC_MAXINMEMORYSIZE=-1
+      - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
+      - MAESTRO_REPOSITORIES_0_COUNTRY=local_song_country
+#if( $dmsConfig.elasticsearch.security.enabled )
+      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_USER=elastic
+      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_PASSWORD=$dmsConfig.elasticsearch.security.rootPassword
+      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_ENABLED=$dmsConfig.elasticsearch.security.enabled
+#end
+    Duration: null
+    StopGracePeriod: 120000000000
+    DNSConfig: null
+    OpenStdin: false
+    ReadOnly: false
+    Hosts: null
+    Hostname: null
+    Secrets: null
+    HealthCheck:
+      # 30s
+      Interval: 30000000000
+      # 30s
+      Timeout: 30000000000
+      Retries: 5
+      # 20s
+      StartPeriod: 20000000000
+    StopSignal: "SIGINT"
+    Privileges: null
+    Configs: null
+  Resources:
+    Limits:
+      #2 GiB
+      MemoryBytes: 2100000000
+      #unlimited.
+      NanoCPUs: 0
+    Reservations:
+      #600 MiB
+      MemoryBytes: 600000000
+      #unlimited.
+      NanoCPUs: 0
+  # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
+  # when the restartpolicy is defined, postgres cannot restart normally.
+  RestartPolicy: null
+  Placement: null
+  LogDriver:
+    Name: "json-file"
+    Options: null
+  ForceUpdate: 0
+  Networks:
+    - Target: $dmsConfig.network
+      Aliases: null
+  Runtime: null
+Mode:
+  Replicated:
+    Replicas: 1
+  Global: null
+UpdateConfig:
+  FailureAction: "rollback"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "stop-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: null
+  Monitor: null
+RollbackConfig:
+  FailureAction: "continue"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "stop-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: 0.8
+  Monitor: null
+Networks:
+  - Target: $dmsConfig.network
+    Aliases: null
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "http"
+      Protocol: "tcp"
+      TargetPort: 11235
+      PublishedPort: $dmsConfig.maestro.hostPort
+      PublishMode: "ingress"
+Labels: null
+

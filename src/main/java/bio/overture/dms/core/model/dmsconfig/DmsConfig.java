@@ -29,4 +29,6 @@ public class DmsConfig {
   @NonNull private final SongConfig song;
 
   @NonNull private final ElasticsearchConfig elasticsearch;
+
+  @NonNull private final MaestroConfig maestro;
 }

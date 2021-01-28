@@ -20,6 +20,8 @@ public class DmsQuestionnaire {
   private final ComposeProperties composeProperties;
   private final SongQuestionnaire songQuestionnaire;
   private final ElasticsearchQuestionnaire elasticsearchQuestionnaire;
+  private final MaestroQuestionnaire maestroQuestionnaire;
+
   private final Terminal terminal;
 
   @Autowired
@@ -30,6 +32,7 @@ public class DmsQuestionnaire {
       @NonNull ComposeProperties composeProperties,
       @NonNull SongQuestionnaire songQuestionnaire,
       @NonNull ElasticsearchQuestionnaire elasticsearchQuestionnaire,
+      MaestroQuestionnaire maestroQuestionnaire,
       @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
@@ -37,6 +40,7 @@ public class DmsQuestionnaire {
     this.composeProperties = composeProperties;
     this.songQuestionnaire = songQuestionnaire;
     this.elasticsearchQuestionnaire = elasticsearchQuestionnaire;
+    this.maestroQuestionnaire = maestroQuestionnaire;
     this.terminal = terminal;
   }
 
@@ -53,6 +57,8 @@ public class DmsQuestionnaire {
     val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode);
     printHeader("ELASTICSEARCH");
     val elasticConfig = elasticsearchQuestionnaire.buildConfig();
+    printHeader("MAESTRO");
+    val maestroConfig = maestroQuestionnaire.buildConfig();
 
     return DmsConfig.builder()
         .clusterRunMode(clusterRunMode)
@@ -61,6 +67,7 @@ public class DmsQuestionnaire {
         .ego(egoConfig)
         .song(songConfig)
         .elasticsearch(elasticConfig)
+        .maestro(maestroConfig)
         .build();
   }
 

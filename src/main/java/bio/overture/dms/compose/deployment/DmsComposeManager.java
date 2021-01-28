@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
 import bio.overture.dms.compose.deployment.elasticsearch.ElasticsearchDeployer;
+import bio.overture.dms.compose.deployment.maestro.MaestroDeployer;
 import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
@@ -28,7 +29,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final ServiceDeployer serviceDeployer;
   private final SongApiDeployer songApiDeployer;
-  private ElasticsearchDeployer elasticsearchDeployer;
+  private final ElasticsearchDeployer elasticsearchDeployer;
+  private final MaestroDeployer maestroDeployer;
 
   @Autowired
   public DmsComposeManager(
@@ -37,13 +39,15 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull SongApiDeployer songApiDeployer,
-      @NonNull ElasticsearchDeployer elasticsearchDeployer) {
+      @NonNull ElasticsearchDeployer elasticsearchDeployer,
+      @NonNull MaestroDeployer maestroDeployer) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
     this.serviceDeployer = serviceDeployer;
     this.songApiDeployer = songApiDeployer;
     this.elasticsearchDeployer = elasticsearchDeployer;
+    this.maestroDeployer = maestroDeployer;
   }
 
   @Override
@@ -71,10 +75,11 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         songDbFuture.runAfterBothAsync(
             egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
 
-    val elasticsearchFuture = runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService);
+    val elasticMaestroFuture = runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService)
+        .thenRunAsync(() -> maestroDeployer.deploy(dmsConfig), executorService);
 
     // Wait for all futures to complete
-    CompletableFuture.allOf(egoFuture, songDbFuture, songApiFuture, elasticsearchFuture).join();
+    CompletableFuture.allOf(egoFuture, songDbFuture, songApiFuture, elasticMaestroFuture).join();
   }
 
   private Runnable getDeployRunnable(

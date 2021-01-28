@@ -18,6 +18,7 @@ public enum ComposeServiceResources {
   SONG_API("song-api"),
   SCORE_API("score-api"),
   ELASTICSEARCH("elasticsearch"),
+  MAESTRO("maestro"),
   ;
   private static final Path TEMPLATE_DIR = Paths.get("templates/servicespec");
 
