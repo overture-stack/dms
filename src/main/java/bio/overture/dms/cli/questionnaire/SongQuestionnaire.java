@@ -6,18 +6,14 @@ import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static java.lang.String.format;
 
-import bio.overture.dms.cli.command.config.ConfigBuildCommand;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongApiConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongDbConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
-import java.util.function.BiConsumer;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -33,9 +29,7 @@ public class SongQuestionnaire {
   private static final String DEFAULT_SONG_APP_CLIENT_ID = SONG_API.toString();
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
   private static final RandomGenerator RANDOM_GENERATOR =
-      createRandomGenerator(ConfigBuildCommand.class.getSimpleName());
-  private static final String DEFAULT_SONG_SCORE_APP_NAME = "score-for-song";
-  private static final String DEFAULT_SONG_SCORE_APP_CLIENT_ID = DEFAULT_SONG_SCORE_APP_NAME;
+      createRandomGenerator(SongQuestionnaire.class.getSimpleName());
 
   /** Dependencies */
   private final QuestionFactory questionFactory;
@@ -55,15 +49,6 @@ public class SongQuestionnaire {
     return AppCredential.builder()
         .name(DEFAULT_SONG_APP_NAME)
         .clientId(DEFAULT_SONG_APP_CLIENT_ID)
-        .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
-        .build();
-  }
-
-  // TODO: use the song client creds with right permissions.
-  private static AppCredential processScoreAppCreds() {
-    return AppCredential.builder()
-        .name(DEFAULT_SONG_SCORE_APP_NAME)
-        .clientId(DEFAULT_SONG_SCORE_APP_CLIENT_ID)
         .clientSecret(RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH))
         .build();
   }
@@ -92,8 +77,7 @@ public class SongQuestionnaire {
               "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
     }
     apiBuilder.url(serverUrl);
-    apiBuilder.songAppCredential(processSongAppCreds());
-    apiBuilder.scoreAppCredential(processScoreAppCreds());
+    apiBuilder.appCredential(processSongAppCreds());
     return apiBuilder.build();
   }
 
@@ -125,23 +109,5 @@ public class SongQuestionnaire {
   @SneakyThrows
   private static URL createLocalhostUrl(int port) {
     return new URL("http://localhost:" + port);
-  }
-
-  public enum SSOProviders {
-    GOOGLE(SSOConfig::setGoogle),
-    LINKEDIN(SSOConfig::setLinkedin),
-    GITHUB(SSOConfig::setGithub),
-    FACEBOOK(SSOConfig::setFacebook),
-    ORCID(SSOConfig::setOrcid);
-
-    private final BiConsumer<SSOConfig, SSOClientConfig> setter;
-
-    SSOProviders(BiConsumer<SSOConfig, SSOClientConfig> setter) {
-      this.setter = setter;
-    }
-
-    public void setClientConfig(SSOConfig s, SSOClientConfig clientConfig) {
-      setter.accept(s, clientConfig);
-    }
   }
 }

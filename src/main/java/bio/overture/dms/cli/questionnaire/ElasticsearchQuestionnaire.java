@@ -22,17 +22,23 @@ public class ElasticsearchQuestionnaire {
     val apiPort =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the elasticsearch http api on?", true, ElasticsearchConfig.DEFAULT_PORT)
+                Integer.class,
+                "What port would you like to expose the elasticsearch http api on?",
+                true,
+                ElasticsearchConfig.DEFAULT_PORT)
             .getAnswer();
 
     val enableSecurity =
         questionFactory
             .newDefaultSingleQuestion(
-                Boolean.class, "Do you want to enable elasticsearch user authentication?", true, true)
+                Boolean.class,
+                "Do you want to enable elasticsearch user authentication?",
+                true,
+                true)
             .getAnswer();
 
     if (enableSecurity) {
-       password =
+      password =
           questionFactory
               .newPasswordQuestion("What should the superuser (elastic) password be?")
               .getAnswer();
@@ -40,11 +46,11 @@ public class ElasticsearchQuestionnaire {
 
     return ElasticsearchConfig.builder()
         .hostPort(apiPort)
-        .security(ElasticsearchConfig.Security
-            .builder()
-            .enabled(enableSecurity)
-            .rootPassword(password)
-            .build()
-        ).build();
+        .security(
+            ElasticsearchConfig.Security.builder()
+                .enabled(enableSecurity)
+                .rootPassword(password)
+                .build())
+        .build();
   }
 }

@@ -20,13 +20,13 @@ TaskTemplate:
       - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
 #end
       - AUTH_SERVER_TOKENNAME=apiKey
-      - AUTH_SERVER_CLIENTID=$dmsConfig.song.api.songAppCredential.clientId
-      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.song.api.songAppCredential.clientSecret
+      - AUTH_SERVER_CLIENTID=$dmsConfig.song.api.appCredential.clientId
+      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.song.api.appCredential.clientSecret
       #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
       - AUTH_SERVER_SCOPE_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
       #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
-      - AUTH_SERVER_SCOPE_SYSTEM=DMS.WRITE
+      - AUTH_SERVER_SCOPE_SYSTEM=SONG.WRITE
 #if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key
 #else
@@ -35,14 +35,14 @@ TaskTemplate:
       - ID_USELOCAL=true
       # TODO: replace this with dmsConfig.score.api.url when score is implemented
       - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:8080
-      - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.scoreAppCredential.clientId
-      - SCORE_CLIENTCREDENTIALS_SECRET=$dmsConfig.song.api.scoreAppCredential.clientSecret
+      - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.appCredential.clientId
+      - SCORE_CLIENTCREDENTIALS_SECRET=$dmsConfig.song.api.appCredential.clientSecret
 #if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       - SCORE_CLIENTCREDENTIALS_TOKENURL=${dmsConfig.ego.api.url}/oauth/token
 #else
       - SCORE_CLIENTCREDENTIALS_TOKENURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token
 #end
-      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=score.WRITE
+      - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=SCORE.WRITE
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000

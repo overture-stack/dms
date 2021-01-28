@@ -3,12 +3,14 @@ package bio.overture.dms.ego.client;
 import static bio.overture.dms.core.util.CollectionUtils.mapToUnmodifiableList;
 
 import bio.overture.dms.core.util.ObjectSerializer;
+import bio.overture.dms.ego.model.ApplicationPermission;
 import bio.overture.dms.ego.model.ApplicationRequest;
 import bio.overture.dms.ego.model.EgoApplication;
 import bio.overture.dms.ego.model.EgoGroup;
 import bio.overture.dms.ego.model.EgoPolicy;
 import bio.overture.dms.ego.model.EgoToken;
 import bio.overture.dms.ego.model.GroupRequest;
+import bio.overture.dms.ego.model.ListApplicationPermissionsRequest;
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
 import bio.overture.dms.ego.model.ListGroupRequest;
@@ -63,6 +65,21 @@ public class EgoClient {
         egoEndpoint.createApplication(),
         r,
         x -> jsonSerializer.convertValue(x, EgoApplication.class));
+  }
+
+  public EgoApplication createApplicationPermission(
+      @NonNull String applicationId, @NonNull Collection<PermissionRequest> permissionRequests) {
+    return restClient.post(
+        egoEndpoint.createApplicationPermission(applicationId),
+        permissionRequests,
+        x -> jsonSerializer.convertValue(x, EgoApplication.class));
+  }
+
+  public PageDTO<ApplicationPermission> listApplicationPermissions(
+      @NonNull ListApplicationPermissionsRequest request) {
+    return restClient.get(
+        egoEndpoint.listApplicationPermission(request),
+        x -> deserializePage(x, ApplicationPermission.class));
   }
 
   public EgoApplication updateApplication(

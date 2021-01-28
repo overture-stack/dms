@@ -5,7 +5,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,7 +25,4 @@ public class ElasticsearchConfig {
     private String rootPassword;
     @Builder.Default private boolean enabled = true;
   }
-
 }
-
-

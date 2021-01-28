@@ -1,0 +1,125 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+Name: score-api
+TaskTemplate:
+  ContainerSpec:
+    Image: "overture/score-server:5.1.0"
+    Env:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=amazon,collaboratory,prod,secure,jwt
+      - OBJECT_SENTINEL=heliograph
+      - BUCKET_NAME_STATE=$dmsConfig.score.api.stateBucket
+      - BUCKET_NAME_OBJECT=$dmsConfig.score.api.objectBucket
+      - COLLABORATORY_DATA_DIRECTORY=data
+      - UPLOAD_PARTSIZE=1073741824
+      - UPLOAD_CONNECTION_TIMEOUT=1200000
+      - METADATA_URL=http://${composeServiceResources.SONG_API.toString()}:8080
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      - S3_ENDPOINT=$dmsConfig.score.s3.url
+#elseif( $dmsConfig.clusterRunMode == 'LOCAL')
+      - S3_ENDPOINT=http://${composeServiceResources.MINIO_API.toString()}:9000
+#end
+      - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
+      - S3_SECRETKEY=$dmsConfig.score.s3.secretKey
+      - S3_SIGV4ENABLED=true
+      - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
+      - AUTH_SERVER_TOKENNAME=apiKey
+      - AUTH_SERVER_CLIENTID=$dmsConfig.score.api.appCredential.clientId
+      - AUTH_SERVER_CLIENTSECRET=$dmsConfig.score.api.appCredential.clientSecret
+      - AUTH_SERVER_SCOPE_DOWNLOAD_SYSTEM=SCORE.READ
+      - AUTH_SERVER_SCOPE_DOWNLOAD_STUDY_PREFIX=DMS.
+      - AUTH_SERVER_SCOPE_DOWNLOAD_STUDY_SUFFIX=.READ
+      - AUTH_SERVER_SCOPE_UPLOAD_SYSTEM=SCORE.WRITE
+      - AUTH_SERVER_SCOPE_UPLOAD_STUDY_PREFIX=DMS.
+      - AUTH_SERVER_SCOPE_UPLOAD_STUDY_SUFFIX=.WRITE
+      - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
+      - LOGGING_LEVEL_BIO_OVERTURE_SCORE_SERVER=DEBUG
+      - LOGGING_LEVEL_BIO_OVERTURE_SCORE_SERVER_REPOSITORY_S3=TRACE
+      - METADATA_USELEGACYMODE=false
+      - SERVER_COMPRESSION_ENABLED=true
+      - SERVER_COMPRESSION_MIMETYPES=application/json
+    Mounts: null
+    Duration: null
+    StopGracePeriod: 120000000000
+    DNSConfig: null
+    OpenStdin: false
+    ReadOnly: false
+    Hosts: null
+    Hostname: null
+    Secrets: null
+    HealthCheck: null
+    StopSignal: "SIGINT"
+    Privileges: null
+    Configs: null
+  Resources:
+    Limits:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #2 GiB
+      MemoryBytes: 2147483648
+#end
+      #unlimited.
+      NanoCPUs: 0
+    Reservations:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #1.5 GiB
+      MemoryBytes: 1610612736
+#end
+      #unlimited.
+      NanoCPUs: 0
+  RestartPolicy:
+    Condition: "on-failure"
+    # 10s
+    Delay: 10000000000
+    MaxAttempts: 0
+    # unbounded
+    Window: 0
+  Placement: null
+  LogDriver:
+    Name: "json-file"
+    Options: null
+  ForceUpdate: 0
+  Networks:
+    - Target: $dmsConfig.network
+      Aliases: null
+  Runtime: null
+Mode:
+  Replicated:
+    Replicas: 1
+  Global: null
+UpdateConfig:
+  FailureAction: "rollback"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: null
+  Monitor: null
+RollbackConfig:
+  FailureAction: "continue"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: 0.8
+  Monitor: null
+Networks:
+  - Target: $dmsConfig.network
+    Aliases: null
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "api"
+      Protocol: "tcp"
+      TargetPort: 8080
+      PublishedPort: $dmsConfig.score.api.hostPort
+      PublishMode: "ingress"
+#else
+EndpointSpec: null
+#end
+Labels: null
+

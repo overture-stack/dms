@@ -3,6 +3,7 @@ package bio.overture.dms.compose.deployment.song;
 import static bio.overture.dms.compose.deployment.SimpleProvisionService.createSimpleProvisionService;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
+import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 
 import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.compose.deployment.ego.EgoHelper;
@@ -50,9 +51,10 @@ public class SongApiDeployer {
     return EgoSongProvisioner.builder()
         .simpleProvisionService(simpleProvisionService)
         .dmsGroupName(DMS_ADMIN_GROUP_NAME)
+        .egoService(egoService)
         .songPolicyName(SONG_POLICY_NAME)
-        .songAppCredential(songApiConfig.getSongAppCredential())
-        .scoreAppCredential(songApiConfig.getScoreAppCredential())
+        .scorePolicyName(SCORE_POLICY_NAME)
+        .appCredential(songApiConfig.getAppCredential())
         .build();
   }
 }

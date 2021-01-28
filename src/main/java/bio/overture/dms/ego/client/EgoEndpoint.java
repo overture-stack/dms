@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import bio.overture.dms.ego.model.ListApplicationPermissionsRequest;
 import bio.overture.dms.ego.model.ListApplicationRequest;
 import bio.overture.dms.ego.model.ListGroupPermissionsRequest;
 import bio.overture.dms.ego.model.ListGroupRequest;
@@ -39,6 +40,17 @@ public class EgoEndpoint {
 
   public String updateApplication(@NonNull String applicationId) {
     return format("%s/applications/%s", baseServerUrl, applicationId);
+  }
+
+  public String listApplicationPermission(@NonNull ListApplicationPermissionsRequest request) {
+    return new RequestParamBuilder()
+        .optionalQuerySingleParam(OFFSET, request.getOffset())
+        .optionalQuerySingleParam(LIMIT, request.getLimit())
+        .build(format("%s/applications/%s/permissions", baseServerUrl, request.getApplicationId()));
+  }
+
+  public String createApplicationPermission(@NonNull String applicationId) {
+    return format("%s/applications/%s/permissions", baseServerUrl, applicationId);
   }
 
   public String listApplications(@NonNull ListApplicationRequest request) {
