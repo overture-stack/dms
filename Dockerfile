@@ -51,25 +51,25 @@ WORKDIR $APP_HOME/bin
 # A helper that contains the song and score clients
 #################################################
 FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine as genomic-transfer-helper
+ARG SONG_VERSION=4.4.0
+ARG SCORE_VERSION=5.1.0
 
 ENV APP_HOME /srv
 ENV EXAMPLE_DATA_DIR=$APP_HOME/example-data
-ENV SONG_VERSION=4.4.0
-ENV SCORE_VERSION=5.1.0
 
 # Song config
 ENV CLIENT_ACCESS_TOKEN=some-jwt
 ENV CLIENT_STUDY_ID=ABC123
 ENV CLIENT_DEBUG=false
 ENV CLIENT_SERVER_URL=http://song-api:8080
-ENV SONG_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/song-client/$SONG_VERSION/song-client-$SONG_VERSION-dist.tar.gz
+ENV SONG_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/song-client/${SONG_VERSION}/song-client-${SONG_VERSION}-dist.tar.gz
 
 
 # Score config
 ENV ACCESSTOKEN=some-jwt
 ENV METADATA_URL=http://song-api:8080
 ENV STORAGE_URL=http://score-api:8080
-ENV SCORE_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/score-client/$SCORE_VERSION/score-client-$SCORE_VERSION-dist.tar.gz
+ENV SCORE_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/score-client/${SCORE_VERSION}/score-client-${SCORE_VERSION}-dist.tar.gz
 
 RUN apk add bash curl vim bash-completion \
 	&& mkdir -p /tmp/scratch  $APP_HOME /var/scratch \
