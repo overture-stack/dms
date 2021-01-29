@@ -43,13 +43,17 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #2 GiB
       MemoryBytes: 2100000000
+#end
       #unlimited.
       NanoCPUs: 0
     Reservations:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       #600 MiB
       MemoryBytes: 600000000
+#end
       #unlimited.
       NanoCPUs: 0
   # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
@@ -70,18 +74,14 @@ Mode:
   Global: null
 UpdateConfig:
   FailureAction: "rollback"
-  #Since there is a shared volume, containing process information
-  # need to ensure its stopped first
-  Order: "stop-first"
+  Order: "start-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: null
   Monitor: null
 RollbackConfig:
   FailureAction: "continue"
-  #Since there is a shared volume, containing process information
-  # need to ensure its stopped first
-  Order: "stop-first"
+  Order: "start-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: 0.8

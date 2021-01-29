@@ -37,7 +37,7 @@ public class DmsQuestionnaire {
       @NonNull SongQuestionnaire songQuestionnaire,
       @NonNull ScoreQuestionnaire scoreQuestionnaire,
       @NonNull ElasticsearchQuestionnaire elasticsearchQuestionnaire,
-      MaestroQuestionnaire maestroQuestionnaire,
+      @NonNull MaestroQuestionnaire maestroQuestionnaire,
       @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
