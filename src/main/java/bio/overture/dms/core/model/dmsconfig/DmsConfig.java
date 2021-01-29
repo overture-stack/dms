@@ -34,4 +34,6 @@ public class DmsConfig {
   @NonNull private final ScoreConfig score;
 
   @NonNull private final ElasticsearchConfig elasticsearch;
+
+  @NonNull private final MaestroConfig maestro;
 }

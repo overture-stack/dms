@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
 import bio.overture.dms.compose.deployment.elasticsearch.ElasticsearchDeployer;
+import bio.overture.dms.compose.deployment.maestro.MaestroDeployer;
 import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
 import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
@@ -34,8 +35,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final ServiceDeployer serviceDeployer;
   private final SongApiDeployer songApiDeployer;
-  private final ScoreApiDeployer scoreApiDeployer;
   private final ElasticsearchDeployer elasticsearchDeployer;
+  private final MaestroDeployer maestroDeployer;
+  private final ScoreApiDeployer scoreApiDeployer;
 
   @Autowired
   public DmsComposeManager(
@@ -44,8 +46,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull SongApiDeployer songApiDeployer,
-      @NonNull ScoreApiDeployer scoreApiDeployer,
-      @NonNull ElasticsearchDeployer elasticsearchDeployer) {
+      @NonNull ElasticsearchDeployer elasticsearchDeployer,
+      @NonNull MaestroDeployer maestroDeployer,
+      @NonNull ScoreApiDeployer scoreApiDeployer) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
@@ -53,6 +56,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     this.songApiDeployer = songApiDeployer;
     this.scoreApiDeployer = scoreApiDeployer;
     this.elasticsearchDeployer = elasticsearchDeployer;
+    this.maestroDeployer = maestroDeployer;
   }
 
   @Override
@@ -95,9 +99,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
     completableFutures.add(scoreApiFuture);
 
-    val elasticsearchFuture =
-        runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService);
-    completableFutures.add(elasticsearchFuture);
+    val elasticMaestroFuture = runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService)
+        .thenRunAsync(() -> maestroDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(elasticMaestroFuture);
 
     // Wait for all completable futures to complete
     waitForCompletableFutures(completableFutures);
