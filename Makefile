@@ -79,4 +79,12 @@ build-image:
 push-image: build-image
 	@$(DOCKER_EXE) push $(DOCKER_IMAGE_NAME)
 
+build-transfer-shell-image:
+	@$(DOCKER_EXE) build --target genomic-transfer-helper -t genomic-transfer-helper:latest ./
+
+BEARER_TOKEN := $(shell cat jwt.txt | sed 's/\s\+//g')
+
+#NOTE: make sure the whole dms cluster is running
+start-transfer-shell: build-transfer-shell-image
+	@$(DOCKER_EXE) run --rm -it --network dms-swarm-network -e CLIENT_ACCESS_TOKEN=$(BEARER_TOKEN) -e ACCESSTOKEN=$(BEARER_TOKEN) genomic-transfer-helper:latest bash
 

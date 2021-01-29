@@ -45,3 +45,53 @@ ENV PATH $PATH:$APP_HOME/bin
 WORKDIR $APP_HOME/bin
 
 # CMD ["java", "-ea", "-jar", "/srv/dms.jar", "/var/scratch"]
+#
+################################################# 
+# Genomic Transfer Helper
+# A helper that contains the song and score clients
+#################################################
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine as genomic-transfer-helper
+ARG SONG_VERSION=4.4.0
+ARG SCORE_VERSION=5.1.0
+
+ENV APP_HOME /srv
+ENV EXAMPLE_DATA_DIR=$APP_HOME/example-data
+
+# Song config
+ENV CLIENT_ACCESS_TOKEN=some-jwt
+ENV CLIENT_STUDY_ID=ABC123
+ENV CLIENT_DEBUG=false
+ENV CLIENT_SERVER_URL=http://song-api:8080
+ENV SONG_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/song-client/${SONG_VERSION}/song-client-${SONG_VERSION}-dist.tar.gz
+
+
+# Score config
+ENV ACCESSTOKEN=some-jwt
+ENV METADATA_URL=http://song-api:8080
+ENV STORAGE_URL=http://score-api:8080
+ENV SCORE_CLIENT_DOWNLOAD_URL=https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/score-client/${SCORE_VERSION}/score-client-${SCORE_VERSION}-dist.tar.gz
+
+RUN apk add bash curl vim bash-completion \
+	&& mkdir -p /tmp/scratch  $APP_HOME /var/scratch \
+	&& curl -sL $SONG_CLIENT_DOWNLOAD_URL --output /tmp/song-client.tar.gz \
+	&& tar zxvf /tmp/song-client.tar.gz -C /tmp/scratch \
+	&& rm -rf /tmp/song-client.tar.gz \
+	&& mv /tmp/scratch/* /tmp/scratch/song-client \
+	&& mv /tmp/scratch/song-client $APP_HOME \
+	&& chmod 777 -R /var/scratch \
+	&& mkdir $EXAMPLE_DATA_DIR
+
+COPY ./example-data/ $EXAMPLE_DATA_DIR/
+
+RUN curl -sL $SCORE_CLIENT_DOWNLOAD_URL --output /tmp/score-client.tar.gz \
+	&& tar zxvf /tmp/score-client.tar.gz -C /tmp/scratch \
+	&& rm -rf /tmp/score-client.tar.gz \
+	&& mv /tmp/scratch/* /tmp/scratch/score-client \
+	&& mv /tmp/scratch/score-client $APP_HOME
+
+RUN echo "alias ls='ls --color'" >> /root/.bashrc \
+	&& echo "alias ll='ls -l'" >> /root/.bashrc  \
+	&& echo "alias lr='ll -rt'" >> /root/.bashrc  \
+	&& echo "alias l='ll'" >> /root/.bashrc 
+
+WORKDIR $APP_HOME

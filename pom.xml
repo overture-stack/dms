@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>bio.overture</groupId>
 	<artifactId>dms</artifactId>
-	<version>0.6.0</version>
+	<version>0.7.0</version>
 	<name>dms</name>
 	<description>Overture Data Management System</description>
 
@@ -142,6 +142,13 @@
 			<groupId>jline</groupId>
 			<artifactId>jline</artifactId>
 			<version>${jline.version}</version>
+		</dependency>
+
+		<!-- AWS S3 -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>${aws.java.sdk.version}</version>
 		</dependency>
 
 
@@ -388,6 +395,8 @@
 		<okhttp.version>4.9.0</okhttp.version>
 		<spring-cloud-stub-runner.version>3.0.0</spring-cloud-stub-runner.version>
 		<asm.version>8.0.1</asm.version>
+		<aws.java.sdk.version>2.15.69</aws.java.sdk.version>
+
 
 		<!--  Plugins-->
 		<plugin.fmt.version>2.10</plugin.fmt.version>

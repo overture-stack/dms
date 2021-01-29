@@ -6,6 +6,7 @@ import static lombok.Lombok.sneakyThrow;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -68,6 +69,11 @@ public class Concurrency {
 
   public static void trySubmit(ExecutorService e, Runnable r) {
     trySubmit(e, r, () -> {});
+  }
+
+  public static void waitForCompletableFutures(
+      Collection<? extends CompletableFuture<?>> completableFutures) {
+    CompletableFuture.allOf(completableFutures.toArray(CompletableFuture<?>[]::new)).join();
   }
 
   public static void waitForFutures(Collection<? extends Future<?>> futures) {

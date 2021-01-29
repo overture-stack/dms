@@ -2,18 +2,19 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: ego-db
+Name: minio-api
 TaskTemplate:
   ContainerSpec:
-    Image: "postgres:11.1"
+    Image: "minio/minio:RELEASE.2018-05-11T00-29-24Z"
     Env:
-      - POSTGRES_DB=ego
-      - POSTGRES_PASSWORD=$dmsConfig.ego.db.databasePassword
+      - MINIO_ACCESS_KEY=$dmsConfig.score.s3.accessKey
+      - MINIO_SECRET_KEY=$dmsConfig.score.s3.secretKey
     Mounts:
       - Type: volume
-        Source: ego-db-data
-        Target: /var/lib/postgresql/data
+        Source: minio-api-data
+        Target: /data
         ReadOnly: false
+    Command: ["minio", "server", "/data"]
     Duration: null
     StopGracePeriod: 120000000000
     DNSConfig: null
@@ -23,34 +24,35 @@ TaskTemplate:
     Hostname: null
     Secrets: null
     HealthCheck:
-      # 30s
+      Test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       Interval: 30000000000
-      # 30s
-      Timeout: 30000000000
-      Test:
-        #TODO: check this command
-        - "CMD-SHELL"
-        - "pg_isready -U postgres"
-      Retries: 5
-      # 20s
-      StartPeriod: 20000000000
+      Timeout: 20000000000
+      Retries: 3
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
   Resources:
     Limits:
-      #200 MiB
-      MemoryBytes: 209715200
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #2 GiB
+      MemoryBytes: 2147483648
+#end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-      #100 MiB
-      MemoryBytes: 104857600
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #1.5 GiB
+      MemoryBytes: 1610612736
+#end
       #unlimited.
       NanoCPUs: 0
-  # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
-  # when the restartpolicy is defined, postgres cannot restart normally.
-  RestartPolicy: null
+  RestartPolicy:
+    Condition: "on-failure"
+    # 10s
+    Delay: 10000000000
+    MaxAttempts: 0
+    # unbounded
+    Window: 0
   Placement: null
   LogDriver:
     Name: "json-file"
@@ -68,7 +70,7 @@ UpdateConfig:
   FailureAction: "rollback"
   #Since there is a shared volume, containing process information
   # need to ensure its stopped first
-  Order: "stop-first"
+  Order: "start-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: null
@@ -77,7 +79,7 @@ RollbackConfig:
   FailureAction: "continue"
   #Since there is a shared volume, containing process information
   # need to ensure its stopped first
-  Order: "stop-first"
+  Order: "start-first"
   Parallelism: null
   Delay: null
   MaxFailureRatio: 0.8
@@ -88,10 +90,10 @@ Networks:
 EndpointSpec:
   Mode: "vip"
   Ports:
-    - Name: "psql"
+    - Name: "api"
       Protocol: "tcp"
-      TargetPort: 5432
-      PublishedPort: $dmsConfig.ego.db.hostPort
+      TargetPort: 9000
+      PublishedPort: $dmsConfig.score.s3.hostPort
       PublishMode: "ingress"
 Labels: null
 

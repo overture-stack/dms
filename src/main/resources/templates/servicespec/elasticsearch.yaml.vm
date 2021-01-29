@@ -2,17 +2,22 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: ego-db
+Name: elasticsearch
 TaskTemplate:
   ContainerSpec:
-    Image: "postgres:11.1"
+    Image: "docker.elastic.co/elasticsearch/elasticsearch:7.6.0"
     Env:
-      - POSTGRES_DB=ego
-      - POSTGRES_PASSWORD=$dmsConfig.ego.db.databasePassword
+      - discovery.type=single-node
+      - cluster.name=dms.elasticsearch
+      - xpack.security.enabled=$dmsConfig.elasticsearch.security.enabled
+#if( $dmsConfig.elasticsearch.security.rootPassword )
+      - ELASTIC_PASSWORD=$dmsConfig.elasticsearch.security.rootPassword
+#end
+      - ES_JAVA_OPTS=-Xms512m -Xmx2048m
     Mounts:
       - Type: volume
-        Source: ego-db-data
-        Target: /var/lib/postgresql/data
+        Source: elasticsearch-data
+        Target: /var/lib/elasticsearch
         ReadOnly: false
     Duration: null
     StopGracePeriod: 120000000000
@@ -27,10 +32,6 @@ TaskTemplate:
       Interval: 30000000000
       # 30s
       Timeout: 30000000000
-      Test:
-        #TODO: check this command
-        - "CMD-SHELL"
-        - "pg_isready -U postgres"
       Retries: 5
       # 20s
       StartPeriod: 20000000000
@@ -39,13 +40,13 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-      #200 MiB
-      MemoryBytes: 209715200
+      #2 GiB
+      MemoryBytes: 2100000000
       #unlimited.
       NanoCPUs: 0
     Reservations:
-      #100 MiB
-      MemoryBytes: 104857600
+      #600 MiB
+      MemoryBytes: 600000000
       #unlimited.
       NanoCPUs: 0
   # NOTE: For the reasons mentioned here https://github.com/docker-library/postgres/issues/101,
@@ -88,10 +89,10 @@ Networks:
 EndpointSpec:
   Mode: "vip"
   Ports:
-    - Name: "psql"
+    - Name: "http"
       Protocol: "tcp"
-      TargetPort: 5432
-      PublishedPort: $dmsConfig.ego.db.hostPort
+      TargetPort: 9200
+      PublishedPort: $dmsConfig.elasticsearch.hostPort
       PublishMode: "ingress"
 Labels: null
 

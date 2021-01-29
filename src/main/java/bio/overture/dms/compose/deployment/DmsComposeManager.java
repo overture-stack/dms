@@ -1,14 +1,22 @@
 package bio.overture.dms.compose.deployment;
 
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
+import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_DB;
+import static bio.overture.dms.core.util.Concurrency.waitForCompletableFutures;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
+import bio.overture.dms.compose.deployment.elasticsearch.ElasticsearchDeployer;
+import bio.overture.dms.compose.deployment.maestro.MaestroDeployer;
+import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
 import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.swarm.service.SwarmService;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
@@ -27,6 +35,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   private final EgoApiDbDeployer egoApiDbDeployer;
   private final ServiceDeployer serviceDeployer;
   private final SongApiDeployer songApiDeployer;
+  private final ElasticsearchDeployer elasticsearchDeployer;
+  private final MaestroDeployer maestroDeployer;
+  private final ScoreApiDeployer scoreApiDeployer;
 
   @Autowired
   public DmsComposeManager(
@@ -34,18 +45,25 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull SwarmService swarmService,
       @NonNull EgoApiDbDeployer egoApiDbDeployer,
       @NonNull ServiceDeployer serviceDeployer,
-      @NonNull SongApiDeployer songApiDeployer) {
+      @NonNull SongApiDeployer songApiDeployer,
+      @NonNull ElasticsearchDeployer elasticsearchDeployer,
+      @NonNull MaestroDeployer maestroDeployer,
+      @NonNull ScoreApiDeployer scoreApiDeployer) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
     this.serviceDeployer = serviceDeployer;
     this.songApiDeployer = songApiDeployer;
+    this.scoreApiDeployer = scoreApiDeployer;
+    this.elasticsearchDeployer = elasticsearchDeployer;
+    this.maestroDeployer = maestroDeployer;
   }
 
   @Override
   public void deploy(@NonNull DmsConfig dmsConfig) {
     swarmService.initializeSwarm();
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
+    val completableFutures = new ArrayList<CompletableFuture<?>>();
 
     // TODO: there should be 2 modes of deployment. a) makes the most sense and is used here.
     // a) Blocking the deployment of a dependency until its parents is READY
@@ -56,19 +74,37 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     // the completable futures
 
     val egoFuture =
-        CompletableFuture.runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
+        runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
             .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI), executorService);
+    completableFutures.add(egoFuture);
 
     val songDbFuture =
         CompletableFuture.runAsync(getDeployRunnable(dmsConfig, SONG_DB), executorService);
+    completableFutures.add(songDbFuture);
 
     // Song API can only deploy once EgoApi and SongDb are BOTH healthy
     val songApiFuture =
         songDbFuture.runAfterBothAsync(
             egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(songApiFuture);
 
-    // Wait for all futures to complete
-    CompletableFuture.allOf(egoFuture, songDbFuture, songApiFuture).join();
+    if (dmsConfig.getScore().getS3().isUseMinio()) {
+      val minioFuture =
+          CompletableFuture.runAsync(getDeployRunnable(dmsConfig, MINIO_API), executorService);
+      completableFutures.add(minioFuture);
+    }
+
+    // Score API can only deploy once EgoApi is healthy
+    val scoreApiFuture =
+        egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(scoreApiFuture);
+
+    val elasticMaestroFuture = runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService)
+        .thenRunAsync(() -> maestroDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(elasticMaestroFuture);
+
+    // Wait for all completable futures to complete
+    waitForCompletableFutures(completableFutures);
   }
 
   private Runnable getDeployRunnable(

@@ -55,6 +55,11 @@ public class ProdTerminalConfig {
 
   @Bean
   public Messenger terminalStatusMessenger(@Autowired Terminal terminal) {
-    return terminal::printStatus;
+    return new Messenger() {
+      @Override
+      public synchronized void send(String message) {
+        terminal.printStatus(message);
+      }
+    };
   }
 }
