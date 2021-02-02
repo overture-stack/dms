@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>bio.overture</groupId>
 	<artifactId>dms</artifactId>
-	<version>0.7.1-SNAPSHOT</version>
+	<version>0.7.1</version>
 	<name>dms</name>
 	<description>Overture Data Management System</description>
 
