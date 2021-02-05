@@ -7,6 +7,7 @@ import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 
 import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.compose.deployment.ego.EgoHelper;
+import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongApiConfig;
@@ -28,16 +29,24 @@ public class SongApiDeployer {
 
   private final EgoHelper egoHelper;
 
+  private final Messenger messenger;
+
   @Autowired
-  public SongApiDeployer(@NonNull ServiceDeployer serviceDeployer, @NonNull EgoHelper egoHelper) {
+  public SongApiDeployer(@NonNull ServiceDeployer serviceDeployer,
+                         @NonNull EgoHelper egoHelper,
+                         @NonNull Messenger messenger) {
     this.serviceDeployer = serviceDeployer;
     this.egoHelper = egoHelper;
+    this.messenger = messenger;
   }
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
     serviceDeployer.deploy(dmsConfig, SONG_API, true);
+    messenger.send("⏳ Provisioning needed data for '%s' ", SONG_API.toString());
     provision(dmsConfig);
+    messenger.send("✔️ Provisioning for '%s' completed", SONG_API.toString());
+    messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", SONG_API.toString());
   }
 
   private void provision(DmsConfig dmsConfig) {

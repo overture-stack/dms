@@ -156,7 +156,7 @@ function main {
 	if [ "${DMS_DEBUG:-}" != "true" ]; then
 		docker_opts='--rm'
 	fi
-	docker_opts="$docker_opts -i --network=host -e \"DOCKER_MODE=true\""
+	docker_opts="$docker_opts -i --network=dms-swarm-network -e \"DOCKER_MODE=true\""
 	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
