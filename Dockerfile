@@ -12,8 +12,12 @@ CMD ["/tmp/run.sh"]
 #############################
 FROM adoptopenjdk/openjdk11:jdk-11.0.6_10-alpine-slim as builder
 WORKDIR /usr/src/app
-ADD . .
-RUN ./mvnw clean package -DskipTests
+COPY ./pom.xml .
+COPY ./mvnw .
+COPY ./.mvn ./.mvn
+RUN ./mvnw dependency:go-offline -B
+COPY ./src ./src
+RUN ./mvnw package -DskipTests
 
 #############################
 #   CLI

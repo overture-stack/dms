@@ -17,6 +17,7 @@ import java.net.URL;
 import java.time.Duration;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
@@ -25,12 +26,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class EgoHelper {
 
   /** Constants */
-  // 10 minute retry policy
   private static final RetryPolicy<String> RETRY_POLICY =
-      new RetryPolicy<String>().withMaxRetries(300).withDelay(Duration.ofSeconds(2));
+      new RetryPolicy<String>().withMaxRetries(10).withDelay(Duration.ofSeconds(10));
 
   /** Dependencies */
   private final EgoClientFactory egoClientFactory;
@@ -59,6 +60,7 @@ public class EgoHelper {
   @SneakyThrows
   public URL getLocalEgoApiUrl(EgoConfig.EgoApiConfig egoApiConfig) {
     if (runInDocker) {
+      // 8080 is the internal port in the cluster network, not changeable
       return new URL("http://" + EGO_API.toString() + ":8080");
     } else {
       return new URL("http://localhost:" + egoApiConfig.getHostPort());
@@ -74,7 +76,6 @@ public class EgoHelper {
             .restClientFactory(basicRestClientFactory)
             .build();
 
-    // TODO: The LOCAL/PRODUCTION logic should be pushed to the EgoClientFactory instead
     EgoClient egoClient = null;
     if (clusterRunMode == LOCAL) {
       egoClient =
@@ -91,7 +92,8 @@ public class EgoHelper {
   }
 
   public EgoService buildEgoService(EgoConfig egoConfig) {
-    val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig);
+    val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig.getApi().getDmsAppCredential(),
+        getLocalEgoApiUrl(egoConfig.getApi()).toString());
     return createEgoService(egoClient);
   }
 }
