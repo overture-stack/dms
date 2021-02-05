@@ -2,8 +2,7 @@ package bio.overture.dms.compose.deployment.score;
 
 import static bio.overture.dms.compose.deployment.SimpleProvisionService.createSimpleProvisionService;
 import static bio.overture.dms.compose.deployment.score.s3.S3ServiceFactory.buildS3Service;
-import static bio.overture.dms.compose.model.ComposeServiceResources.MINIO_API;
-import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
 import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
@@ -14,6 +13,7 @@ import static software.amazon.awssdk.regions.Region.US_EAST_1;
 import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.compose.deployment.ego.EgoHelper;
 import bio.overture.dms.compose.model.S3ObjectUploadRequest;
+import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
@@ -51,20 +51,26 @@ public class ScoreApiDeployer {
   private final EgoHelper egoHelper;
   private final DockerProperties dockerProperties;
 
+  private final Messenger messenger;
   @Autowired
   public ScoreApiDeployer(
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull EgoHelper egoHelper,
-      @NonNull DockerProperties dockerProperties) {
+      @NonNull DockerProperties dockerProperties,
+      @NonNull Messenger messenger) {
     this.serviceDeployer = serviceDeployer;
     this.egoHelper = egoHelper;
     this.dockerProperties = dockerProperties;
+    this.messenger = messenger;
   }
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
+    messenger.send("⏳ Provisioning needed data for '%s' ", SCORE_API.toString());
     serviceDeployer.deploy(dmsConfig, SCORE_API, true);
     provision(dmsConfig);
+    messenger.send("✔️ Provisioning for '%s' completed", SCORE_API.toString());
+    messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", SCORE_API.toString());
   }
 
   private void provision(DmsConfig dmsConfig) {

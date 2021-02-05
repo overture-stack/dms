@@ -50,20 +50,24 @@ public class ServiceDeployer {
     val deployType = deployServiceSpec(serviceSpec);
     if (waitForServiceRunning) {
       waitForServiceRunning(serviceSpec);
+
     }
+
     return deployType;
   }
 
   // TODO: not working properly. Is not waiting for service to be RUNNING. Specifically, ego-db says
   // "waiting" and then doesnt show "now running"
   public void waitForServiceRunning(@NonNull ServiceSpec s) {
-    messenger.send("Waiting for the service '%s' to be in the RUNNING state", s.getName());
+    messenger.send("⏳ Waiting for the service '%s' to be in the RUNNING state", s.getName());
     swarmService.waitForServiceRunning(s.getName(), NUM_RETRIES, POLL_PERIOD);
+    messenger.send("✔️ Service %s started", s.getName());
   }
 
   private DeployTypes deployServiceSpec(@NonNull ServiceSpec s) {
+    messenger.send("⏳ Deploying service '%s' ...", s.getName());
     val out = deploySwarmService(s);
-    messenger.send("Completed deployment task for service %s", s.getName());
+    messenger.send("✔️ Deployed service %s", s.getName());
     return out;
   }
 
