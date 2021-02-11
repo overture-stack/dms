@@ -36,4 +36,6 @@ public class DmsConfig {
   @NonNull private final ElasticsearchConfig elasticsearch;
 
   @NonNull private final MaestroConfig maestro;
+
+  @NonNull private final ArrangerConfig arranger;
 }

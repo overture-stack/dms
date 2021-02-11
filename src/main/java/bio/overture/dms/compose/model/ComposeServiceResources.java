@@ -20,6 +20,8 @@ public enum ComposeServiceResources {
   MINIO_API("minio-api"),
   ELASTICSEARCH("elasticsearch"),
   MAESTRO("maestro"),
+  ARRANGER_SERVER("arranger-server"),
+  ARRANGER_UI("arranger-ui"),
   ;
 
   private static final Path TEMPLATE_DIR = Paths.get("templates/servicespec");
