@@ -19,9 +19,9 @@ TaskTemplate:
     Hostname: null
     Secrets: null
     HealthCheck:
-      Test: ["CMD", "curl", "-f", "http://localhost:8080/"]
-      Interval: 30000000000
-      Timeout: 20000000000
+      Test: ["CMD", "wget", "-O-", "http://localhost:8080/"]
+      Interval: 10000000000
+      Timeout: 10000000000
       Retries: 5
     StopSignal: "SIGINT"
     Privileges: null

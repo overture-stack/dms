@@ -12,7 +12,7 @@ TaskTemplate:
 #if( $dmsConfig.elasticsearch.security.enabled )
       - ES_USER=elastic
       - ES_PASS=$dmsConfig.elasticsearch.security.rootPassword
-    #end
+#end
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -22,7 +22,15 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
+# TODO figure out why health check call not working
     HealthCheck: null
+##      Test: ["CMD", "wget", "-q", "-O-",
+##             "--header=\"Content-Type: application/json\"",
+##             "--post-data='{\"query\": \"{ __schema { __typename } }\"}'",
+##             "http://localhost:5050/admin/graphql"]
+##      Interval: 10000000000
+##      Timeout: 10000000000
+##      Retries: 5
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
