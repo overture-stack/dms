@@ -1,0 +1,95 @@
+# For more info on the api, refer to:
+#  SwaggerEditor: https://editor.swagger.io/
+#  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
+# All durations are in nanotime
+Name: arranger-ui
+TaskTemplate:
+  ContainerSpec:
+    Image: "overture/arranger-ui:2.9.0"
+    Env:
+      - PORT=8080
+      - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:5050
+    Mounts: null
+    Duration: null
+    StopGracePeriod: 120000000000
+    DNSConfig: null
+    OpenStdin: false
+    ReadOnly: false
+    Hosts: null
+    Hostname: null
+    Secrets: null
+    HealthCheck:
+      Test: ["CMD", "wget", "-O-", "http://localhost:8080/"]
+      Interval: 10000000000
+      Timeout: 10000000000
+      Retries: 5
+    StopSignal: "SIGINT"
+    Privileges: null
+    Configs: null
+  Resources:
+    Limits:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #1 GiB
+      MemoryBytes: 1073741824
+#end
+      #unlimited.
+      NanoCPUs: 0
+    Reservations:
+#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+      #1.5 GiB
+      MemoryBytes: 1610612736
+#end
+      #unlimited.
+      NanoCPUs: 0
+  RestartPolicy:
+    Condition: "on-failure"
+    # 10s
+    Delay: 10000000000
+##          MaxAttempts: 10
+    MaxAttempts: 0
+    # unbounded
+    Window: 0
+  Placement: null
+  LogDriver:
+    Name: "json-file"
+    Options: null
+  ForceUpdate: 0
+  Networks:
+    - Target: $dmsConfig.network
+      Aliases: null
+  Runtime: null
+Mode:
+  Replicated:
+    Replicas: 1
+  Global: null
+UpdateConfig:
+  FailureAction: "rollback"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: null
+  Monitor: null
+RollbackConfig:
+  FailureAction: "continue"
+  #Since there is a shared volume, containing process information
+  # need to ensure its stopped first
+  Order: "start-first"
+  Parallelism: null
+  Delay: null
+  MaxFailureRatio: 0.8
+  Monitor: null
+Networks:
+  - Target: $dmsConfig.network
+    Aliases: null
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "ui"
+      Protocol: "tcp"
+      TargetPort: 8080
+      PublishedPort: $dmsConfig.arranger.ui.hostPort
+      PublishMode: "ingress"
+Labels: null
+

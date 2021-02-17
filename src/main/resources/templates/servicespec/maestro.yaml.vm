@@ -9,6 +9,8 @@ TaskTemplate:
     Env:
       - management.health.elasticsearch.enabled=false
       - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
+      - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_NAME=$dmsConfig.maestro.fileCentricIndexName
+      - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_ALIAS=$dmsConfig.maestro.fileCentricAlias
       - MAESTRO_REPOSITORIES_0_CODE=song.overture
       - MAESTRO_DISABLEEVENTINDEXING=true
       - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
