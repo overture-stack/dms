@@ -5,13 +5,14 @@
 Name: ego-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego:3.6.0"
+    Image: "overture/ego:a3a21b49"
     Env:
     - SERVER_PORT=8080
     - SPRING_FLYWAY_ENABLED=true
     - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
     - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
     - SPRING_DATASOURCE_USERNAME=postgres
+    - DEFAULT_USER_FIRSTUSERASADMIN=true
     - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.db.databasePassword
     - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:5432/ego?stringtype=unspecified
     - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port

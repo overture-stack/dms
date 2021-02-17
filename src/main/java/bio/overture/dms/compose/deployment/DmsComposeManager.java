@@ -15,6 +15,7 @@ import bio.overture.dms.swarm.service.SwarmService;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -88,6 +89,11 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         .thenRunAsync(getDeployRunnable(dmsConfig, MAESTRO, messenger), executorService);
     completableFutures.add(elasticMaestroFuture);
 
+    val arrangerFuture = elasticMaestroFuture
+        .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
+        .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
+    completableFutures.add(arrangerFuture);
+
     // Wait for all completable futures to complete
     waitForCompletableFutures(completableFutures);
   }
@@ -98,6 +104,14 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       serviceDeployer.deploy(dmsConfig, composeServiceResource, true);
       messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", composeServiceResource.toString());
     };
+  }
+
+  public static void delay(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

@@ -2,13 +2,13 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: ego-ui
+Name: arranger-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego-ui:edge"
+    Image: "overture/arranger-ui:2.9.0"
     Env:
-      - REACT_APP_API=$dmsConfig.ego.api.url
-      - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
+      - PORT=8080
+      - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:5050
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -18,7 +18,11 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
-    HealthCheck: null
+    HealthCheck:
+      Test: ["CMD", "wget", "-O-", "http://localhost:8080/"]
+      Interval: 10000000000
+      Timeout: 10000000000
+      Retries: 5
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
@@ -82,10 +86,10 @@ Networks:
 EndpointSpec:
   Mode: "vip"
   Ports:
-    - Name: "ego-ui"
+    - Name: "ui"
       Protocol: "tcp"
       TargetPort: 8080
-      PublishedPort: $dmsConfig.ego.ui.hostPort
+      PublishedPort: $dmsConfig.arranger.ui.hostPort
       PublishMode: "ingress"
 Labels: null
 

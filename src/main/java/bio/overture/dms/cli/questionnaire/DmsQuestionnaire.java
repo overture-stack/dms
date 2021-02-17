@@ -25,6 +25,7 @@ public class DmsQuestionnaire {
   private final ScoreQuestionnaire scoreQuestionnaire;
   private final ElasticsearchQuestionnaire elasticsearchQuestionnaire;
   private final MaestroQuestionnaire maestroQuestionnaire;
+  private final ArrangerQuestionnaire arrangerQuestionnaire;
 
   private final Terminal terminal;
 
@@ -38,6 +39,7 @@ public class DmsQuestionnaire {
       @NonNull ScoreQuestionnaire scoreQuestionnaire,
       @NonNull ElasticsearchQuestionnaire elasticsearchQuestionnaire,
       @NonNull MaestroQuestionnaire maestroQuestionnaire,
+      @NonNull ArrangerQuestionnaire arrangerQuestionnaire,
       @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
@@ -47,6 +49,7 @@ public class DmsQuestionnaire {
     this.scoreQuestionnaire = scoreQuestionnaire;
     this.elasticsearchQuestionnaire = elasticsearchQuestionnaire;
     this.maestroQuestionnaire = maestroQuestionnaire;
+    this.arrangerQuestionnaire = arrangerQuestionnaire;
     this.terminal = terminal;
   }
 
@@ -75,6 +78,8 @@ public class DmsQuestionnaire {
     val elasticConfig = elasticsearchQuestionnaire.buildConfig();
     printHeader("MAESTRO");
     val maestroConfig = maestroQuestionnaire.buildConfig();
+    printHeader("ARRANGER");
+    val arrangerConfig = arrangerQuestionnaire.buildConfig();
 
     return DmsConfig.builder()
         .gatewayUrl(dmsGatewayUrl)
@@ -86,6 +91,7 @@ public class DmsQuestionnaire {
         .score(scoreConfig)
         .elasticsearch(elasticConfig)
         .maestro(maestroConfig)
+        .arranger(arrangerConfig)
         .build();
   }
 

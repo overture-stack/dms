@@ -2,13 +2,17 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: ego-ui
+Name: arranger-server
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego-ui:edge"
+    Image: "overture/arranger-server:2.9.0"
     Env:
-      - REACT_APP_API=$dmsConfig.ego.api.url
-      - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
+      - PORT=5050
+      - ES_HOST=http://${composeServiceResources.ELASTICSEARCH.toString()}:9200
+#if( $dmsConfig.elasticsearch.security.enabled )
+      - ES_USER=elastic
+      - ES_PASS=$dmsConfig.elasticsearch.security.rootPassword
+#end
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -18,15 +22,23 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
+# TODO figure out why health check call not working
     HealthCheck: null
+##      Test: ["CMD", "wget", "-q", "-O-",
+##             "--header=\"Content-Type: application/json\"",
+##             "--post-data='{\"query\": \"{ __schema { __typename } }\"}'",
+##             "http://localhost:5050/admin/graphql"]
+##      Interval: 10000000000
+##      Timeout: 10000000000
+##      Retries: 5
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
   Resources:
     Limits:
 #if( $dmsConfig.clusterRunMode == 'PRODUCTION')
-      #1 GiB
-      MemoryBytes: 1073741824
+      #2 GiB
+      MemoryBytes: 2147483648
 #end
       #unlimited.
       NanoCPUs: 0
@@ -39,9 +51,8 @@ TaskTemplate:
       NanoCPUs: 0
   RestartPolicy:
     Condition: "on-failure"
-    # 10s
-    Delay: 10000000000
-##          MaxAttempts: 10
+    # 5s
+    Delay: 5000000000
     MaxAttempts: 0
     # unbounded
     Window: 0
@@ -82,10 +93,10 @@ Networks:
 EndpointSpec:
   Mode: "vip"
   Ports:
-    - Name: "ego-ui"
+    - Name: "api"
       Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.ego.ui.hostPort
+      TargetPort: 5050
+      PublishedPort: $dmsConfig.arranger.api.hostPort
       PublishMode: "ingress"
 Labels: null
 
