@@ -38,4 +38,6 @@ public class DmsConfig {
   @NonNull private final MaestroConfig maestro;
 
   @NonNull private final ArrangerConfig arranger;
+
+  @NonNull private final DmsUIConfig dmsUI;
 }

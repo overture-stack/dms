@@ -22,6 +22,7 @@ public enum ComposeServiceResources {
   MAESTRO("maestro"),
   ARRANGER_SERVER("arranger-server"),
   ARRANGER_UI("arranger-ui"),
+  DMS_UI("dms-ui"),
   ;
 
   private static final Path TEMPLATE_DIR = Paths.get("templates/servicespec");

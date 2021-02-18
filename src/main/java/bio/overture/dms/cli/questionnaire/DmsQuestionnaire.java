@@ -9,6 +9,7 @@ import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import java.net.URL;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
@@ -26,6 +27,7 @@ public class DmsQuestionnaire {
   private final ElasticsearchQuestionnaire elasticsearchQuestionnaire;
   private final MaestroQuestionnaire maestroQuestionnaire;
   private final ArrangerQuestionnaire arrangerQuestionnaire;
+  private final DmsUIQuestionnaire dmsUIQuestionnaire;
 
   private final Terminal terminal;
 
@@ -40,6 +42,7 @@ public class DmsQuestionnaire {
       @NonNull ElasticsearchQuestionnaire elasticsearchQuestionnaire,
       @NonNull MaestroQuestionnaire maestroQuestionnaire,
       @NonNull ArrangerQuestionnaire arrangerQuestionnaire,
+      @NonNull DmsUIQuestionnaire dmsUIQuestionnaire,
       @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
     this.buildProperties = buildProperties;
@@ -50,6 +53,7 @@ public class DmsQuestionnaire {
     this.elasticsearchQuestionnaire = elasticsearchQuestionnaire;
     this.maestroQuestionnaire = maestroQuestionnaire;
     this.arrangerQuestionnaire = arrangerQuestionnaire;
+    this.dmsUIQuestionnaire = dmsUIQuestionnaire;
     this.terminal = terminal;
   }
 
@@ -79,7 +83,11 @@ public class DmsQuestionnaire {
     printHeader("MAESTRO");
     val maestroConfig = maestroQuestionnaire.buildConfig();
     printHeader("ARRANGER");
-    val arrangerConfig = arrangerQuestionnaire.buildConfig();
+    val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode);
+    printHeader("DMS UI");
+    // we pass maestro's config to read the alias name to be used
+    // in case the user changed the default.
+    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig);
 
     return DmsConfig.builder()
         .gatewayUrl(dmsGatewayUrl)
@@ -91,8 +99,14 @@ public class DmsQuestionnaire {
         .score(scoreConfig)
         .elasticsearch(elasticConfig)
         .maestro(maestroConfig)
+        .dmsUI(dmsUIConfig)
         .arranger(arrangerConfig)
         .build();
+  }
+
+  @SneakyThrows
+  static URL createLocalhostUrl(int port) {
+    return new URL("http://localhost:" + port);
   }
 
   private void printHeader(@NonNull String title) {
