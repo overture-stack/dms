@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -310,10 +311,6 @@ public class EgoQuestionnaire {
     return RANDOM_GENERATOR.generateRandomAsciiString(charCount);
   }
 
-  @SneakyThrows
-  private static URL createLocalhostUrl(int port) {
-    return new URL("http://localhost:" + port);
-  }
 
   public enum SSOProviders {
     GOOGLE(SSOConfig::setGoogle),

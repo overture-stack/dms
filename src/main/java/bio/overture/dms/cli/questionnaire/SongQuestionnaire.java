@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
@@ -102,12 +103,7 @@ public class SongQuestionnaire {
                 Integer.class, "What port would you like to expose the SONG db on?", true, 9011)
             .getAnswer();
     dbBuilder.hostPort(dbPort);
-
     return dbBuilder.build();
   }
 
-  @SneakyThrows
-  private static URL createLocalhostUrl(int port) {
-    return new URL("http://localhost:" + port);
-  }
 }

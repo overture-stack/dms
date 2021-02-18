@@ -14,6 +14,7 @@ import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
 import lombok.NonNull;
@@ -94,8 +95,21 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
     completableFutures.add(arrangerFuture);
 
+    val dmsUIFuture = arrangerFuture.thenRunAsync(getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);
+    completableFutures.add(dmsUIFuture);
+    CountDownLatch latch = new CountDownLatch(1);
+    CompletableFuture.runAsync(() -> {
+      delay(5 * 1000);
+      while (latch.getCount()  == 1) {
+        messenger.send("Still Working...");
+        delay(15 * 1000);
+      }
+
+    });
     // Wait for all completable futures to complete
     waitForCompletableFutures(completableFutures);
+
+    latch.countDown();
   }
 
   private Runnable getDeployRunnable(

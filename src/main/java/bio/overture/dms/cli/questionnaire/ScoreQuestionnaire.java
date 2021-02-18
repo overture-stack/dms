@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
@@ -218,8 +219,4 @@ public class ScoreQuestionnaire {
     return new URL(dmsGatewayUrl.toString() + "/minio");
   }
 
-  @SneakyThrows
-  private static URL createLocalhostUrl(int port) {
-    return new URL("http://localhost:" + port);
-  }
 }
