@@ -43,9 +43,9 @@ public class SongApiDeployer {
   public void deploy(@NonNull DmsConfig dmsConfig) {
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
     serviceDeployer.deploy(dmsConfig, SONG_API, true);
-    messenger.send("⏳ Provisioning needed data for '%s' ", SONG_API.toString());
+//    messenger.send("⏳ Provisioning needed data for '%s' ", SONG_API.toString());
     provision(dmsConfig);
-    messenger.send("✔️ Provisioning for '%s' completed", SONG_API.toString());
+//    messenger.send("✔️ Provisioning for '%s' completed", SONG_API.toString());
     messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", SONG_API.toString());
   }
 
