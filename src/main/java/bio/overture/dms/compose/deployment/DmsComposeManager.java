@@ -181,7 +181,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     }
     if (runModes == ClusterRunModes.LOCAL) {
       if (runningInDocker) {
-        return ("http://" + resource.toString() + containerPort);
+        return ("http://" + resource.toString() + ":" + containerPort);
       } else {
         return ("http://localhost:" + hostPort);
       }

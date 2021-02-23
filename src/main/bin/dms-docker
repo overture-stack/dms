@@ -10,6 +10,7 @@ export DMS_HOME=$HOME/.dms
 export DMS_CONFIG_FILE=$DMS_HOME/$CONFIG_FILENAME
 
 MIN_VERSION=19.03.00
+NETWORK_NAME=dms-swarm-network
 
 function isVersionGTE {
 	input_version=$1
@@ -156,7 +157,7 @@ function main {
 	if [ "${DMS_DEBUG:-}" != "true" ]; then
 		docker_opts='--rm'
 	fi
-	docker_opts="$docker_opts -i --network=dms-swarm-network -e \"DOCKER_MODE=true\""
+	docker_opts="$docker_opts -i --network=$NETWORK_NAME -e \"DOCKER_MODE=true\""
 	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
@@ -173,10 +174,14 @@ function main {
 	docker_opts="$docker_opts -e DOCKER_RUNAS=true"
 	# create dms-swarm-network if it doesn't exist, this is important for first run
 	# since the dms uses that in its run options
-	$DOCKER_EXE network create -d overlay dms-swarm-network || true
-	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
+  found_network=$(docker network ls --filter name=${NETWORK_NAME} --format="{{ .Name }}")
+  if [ -z $found_network ] ; then
+    echo "creating the dms network"
+    $DOCKER_EXE network create -d overlay --attachable ${NETWORK_NAME} ;
+  fi
+#	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
 # use this to test the docker image locally (build firts: docker build . -t dms-test)
-#	$DOCKER_EXE run $docker_opts dms-test:latest dms $all_dms_params
+	$DOCKER_EXE run $docker_opts dms-test:latest dms $all_dms_params
 	set +x
 }
 
