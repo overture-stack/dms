@@ -38,7 +38,7 @@ public class ServiceDeployer {
   private final ServiceSpecRenderEngine serviceSpecRenderEngine;
 
   private static final RetryPolicy<Boolean> RETRY_POLICY =
-      new RetryPolicy<Boolean>().withMaxRetries(5).withDelay(Duration.ofSeconds(5));
+      new RetryPolicy<Boolean>().withMaxRetries(10).withDelay(Duration.ofSeconds(5));
 
   @Autowired
   public ServiceDeployer(
