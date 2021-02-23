@@ -32,9 +32,10 @@ public class SongApiDeployer {
   private final Messenger messenger;
 
   @Autowired
-  public SongApiDeployer(@NonNull ServiceDeployer serviceDeployer,
-                         @NonNull EgoHelper egoHelper,
-                         @NonNull Messenger messenger) {
+  public SongApiDeployer(
+      @NonNull ServiceDeployer serviceDeployer,
+      @NonNull EgoHelper egoHelper,
+      @NonNull Messenger messenger) {
     this.serviceDeployer = serviceDeployer;
     this.egoHelper = egoHelper;
     this.messenger = messenger;
@@ -43,10 +44,11 @@ public class SongApiDeployer {
   public void deploy(@NonNull DmsConfig dmsConfig) {
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
     serviceDeployer.deploy(dmsConfig, SONG_API, true);
-//    messenger.send("⏳ Provisioning needed data for '%s' ", SONG_API.toString());
+    //    messenger.send("⏳ Provisioning needed data for '%s' ", SONG_API.toString());
     provision(dmsConfig);
-//    messenger.send("✔️ Provisioning for '%s' completed", SONG_API.toString());
-    messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", SONG_API.toString());
+    //    messenger.send("✔️ Provisioning for '%s' completed", SONG_API.toString());
+    messenger.send(
+        "\uD83C\uDFC1️ Deployment for service %s finished successfully", SONG_API.toString());
   }
 
   private void provision(DmsConfig dmsConfig) {

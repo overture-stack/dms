@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("ego.client")
 public class EgoClientProperties {
-
   private final EgoTimeoutSecondsProperties timeoutSeconds = new EgoTimeoutSecondsProperties();
   private final RetryProperties retry = new RetryProperties();
 }

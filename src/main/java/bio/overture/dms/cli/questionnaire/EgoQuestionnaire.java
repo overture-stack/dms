@@ -311,7 +311,6 @@ public class EgoQuestionnaire {
     return RANDOM_GENERATOR.generateRandomAsciiString(charCount);
   }
 
-
   public enum SSOProviders {
     GOOGLE(SSOConfig::setGoogle),
     LINKEDIN(SSOConfig::setLinkedin),
