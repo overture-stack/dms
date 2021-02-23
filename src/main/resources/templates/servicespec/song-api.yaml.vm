@@ -22,10 +22,8 @@ TaskTemplate:
       - AUTH_SERVER_TOKENNAME=apiKey
       - AUTH_SERVER_CLIENTID=$dmsConfig.song.api.appCredential.clientId
       - AUTH_SERVER_CLIENTSECRET=$dmsConfig.song.api.appCredential.clientSecret
-      #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
       - AUTH_SERVER_SCOPE_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
-      #TODO: DMS. is baked in. This should be referenced from some variable in Java. Slowly...its becoming more difficult to template than to it in java directly....
       - AUTH_SERVER_SCOPE_SYSTEM=SONG.WRITE
 #if( $dmsConfig.clusterRunMode == 'PRODUCTION')
       - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key

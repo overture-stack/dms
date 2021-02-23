@@ -52,6 +52,7 @@ public class ScoreApiDeployer {
   private final DockerProperties dockerProperties;
 
   private final Messenger messenger;
+
   @Autowired
   public ScoreApiDeployer(
       @NonNull ServiceDeployer serviceDeployer,
@@ -66,11 +67,12 @@ public class ScoreApiDeployer {
 
   public void deploy(@NonNull DmsConfig dmsConfig) {
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
-//    messenger.send("⏳ Provisioning needed data for '%s' ", SCORE_API.toString());
+    //    messenger.send("⏳ Provisioning needed data for '%s' ", SCORE_API.toString());
     serviceDeployer.deploy(dmsConfig, SCORE_API, true);
     provision(dmsConfig);
-//    messenger.send("✔️ Provisioning for '%s' completed", SCORE_API.toString());
-    messenger.send("\uD83C\uDFC1️ Deployment for service %s finished successfully", SCORE_API.toString());
+    //    messenger.send("✔️ Provisioning for '%s' completed", SCORE_API.toString());
+    messenger.send(
+        "\uD83C\uDFC1️ Deployment for service %s finished successfully", SCORE_API.toString());
   }
 
   private void provision(DmsConfig dmsConfig) {

@@ -1,10 +1,9 @@
 package bio.overture.dms.core.model.dmsconfig;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
 @Data
 @Builder
@@ -19,5 +18,3 @@ public class MaestroConfig {
   @Builder.Default private String fileCentricIndexName = FILE_CENTRIC_INDEX_NAME;
   @Builder.Default private String fileCentricAlias = FILE_CENTRIC_ALIAS_NAME;
 }
-
-

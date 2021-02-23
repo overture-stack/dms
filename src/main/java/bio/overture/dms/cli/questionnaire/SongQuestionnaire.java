@@ -16,7 +16,6 @@ import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -105,5 +104,4 @@ public class SongQuestionnaire {
     dbBuilder.hostPort(dbPort);
     return dbBuilder.build();
   }
-
 }

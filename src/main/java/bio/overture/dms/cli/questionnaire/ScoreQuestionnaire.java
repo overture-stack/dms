@@ -218,5 +218,4 @@ public class ScoreQuestionnaire {
   private static URL resolveMinioProdUrl(@NonNull URL dmsGatewayUrl) {
     return new URL(dmsGatewayUrl.toString() + "/minio");
   }
-
 }
