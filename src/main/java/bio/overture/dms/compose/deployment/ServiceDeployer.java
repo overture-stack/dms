@@ -6,7 +6,6 @@ import static bio.overture.dms.compose.deployment.ServiceDeployer.DeployTypes.UP
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.rest.RestClientFactory;
 import bio.overture.dms.swarm.service.SwarmService;
 import com.github.dockerjava.api.model.ServiceSpec;
 import java.time.Duration;
@@ -18,7 +17,6 @@ import net.jodah.failsafe.RetryPolicy;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
@@ -38,7 +36,6 @@ public class ServiceDeployer {
 
   private final Messenger messenger;
   private final ServiceSpecRenderEngine serviceSpecRenderEngine;
-  private final RestClientFactory restClient;
 
   private static final RetryPolicy<Boolean> RETRY_POLICY =
       new RetryPolicy<Boolean>().withMaxRetries(5).withDelay(Duration.ofSeconds(5));
@@ -47,12 +44,10 @@ public class ServiceDeployer {
   public ServiceDeployer(
       @NonNull SwarmService swarmService,
       @NonNull Messenger messenger,
-      @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine,
-      @NonNull @Qualifier("nonRetryingRestClientFactory") RestClientFactory restClient) {
+      @NonNull ServiceSpecRenderEngine serviceSpecRenderEngine) {
     this.swarmService = swarmService;
     this.messenger = messenger;
     this.serviceSpecRenderEngine = serviceSpecRenderEngine;
-    this.restClient = restClient;
   }
 
   public DeployTypes deploy(
@@ -103,22 +98,22 @@ public class ServiceDeployer {
     CREATE;
   }
 
+  public static void waitForOk(String url) {
+    waitForOk(url, null);
+  }
+
   public static void waitForOk(String url, String basicAuth) {
-    val basicAuthHeaderValue = "basic " + new String(Base64Utils.encode(basicAuth.getBytes()));
     Failsafe.with(RETRY_POLICY)
         .get(
             () -> {
               val client = new OkHttpClient.Builder().build();
               val reqBuilder = new Request.Builder().url(url).get();
               if (!StringUtils.isEmpty(basicAuth)) {
+                val basicAuthHeaderValue =
+                    "basic " + new String(Base64Utils.encode(basicAuth.getBytes()));
                 reqBuilder.addHeader("Authorization", basicAuthHeaderValue);
               }
               val response = client.newCall(reqBuilder.build()).execute();
-              System.out.println(
-                  "recieved response "
-                      + response.body().string()
-                      + " and status "
-                      + response.code());
               return response.code() == 200;
             });
   }

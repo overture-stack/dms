@@ -12,6 +12,9 @@ import bio.overture.dms.compose.deployment.song.SongApiDeployer;
 import bio.overture.dms.compose.model.ComposeServiceResources;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
+import bio.overture.dms.swarm.properties.DockerProperties;
 import bio.overture.dms.swarm.service.SwarmService;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +40,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   private final ScoreApiDeployer scoreApiDeployer;
   private final ElasticsearchDeployer elasticsearchDeployer;
   private final Messenger messenger;
+  private final boolean dmsRunningInDocker;
 
   @Autowired
   public DmsComposeManager(
@@ -45,7 +50,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull ServiceDeployer serviceDeployer,
       @NonNull SongApiDeployer songApiDeployer,
       @NonNull ScoreApiDeployer scoreApiDeployer,
-      ElasticsearchDeployer elasticsearchDeployer,
+      @NonNull ElasticsearchDeployer elasticsearchDeployer,
+      @NonNull DockerProperties dockerProperties,
       @NonNull Messenger messenger) {
     this.executorService = executorService;
     this.swarmService = swarmService;
@@ -54,6 +60,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     this.songApiDeployer = songApiDeployer;
     this.scoreApiDeployer = scoreApiDeployer;
     this.elasticsearchDeployer = elasticsearchDeployer;
+    this.dmsRunningInDocker = dockerProperties.getRunAs();
     this.messenger = messenger;
   }
 
@@ -92,8 +99,10 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     completableFutures.add(scoreApiFuture);
 
     val elasticMaestroFuture =
-        runAsync(() -> elasticsearchDeployer.deploy(dmsConfig), executorService)
-            .thenRunAsync(getDeployRunnable(dmsConfig, MAESTRO, messenger), executorService);
+        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
+            .thenRunAsync(
+                getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
+                executorService);
     completableFutures.add(elasticMaestroFuture);
 
     val arrangerFuture =
@@ -108,17 +117,47 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     completableFutures.add(dmsUIFuture);
 
     CountDownLatch latch = new CountDownLatch(1);
-    //    CompletableFuture.runAsync(
-    //        () -> {
-    //          delay(5 * 1000);
-    //          while (latch.getCount() == 1) {
-    //            messenger.send("Still Working...");
-    //            delay(15 * 1000);
-    //          }
-    //        });
+    CompletableFuture.runAsync(
+        () -> {
+          delay(5 * 1000);
+          while (latch.getCount() == 1) {
+            messenger.send("Still Working...");
+            delay(15 * 1000);
+          }
+        });
 
-    // Wait for all completable futures to complete
-    waitForCompletableFutures(completableFutures);
+    try {
+      // Wait for all completable futures to complete
+      waitForCompletableFutures(completableFutures);
+    } catch (Exception e) {
+      messenger.send("Failed to deploy services");
+      latch.countDown();
+      throw e;
+    } finally {
+      if (latch.getCount() == 1) latch.countDown();
+    }
+  }
+
+  private Runnable getMaestroDeployRunnable(
+      DmsConfig dmsConfig, Boolean dmsRunningInDocker, Messenger messenger) {
+    return () -> {
+      serviceDeployer.deploy(dmsConfig, MAESTRO, true);
+      val url =
+          DmsComposeManager.resolveServiceHost(
+              MAESTRO,
+              dmsConfig.getClusterRunMode(),
+              MaestroConfig.DEFAULT_PORT,
+              dmsConfig.getMaestro().getHostPort(),
+              dmsRunningInDocker);
+      try {
+        ServiceDeployer.waitForOk(url);
+      } catch (Exception e) {
+        messenger.send("❌ Health check failed for Maestro");
+        throw e;
+      }
+      messenger.send(
+          "\uD83C\uDFC1️ Deployment for service %s finished successfully", MAESTRO.toString());
+    };
   }
 
   private Runnable getDeployRunnable(
@@ -129,6 +168,26 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
           "\uD83C\uDFC1️ Deployment for service %s finished successfully",
           composeServiceResource.toString());
     };
+  }
+
+  public static String resolveServiceHost(
+      ComposeServiceResources resource,
+      ClusterRunModes runModes,
+      int containerPort,
+      int hostPort,
+      boolean runningInDocker) {
+    if (runModes == ClusterRunModes.PRODUCTION) {
+      throw new NotImplementedException("");
+    }
+    if (runModes == ClusterRunModes.LOCAL) {
+      if (runningInDocker) {
+        return ("http://" + resource.toString() + containerPort);
+      } else {
+        return ("http://localhost:" + hostPort);
+      }
+    } else {
+      throw new RuntimeException("invalid cluster mode");
+    }
   }
 
   public static void delay(long millis) {

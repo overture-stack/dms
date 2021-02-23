@@ -2,12 +2,14 @@ package bio.overture.dms.compose.deployment.elasticsearch;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 
+import bio.overture.dms.compose.deployment.DmsComposeManager;
 import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.ElasticsearchConfig;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,17 +29,24 @@ public class ElasticsearchDeployer {
     this.messenger = messenger;
   }
 
-  public void deploy(@NonNull DmsConfig dmsConfig) {
+  public void deploy(boolean runInDocker, @NonNull DmsConfig dmsConfig) {
     serviceDeployer.deploy(dmsConfig, ELASTICSEARCH, true);
     messenger.send("⏳ Waiting for '%s' service to be healthy..", ELASTICSEARCH.toString());
-    ServiceDeployer.waitForOk(
-        "http://"
-            + ELASTICSEARCH.toString()
-            + ":"
-            + ElasticsearchConfig.DEFAULT_PORT
-            + "/_cluster/health?wait_for_status=yellow",
-        "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword());
-
+    val url =
+        DmsComposeManager.resolveServiceHost(
+            ELASTICSEARCH,
+            dmsConfig.getClusterRunMode(),
+            ElasticsearchConfig.DEFAULT_PORT,
+            dmsConfig.getElasticsearch().getHostPort(),
+            runInDocker);
+    try {
+      ServiceDeployer.waitForOk(
+          url + "/_cluster/health?wait_for_status=yellow",
+          "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword());
+    } catch (Exception e) {
+      messenger.send("❌ Health check for Elasticsearch failed");
+      throw e;
+    }
     messenger.send("\uD83C\uDFC1️ Deployment for '%s' finished ", ELASTICSEARCH.toString());
   }
 }
