@@ -28,6 +28,11 @@ TaskTemplate:
     Hostname: null
     Secrets: null
     HealthCheck:
+###if( $dmsConfig.elasticsearch.security.rootPassword )
+##      Test: ["CMD", "curl", "-u", "elastic:$dmsConfig.elasticsearch.security.rootPassword", "http://localhost:9200/_cluster/health?wait_for_status=yellow" ]
+###else
+##      Test: ["CMD", "curl", "http://localhost:9200/_cluster/health?wait_for_status=yellow" ]
+###end
       # 30s
       Interval: 30000000000
       # 30s

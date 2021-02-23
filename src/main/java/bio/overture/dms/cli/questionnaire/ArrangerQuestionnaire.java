@@ -1,19 +1,18 @@
 package bio.overture.dms.cli.questionnaire;
 
-import bio.overture.dms.cli.question.QuestionFactory;
-import bio.overture.dms.core.model.dmsconfig.ArrangerConfig;
-import bio.overture.dms.core.model.enums.ClusterRunModes;
-import lombok.NonNull;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.net.URL;
-
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static java.lang.String.format;
+
+import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.core.model.dmsconfig.ArrangerConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
+import java.net.URL;
+import lombok.NonNull;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ArrangerQuestionnaire {
@@ -29,8 +28,10 @@ public class ArrangerQuestionnaire {
     val apiPort =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the Arranger API on?",
-                true, ArrangerConfig.ArrangerApiConfig.DEFAULT_PORT)
+                Integer.class,
+                "What port would you like to expose the Arranger API on?",
+                true,
+                ArrangerConfig.ArrangerApiConfig.DEFAULT_PORT)
             .getAnswer();
 
     URL serverUrl;
@@ -51,8 +52,10 @@ public class ArrangerQuestionnaire {
     val uiPort =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the Arranger UI on?",
-                true, ArrangerConfig.ArrangerUIConfig.DEFAULT_PORT)
+                Integer.class,
+                "What port would you like to expose the Arranger UI on?",
+                true,
+                ArrangerConfig.ArrangerUIConfig.DEFAULT_PORT)
             .getAnswer();
 
     return ArrangerConfig.builder()

@@ -92,8 +92,10 @@ public class EgoHelper {
   }
 
   public EgoService buildEgoService(EgoConfig egoConfig) {
-    val egoClient = egoClientFactory.buildAuthDmsEgoClient(egoConfig.getApi().getDmsAppCredential(),
-        getLocalEgoApiUrl(egoConfig.getApi()).toString());
+    val egoClient =
+        egoClientFactory.buildAuthDmsEgoClient(
+            egoConfig.getApi().getDmsAppCredential(),
+            getLocalEgoApiUrl(egoConfig.getApi()).toString());
     return createEgoService(egoClient);
   }
 }

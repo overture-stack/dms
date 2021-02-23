@@ -31,9 +31,10 @@ public class EgoApiDbDeployer {
   private final Messenger messenger;
 
   @Autowired
-  public EgoApiDbDeployer(@NonNull ServiceDeployer serviceDeployer,
-                          @NonNull EgoHelper egoHelper,
-                          @NonNull Messenger messenger) {
+  public EgoApiDbDeployer(
+      @NonNull ServiceDeployer serviceDeployer,
+      @NonNull EgoHelper egoHelper,
+      @NonNull Messenger messenger) {
     this.serviceDeployer = serviceDeployer;
     this.egoHelper = egoHelper;
     this.messenger = messenger;
@@ -48,11 +49,11 @@ public class EgoApiDbDeployer {
 
     messenger.send("⏳ Waiting for '%s' service to be healthy..", EGO_API.toString());
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
-//    messenger.send("✔️ Service '%s' is healthy. ", EGO_API.toString());
+    //    messenger.send("✔️ Service '%s' is healthy. ", EGO_API.toString());
 
-//    messenger.send("⏳ Provisioning needed data for '%s' ", EGO_API.toString());
+    //    messenger.send("⏳ Provisioning needed data for '%s' ", EGO_API.toString());
     provision(dmsConfig);
-//    messenger.send("✔️ Provisioning for '%s' completed", EGO_API.toString());
+    //    messenger.send("✔️ Provisioning for '%s' completed", EGO_API.toString());
     messenger.send("\uD83C\uDFC1️ Deployment for '%s' finished ", EGO_API.toString());
   }
 

@@ -171,6 +171,7 @@ function main {
 		set -x
 	fi
 	docker_opts="$docker_opts -e DOCKER_RUNAS=true"
+	$DOCKER_EXE network create -d overlay dms-swarm-network > /dev/null
 	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
 # use this to test the docker image locally (build firts: docker build . -t dms-test)
 #	$DOCKER_EXE run $docker_opts dms-test:latest dms $all_dms_params
