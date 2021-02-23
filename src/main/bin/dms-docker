@@ -174,14 +174,12 @@ function main {
 	docker_opts="$docker_opts -e DOCKER_RUNAS=true"
 	# create dms-swarm-network if it doesn't exist, this is important for first run
 	# since the dms uses that in its run options
-  found_network=$(docker network ls --filter name=${NETWORK_NAME} --format="{{ .Name }}")
-  if [ -z $found_network ] ; then
-    echo "creating the dms network"
-    $DOCKER_EXE network create -d overlay --attachable ${NETWORK_NAME} ;
-  fi
-#	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
-# use this to test the docker image locally (build firts: docker build . -t dms-test)
-	$DOCKER_EXE run $docker_opts dms-test:latest dms $all_dms_params
+	found_network=$(docker network ls --filter name=${NETWORK_NAME} --format="{{ .Name }}")
+	if [ -z $found_network ] ; then
+		echo "creating the dms network"
+		$DOCKER_EXE network create -d overlay --attachable ${NETWORK_NAME} ;
+	fi
+	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
 	set +x
 }
 
