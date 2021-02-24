@@ -6,6 +6,7 @@ import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.HealthCheckConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import java.net.URL;
 import lombok.NonNull;
@@ -92,6 +93,8 @@ public class DmsQuestionnaire {
     return DmsConfig.builder()
         .gatewayUrl(dmsGatewayUrl)
         .clusterRunMode(clusterRunMode)
+        .healthCheck(HealthCheckConfig.builder()
+            .build())
         .version(buildProperties.getVersion())
         .network(composeProperties.getNetwork())
         .ego(egoConfig)

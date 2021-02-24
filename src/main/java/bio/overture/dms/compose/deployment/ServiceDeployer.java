@@ -37,8 +37,7 @@ public class ServiceDeployer {
   private final Messenger messenger;
   private final ServiceSpecRenderEngine serviceSpecRenderEngine;
 
-  private static final RetryPolicy<Boolean> RETRY_POLICY =
-      new RetryPolicy<Boolean>().withMaxRetries(10).withDelay(Duration.ofSeconds(5));
+
 
   @Autowired
   public ServiceDeployer(
@@ -98,11 +97,13 @@ public class ServiceDeployer {
     CREATE;
   }
 
-  public static void waitForOk(String url) {
-    waitForOk(url, null);
+  public static void waitForOk(String url, int retries, int delay) {
+    waitForOk(url, null, retries, delay);
   }
 
-  public static void waitForOk(String url, String basicAuth) {
+  public static void waitForOk(String url, String basicAuth, int retries, int delay) {
+    RetryPolicy<Boolean> RETRY_POLICY =
+        new RetryPolicy<Boolean>().withMaxRetries(retries).withDelay(Duration.ofSeconds(delay));
     Failsafe.with(RETRY_POLICY)
         .get(
             () -> {

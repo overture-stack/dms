@@ -142,7 +142,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       DmsConfig dmsConfig, Boolean dmsRunningInDocker, Messenger messenger) {
     return () -> {
       serviceDeployer.deploy(dmsConfig, MAESTRO, true);
-      val url =
+      val host =
           DmsComposeManager.resolveServiceHost(
               MAESTRO,
               dmsConfig.getClusterRunMode(),
@@ -150,7 +150,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
               dmsConfig.getMaestro().getHostPort(),
               dmsRunningInDocker);
       try {
-        ServiceDeployer.waitForOk(url);
+        ServiceDeployer.waitForOk("http://" + host, dmsConfig.getHealthCheck().getRetries(),
+            dmsConfig.getHealthCheck().getDelaySec());
       } catch (Exception e) {
         messenger.send("❌ Health check failed for Maestro");
         throw e;
@@ -181,9 +182,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     }
     if (runModes == ClusterRunModes.LOCAL) {
       if (runningInDocker) {
-        return ("http://" + resource.toString() + ":" + containerPort);
+        return (resource.toString() + ":" + containerPort);
       } else {
-        return ("http://localhost:" + hostPort);
+        return ("localhost:" + hostPort);
       }
     } else {
       throw new RuntimeException("invalid cluster mode");
