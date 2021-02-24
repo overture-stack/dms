@@ -32,7 +32,7 @@ public class ElasticsearchDeployer {
   public void deploy(boolean runInDocker, @NonNull DmsConfig dmsConfig) {
     serviceDeployer.deploy(dmsConfig, ELASTICSEARCH, true);
     messenger.send("⏳ Waiting for '%s' service to be healthy..", ELASTICSEARCH.toString());
-    val url =
+    val host =
         DmsComposeManager.resolveServiceHost(
             ELASTICSEARCH,
             dmsConfig.getClusterRunMode(),
@@ -41,10 +41,12 @@ public class ElasticsearchDeployer {
             runInDocker);
     try {
       ServiceDeployer.waitForOk(
-          url + "/_cluster/health?wait_for_status=yellow",
-          "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword());
+          "http://" + host + "/_cluster/health?wait_for_status=yellow",
+          "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword(),
+          dmsConfig.getHealthCheck().getRetries(),
+          dmsConfig.getHealthCheck().getDelaySec());
     } catch (Exception e) {
-      messenger.send("❌ Health check for Elasticsearch failed");
+      messenger.send("❌ Health check failed for Elasticsearch");
       throw e;
     }
     messenger.send("\uD83C\uDFC1️ Deployment for '%s' finished ", ELASTICSEARCH.toString());
