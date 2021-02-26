@@ -16,10 +16,10 @@ TaskTemplate:
       - UPLOAD_PARTSIZE=1073741824
       - UPLOAD_CONNECTION_TIMEOUT=1200000
       - METADATA_URL=http://${composeServiceResources.SONG_API.toString()}:8080
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
-      - S3_ENDPOINT=$dmsConfig.score.s3.url
-#elseif( $dmsConfig.clusterRunMode == 'LOCAL')
+#if($dmsConfig.score.s3.useMinio)
       - S3_ENDPOINT=http://${composeServiceResources.MINIO_API.toString()}:9000
+#else
+      - S3_ENDPOINT=$dmsConfig.score.s3.url
 #end
       - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
       - S3_SECRETKEY=$dmsConfig.score.s3.secretKey

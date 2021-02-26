@@ -154,7 +154,7 @@ public class ScoreQuestionnaire {
 
       val s3SecretKey =
           questionFactory
-              .newDefaultSingleQuestion(String.class, "What is the S3 accessKey?", false, null)
+              .newDefaultSingleQuestion(String.class, "What is the S3 secretKey?", false, null)
               .getAnswer();
       s3Builder.secretKey(s3SecretKey);
     } else {
