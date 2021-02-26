@@ -83,7 +83,7 @@ public class ScoreApiDeployer {
   private void provisionS3Buckets(ClusterRunModes clusterRunMode, ScoreConfig scoreConfig) {
     // TODO: May want to create interactive question for this in the future. For now, autocreate
     // buckets if minio is run
-    val autoCreateBuckets = clusterRunMode == LOCAL;
+    val autoCreateBuckets = scoreConfig.getS3().isUseMinio();
     val endpointUri = resolveS3Endpoint(clusterRunMode, scoreConfig.getS3());
     val region = resolveS3Region(scoreConfig.getS3());
     val s3Service = buildS3Service(scoreConfig.getS3(), endpointUri, region);
