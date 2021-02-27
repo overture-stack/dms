@@ -14,7 +14,7 @@ TaskTemplate:
         Source: minio-api-data
         Target: /data
         ReadOnly: false
-    Command: ["minio", "server", "/data"]
+    Command: ["minio", "server", "--address", ":$dmsConfig.score.s3.hostPort", "/data"]
     Duration: null
     StopGracePeriod: 120000000000
     DNSConfig: null
@@ -24,7 +24,7 @@ TaskTemplate:
     Hostname: null
     Secrets: null
     HealthCheck:
-      Test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      Test: ["CMD", "curl", "-f", "http://localhost:$dmsConfig.score.s3.hostPort/minio/health/live"]
       Interval: 30000000000
       Timeout: 20000000000
       Retries: 3
@@ -59,8 +59,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+  #if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+  #else
     - Target: $dmsConfig.network
       Aliases: null
+  #end
   Runtime: null
 Mode:
   Replicated:
@@ -85,15 +90,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "api"
       Protocol: "tcp"
-      TargetPort: 9000
+      TargetPort: $dmsConfig.score.s3.hostPort
       PublishedPort: $dmsConfig.score.s3.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

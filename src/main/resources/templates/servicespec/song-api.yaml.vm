@@ -7,39 +7,34 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/song-server:4.4.0"
     Env:
-      - SERVER_PORT=8080
+      - SERVER_PORT=$dmsConfig.song.api.hostPort
       - SPRING_FLYWAY_ENABLED=true
       - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
       - SPRING_PROFILES_ACTIVE=prod,secure,jwt,score-client-cred,default
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=$dmsConfig.song.db.databasePassword
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.SONG_DB.toString()}:5432/song?stringtype=unspecified
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
-      - AUTH_SERVER_URL=${dmsConfig.ego.api.url}/o/check_api_key
-#else
-      - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
-#end
       - AUTH_SERVER_TOKENNAME=apiKey
       - AUTH_SERVER_CLIENTID=$dmsConfig.song.api.appCredential.clientId
       - AUTH_SERVER_CLIENTSECRET=$dmsConfig.song.api.appCredential.clientSecret
       - AUTH_SERVER_SCOPE_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
       - AUTH_SERVER_SCOPE_SYSTEM=SONG.WRITE
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
-      - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key
-#else
-      - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
-#end
       - ID_USELOCAL=true
-      # TODO: replace this with dmsConfig.score.api.url when score is implemented
-      - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:8080
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - AUTH_SERVER_URL=http://localhost:$dmsConfig.ego.api.hostPort/o/check_api_key
+      - AUTH_JWT_PUBLICKEYURL=http://localhost:$dmsConfig.ego.api.hostPort/oauth/token/public_key
+      - SCORE_URL=http://localhost:$dmsConfig.score.api.hostPort
+      - SCORE_CLIENTCREDENTIALS_TOKENURL=http://localhost:$dmsConfig.ego.api.hostPort/oauth/token
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:$dmsConfig.song.db.hostPort/song?stringtype=unspecified
+#else
+      - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key
+      - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:$dmsConfig.score.api.hostPort
+      - SCORE_CLIENTCREDENTIALS_TOKENURL=${dmsConfig.ego.api.url}/oauth/token
+      - AUTH_SERVER_URL=${dmsConfig.ego.api.url}/o/check_api_key
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.SONG_DB.toString()}:$dmsConfig.song.db.hostPort/song?stringtype=unspecified
+#end
       - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.appCredential.clientId
       - SCORE_CLIENTCREDENTIALS_SECRET=$dmsConfig.song.api.appCredential.clientSecret
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
-      - SCORE_CLIENTCREDENTIALS_TOKENURL=${dmsConfig.ego.api.url}/oauth/token
-#else
-      - SCORE_CLIENTCREDENTIALS_TOKENURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token
-#end
       - SCORE_CLIENTCREDENTIALS_SYSTEMSCOPE=SCORE.WRITE
     Mounts: null
     Duration: null
@@ -54,6 +49,7 @@ TaskTemplate:
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
+
   Resources:
     Limits:
 #if( $dmsConfig.clusterRunMode == 'PRODUCTION')
@@ -82,8 +78,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: $dmsConfig.network
-      Aliases: null
+    #if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - Target: host
+        Aliases: null
+    #else
+      - Target: $dmsConfig.network
+        Aliases: null
+    #end
   Runtime: null
 Mode:
   Replicated:
@@ -108,15 +109,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "api"
       Protocol: "tcp"
-      TargetPort: 8080
+      TargetPort: $dmsConfig.song.api.hostPort
       PublishedPort: $dmsConfig.song.api.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

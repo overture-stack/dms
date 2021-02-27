@@ -7,20 +7,22 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/ego:a3a21b49"
     Env:
-    - SERVER_PORT=8080
+    - SERVER_PORT=$dmsConfig.ego.api.hostPort
     - SPRING_FLYWAY_ENABLED=true
     - SPRING_FLYWAY_LOCATIONS=classpath:flyway/sql,classpath:db/migration
-    - SPRING_PROFILES_ACTIVE=auth,grpc,jwt
+    - SPRING_PROFILES_ACTIVE=auth,jwt
     - SPRING_DATASOURCE_USERNAME=postgres
     - DEFAULT_USER_FIRSTUSERASADMIN=true
     - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.db.databasePassword
-    - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:5432/ego?stringtype=unspecified
-    - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port
-    - SWAGGER_BASEURL=#if($dmsConfig.ego.api.url.path == '')/#{else}$dmsConfig.ego.api.url.path#end
 #if( $dmsConfig.clusterRunMode == 'LOCAL')
     - LOGIN_NONCE_SECURE=false
     - LOGIN_NONCE_SAMESITE=lax
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:$dmsConfig.ego.db.hostPort/ego?stringtype=unspecified
+#else
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:$dmsConfig.ego.db.hostPort/ego?stringtype=unspecified
 #end
+    - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port
+    - SWAGGER_BASEURL=#if($dmsConfig.ego.api.url.path == '')/#{else}$dmsConfig.ego.api.url.path#end
     - INITIALIZATION_ENABLED=true
     - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredential.name
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
@@ -98,8 +100,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: $dmsConfig.network
-      Aliases: null
+    #if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - Target: host
+        Aliases: null
+    #else
+      - Target: $dmsConfig.network
+        Aliases: null
+    #end
   Runtime: null
 Mode:
   Replicated:
@@ -124,15 +131,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "api"
       Protocol: "tcp"
-      TargetPort: 8080
+      TargetPort: $dmsConfig.ego.api.hostPort
       PublishedPort: $dmsConfig.ego.api.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

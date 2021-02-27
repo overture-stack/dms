@@ -7,14 +7,20 @@ TaskTemplate:
   ContainerSpec:
     Image: "ghcr.io/overture-stack/maestro:3.7.0"
     Env:
+      - SERVER_PORT=$dmsConfig.maestro.hostPort
       - management.health.elasticsearch.enabled=false
-      - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - MAESTRO.ELASTICSEARCH.CLUSTERNODES=localhost:$dmsConfig.elasticsearch.hostPort
+      - MAESTRO_REPOSITORIES_0_URL=http://localhost:$dmsConfig.song.api.hostPort
+#else
+      - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:$dmsConfig.elasticsearch.hostPort
+      - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:$dmsConfig.song.api.hostPort
+#end
       - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_NAME=$dmsConfig.maestro.fileCentricIndexName
       - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_ALIAS=$dmsConfig.maestro.fileCentricAlias
       - MAESTRO_REPOSITORIES_0_CODE=song.overture
       - MAESTRO_DISABLEEVENTINDEXING=true
       - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
-      - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:8080
       - MAESTRO_REPOSITORIES_0_NAME=song.overture
       - SPRING_CODEC_MAXINMEMORYSIZE=-1
       - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
@@ -64,8 +70,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: $dmsConfig.network
-      Aliases: null
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - Target: host
+        Aliases: null
+#else
+      - Target: $dmsConfig.network
+        Aliases: null
+#end
   Runtime: null
 Mode:
   Replicated:
@@ -86,15 +97,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "http"
       Protocol: "tcp"
-      TargetPort: 11235
+      TargetPort: $dmsConfig.maestro.hostPort
       PublishedPort: $dmsConfig.maestro.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

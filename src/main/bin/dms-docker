@@ -157,7 +157,10 @@ function main {
 	if [ "${DMS_DEBUG:-}" != "true" ]; then
 		docker_opts='--rm'
 	fi
-	docker_opts="$docker_opts -i --network=$NETWORK_NAME -e \"DOCKER_MODE=true\""
+	# since we use the host network in localmode we need dms container to be on it
+	# this will need to be handled differently for server (aka Production) mode where there will be
+	# an overlay docker network to reach the containers.
+	docker_opts="$docker_opts -i --network=host -e \"DOCKER_MODE=true\""
 	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"

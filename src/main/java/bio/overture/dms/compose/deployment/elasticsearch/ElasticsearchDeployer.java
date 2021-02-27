@@ -32,13 +32,9 @@ public class ElasticsearchDeployer {
   public void deploy(boolean runInDocker, @NonNull DmsConfig dmsConfig) {
     serviceDeployer.deploy(dmsConfig, ELASTICSEARCH, true);
     messenger.send("⏳ Waiting for '%s' service to be healthy..", ELASTICSEARCH.toString());
-    val host =
-        DmsComposeManager.resolveServiceHost(
-            ELASTICSEARCH,
+    val host = DmsComposeManager.resolveServiceHost(
             dmsConfig.getClusterRunMode(),
-            ElasticsearchConfig.DEFAULT_PORT,
-            dmsConfig.getElasticsearch().getHostPort(),
-            runInDocker);
+            dmsConfig.getElasticsearch().getHostPort());
     try {
       ServiceDeployer.waitForOk(
           "http://" + host + "/_cluster/health?wait_for_status=yellow",

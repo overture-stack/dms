@@ -7,7 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/score-server:5.1.0"
     Env:
-      - SERVER_PORT=8080
+      - SERVER_PORT=$dmsConfig.score.api.hostPort
       - SPRING_PROFILES_ACTIVE=amazon,collaboratory,prod,secure,jwt
       - OBJECT_SENTINEL=heliograph
       - BUCKET_NAME_STATE=$dmsConfig.score.api.stateBucket
@@ -15,16 +15,25 @@ TaskTemplate:
       - COLLABORATORY_DATA_DIRECTORY=data
       - UPLOAD_PARTSIZE=1073741824
       - UPLOAD_CONNECTION_TIMEOUT=1200000
-      - METADATA_URL=http://${composeServiceResources.SONG_API.toString()}:8080
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - METADATA_URL=http://localhost:$dmsConfig.song.api.hostPort
+      - AUTH_SERVER_URL=http://localhost:$dmsConfig.ego.api.hostPort/o/check_api_key
+      - AUTH_JWT_PUBLICKEYURL=http://localhost:$dmsConfig.ego.api.hostPort/oauth/token/public_key
+#else
+      - METADATA_URL=http://${composeServiceResources.SONG_API.toString()}:$dmsConfig.song.api.hostPort
+      - AUTH_JWT_PUBLICKEYURL=${dmsConfig.ego.api.url}/oauth/token/public_key
+      - AUTH_SERVER_URL=${dmsConfig.ego.api.url}/o/check_api_key
+#end
+
+## TODO: this doesn't handle the case of minio in prod server
 #if($dmsConfig.score.s3.useMinio)
-      - S3_ENDPOINT=http://${composeServiceResources.MINIO_API.toString()}:9000
+      - S3_ENDPOINT=http://localhost:$dmsConfig.score.s3.hostPort
 #else
       - S3_ENDPOINT=$dmsConfig.score.s3.url
 #end
       - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
       - S3_SECRETKEY=$dmsConfig.score.s3.secretKey
       - S3_SIGV4ENABLED=true
-      - AUTH_SERVER_URL=http://${composeServiceResources.EGO_API.toString()}:8080/o/check_api_key
       - AUTH_SERVER_TOKENNAME=apiKey
       - AUTH_SERVER_CLIENTID=$dmsConfig.score.api.appCredential.clientId
       - AUTH_SERVER_CLIENTSECRET=$dmsConfig.score.api.appCredential.clientSecret
@@ -34,7 +43,6 @@ TaskTemplate:
       - AUTH_SERVER_SCOPE_UPLOAD_SYSTEM=SCORE.WRITE
       - AUTH_SERVER_SCOPE_UPLOAD_STUDY_PREFIX=DMS.
       - AUTH_SERVER_SCOPE_UPLOAD_STUDY_SUFFIX=.WRITE
-      - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
       - LOGGING_LEVEL_BIO_OVERTURE_SCORE_SERVER=DEBUG
       - LOGGING_LEVEL_BIO_OVERTURE_SCORE_SERVER_REPOSITORY_S3=TRACE
       - METADATA_USELEGACYMODE=false
@@ -81,8 +89,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: $dmsConfig.network
-      Aliases: null
+    #if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - Target: host
+        Aliases: null
+    #else
+      - Target: $dmsConfig.network
+        Aliases: null
+    #end
   Runtime: null
 Mode:
   Replicated:
@@ -107,17 +120,22 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 #if( $dmsConfig.clusterRunMode == 'LOCAL')
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "api"
       Protocol: "tcp"
-      TargetPort: 8080
+      TargetPort: $dmsConfig.score.api.hostPort
       PublishedPort: $dmsConfig.score.api.hostPort
-      PublishMode: "ingress"
+      PublishMode: host
 #else
 EndpointSpec: null
 #end

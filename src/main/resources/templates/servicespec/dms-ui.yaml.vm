@@ -60,8 +60,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+  #if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+  #else
     - Target: $dmsConfig.network
       Aliases: null
+  #end
   Runtime: null
 Mode:
   Replicated:
@@ -86,8 +91,13 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
@@ -95,6 +105,10 @@ EndpointSpec:
       Protocol: "tcp"
       TargetPort: 3000
       PublishedPort: $dmsConfig.dmsUI.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

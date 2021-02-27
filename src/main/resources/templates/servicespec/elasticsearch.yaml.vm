@@ -7,6 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "docker.elastic.co/elasticsearch/elasticsearch:7.6.0"
     Env:
+      - ES_HTTP_PORT=$dmsConfig.elasticsearch.hostPort
       - discovery.type=single-node
       - cluster.name=dms.elasticsearch
       - xpack.security.enabled=$dmsConfig.elasticsearch.security.enabled
@@ -17,7 +18,7 @@ TaskTemplate:
     Mounts:
       - Type: volume
         Source: elasticsearch-data
-        Target: /var/lib/elasticsearch
+        Target: /usr/share/elasticsearch/data
         ReadOnly: false
     Duration: null
     StopGracePeriod: 120000000000
@@ -58,8 +59,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
-    - Target: $dmsConfig.network
-      Aliases: null
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
+  - Target: $dmsConfig.network
+    Aliases: null
+#end
   Runtime: null
 Mode:
   Replicated:
@@ -84,15 +90,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "http"
       Protocol: "tcp"
-      TargetPort: 9200
+      TargetPort: $dmsConfig.elasticsearch.hostPort
       PublishedPort: $dmsConfig.elasticsearch.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

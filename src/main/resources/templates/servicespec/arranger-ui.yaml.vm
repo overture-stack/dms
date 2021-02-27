@@ -7,8 +7,12 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/arranger-ui:2.9.0"
     Env:
-      - PORT=8080
-      - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:5050
+      - PORT=$dmsConfig.arranger.ui.hostPort
+    #if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - REACT_APP_ARRANGER_ADMIN_ROOT=http://localhost:$dmsConfig.arranger.api.hostPort
+    #else
+      - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:$dmsConfig.arranger.api.hostPort
+    #end
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -19,7 +23,7 @@ TaskTemplate:
     Hostname: null
     Secrets: null
     HealthCheck:
-      Test: ["CMD", "wget", "-O-", "http://localhost:8080/"]
+      Test: ["CMD", "wget", "-O-", "http://localhost:$dmsConfig.arranger.ui.hostPort/"]
       Interval: 10000000000
       Timeout: 10000000000
       Retries: 5
@@ -55,8 +59,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+  #if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+  #else
     - Target: $dmsConfig.network
       Aliases: null
+  #end
   Runtime: null
 Mode:
   Replicated:
@@ -81,15 +90,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "ui"
       Protocol: "tcp"
-      TargetPort: 8080
+      TargetPort: $dmsConfig.arranger.ui.hostPort
       PublishedPort: $dmsConfig.arranger.ui.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

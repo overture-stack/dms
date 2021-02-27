@@ -7,6 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "postgres:11.1"
     Env:
+      - PGPORT=$dmsConfig.song.db.hostPort
       - POSTGRES_DB=song
       - POSTGRES_PASSWORD=$dmsConfig.song.db.databasePassword
     Mounts:
@@ -56,8 +57,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+  #if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+  #else
     - Target: $dmsConfig.network
       Aliases: null
+  #end
   Runtime: null
 Mode:
   Replicated:
@@ -82,15 +88,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "psql"
       Protocol: "tcp"
-      TargetPort: 5432
+      TargetPort: $dmsConfig.song.db.hostPort
       PublishedPort: $dmsConfig.song.db.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

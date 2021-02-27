@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class EgoSongProvisioner implements Runnable {
-
   @NonNull private final SimpleProvisionService simpleProvisionService;
   @NonNull private final String dmsGroupName;
   @NonNull private final String songPolicyName;
@@ -28,6 +27,7 @@ public class EgoSongProvisioner implements Runnable {
     provisionScoreAppPermissions();
   }
 
+  // This step depends on the score policy been created when ego api got deployed
   private void provisionScoreAppPermissions() {
     egoService.createApplicationPermission(appCredential.getName(), scorePolicyName, WRITE);
   }

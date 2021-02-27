@@ -1,12 +1,12 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 @Data
 @Builder

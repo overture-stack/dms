@@ -7,6 +7,7 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/ego-ui:edge"
     Env:
+      - PORT=$dmsConfig.ego.ui.hostPort
       - REACT_APP_API=$dmsConfig.ego.api.url
       - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
     Mounts: null
@@ -51,8 +52,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+  #if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+  #else
     - Target: $dmsConfig.network
       Aliases: null
+  #end
   Runtime: null
 Mode:
   Replicated:
@@ -77,15 +83,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "ego-ui"
       Protocol: "tcp"
-      TargetPort: 8080
+      TargetPort: $dmsConfig.ego.ui.hostPort
       PublishedPort: $dmsConfig.ego.ui.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 

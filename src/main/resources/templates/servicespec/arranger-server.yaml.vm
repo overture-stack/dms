@@ -7,8 +7,13 @@ TaskTemplate:
   ContainerSpec:
     Image: "overture/arranger-server:2.9.0"
     Env:
-      - PORT=5050
-      - ES_HOST=http://${composeServiceResources.ELASTICSEARCH.toString()}:9200
+      - PORT=$dmsConfig.arranger.api.hostPort
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      - ES_HOST=http://localhost:$dmsConfig.elasticsearch.hostPort
+#else
+      - ES_HOST=http://${composeServiceResources.ELASTICSEARCH.toString()}:$dmsConfig.elasticsearch.hostPort
+#end
+
 #if( $dmsConfig.elasticsearch.security.enabled )
       - ES_USER=elastic
       - ES_PASS=$dmsConfig.elasticsearch.security.rootPassword
@@ -62,8 +67,13 @@ TaskTemplate:
     Options: null
   ForceUpdate: 0
   Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+    - Target: host
+      Aliases: null
+#else
     - Target: $dmsConfig.network
       Aliases: null
+#end
   Runtime: null
 Mode:
   Replicated:
@@ -88,15 +98,24 @@ RollbackConfig:
   MaxFailureRatio: 0.8
   Monitor: null
 Networks:
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+  - Target: host
+    Aliases: null
+#else
   - Target: $dmsConfig.network
     Aliases: null
+#end
 EndpointSpec:
   Mode: "vip"
   Ports:
     - Name: "api"
       Protocol: "tcp"
-      TargetPort: 5050
+      TargetPort: $dmsConfig.arranger.api.hostPort
       PublishedPort: $dmsConfig.arranger.api.hostPort
-      PublishMode: "ingress"
+#if( $dmsConfig.clusterRunMode == 'LOCAL')
+      PublishMode: host
+#else
+      PublishMode: ingress
+#end
 Labels: null
 
