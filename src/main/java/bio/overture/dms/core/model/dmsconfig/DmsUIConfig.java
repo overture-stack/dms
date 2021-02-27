@@ -15,11 +15,11 @@ public class DmsUIConfig {
 
   @Min(value = 2000)
   @Builder.Default
-  private int hostPort = 8000;
+  private int hostPort = 3000;
 
   private ArrangerProjectConfig projectConfig;
 
-  public static final int DEFAULT_PORT = 8000;
+  public static final int DEFAULT_PORT = 3000;
 
   @Data
   @Builder
