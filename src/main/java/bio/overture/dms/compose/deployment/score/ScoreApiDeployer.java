@@ -103,7 +103,7 @@ public class ScoreApiDeployer {
     if (clusterRunMode == PRODUCTION) {
       return scoreS3Config.getUrl().toURI();
     } else if (clusterRunMode == LOCAL) {
-      return resolveMinioContainerUri(scoreS3Config);
+      return resolveS3LocalUrl(scoreS3Config);
     } else {
       throw new IllegalStateException(
           format(
@@ -112,8 +112,8 @@ public class ScoreApiDeployer {
   }
 
   @SneakyThrows
-  private URI resolveMinioContainerUri(ScoreS3Config scoreS3Config) {
-    if (dockerProperties.getRunAs()) {
+  private URI resolveS3LocalUrl(ScoreS3Config scoreS3Config) {
+    if (dockerProperties.getRunAs() && scoreS3Config.isUseMinio()) {
       return new URI("http://" + MINIO_API.toString() + ":" + MINIO_API_CONTAINER_PORT);
     } else {
       return scoreS3Config.getUrl().toURI();
