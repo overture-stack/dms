@@ -113,7 +113,7 @@ public class ScoreApiDeployer {
 
   @SneakyThrows
   private URI resolveS3LocalUrl(ScoreS3Config scoreS3Config) {
-    if (scoreS3Config.isUseMinio()) {
+    if (dockerProperties.getRunAs() && scoreS3Config.isUseMinio()) {
       return new URI("http://" + MINIO_API.toString() + ":" + MINIO_API_CONTAINER_PORT);
     } else {
       return scoreS3Config.getUrl().toURI();
