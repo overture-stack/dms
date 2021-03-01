@@ -11,7 +11,6 @@
 	<groupId>bio.overture</groupId>
 	<artifactId>dms</artifactId>
   	<version>0.12.1</version>
-
 	<name>dms</name>
 	<description>Overture Data Management System</description>
 
