@@ -98,23 +98,23 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
     completableFutures.add(scoreApiFuture);
 
-    val elasticMaestroFuture =
-        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
-            .thenRunAsync(
-                getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
-                executorService);
-    completableFutures.add(elasticMaestroFuture);
+//    val elasticMaestroFuture =
+//        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
+//            .thenRunAsync(
+//                getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
+//                executorService);
+//    completableFutures.add(elasticMaestroFuture);
 
-    val arrangerFuture =
-        elasticMaestroFuture
-            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
-            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
-    completableFutures.add(arrangerFuture);
-
-    val dmsUIFuture =
-        arrangerFuture.thenRunAsync(
-            getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);
-    completableFutures.add(dmsUIFuture);
+//    val arrangerFuture =
+//        elasticMaestroFuture
+//            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
+//            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
+//    completableFutures.add(arrangerFuture);
+//
+//    val dmsUIFuture =
+//        arrangerFuture.thenRunAsync(
+//            getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);
+//    completableFutures.add(dmsUIFuture);
 
     CountDownLatch latch = new CountDownLatch(1);
     CompletableFuture.runAsync(

@@ -5,7 +5,7 @@
 Name: score-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/score-server:5.1.0"
+    Image: "score_score-server:latest"
     Env:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=amazon,collaboratory,prod,secure,jwt
@@ -21,6 +21,7 @@ TaskTemplate:
 #else
       - S3_ENDPOINT=$dmsConfig.score.s3.url
 #end
+      - S3_PRESIGNEDURL_OVERRIDE_HOST=http://localhost:8080/minio-api
       - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
       - S3_SECRETKEY=$dmsConfig.score.s3.secretKey
       - S3_SIGV4ENABLED=true
