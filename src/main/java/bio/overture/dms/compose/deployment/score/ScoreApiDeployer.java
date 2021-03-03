@@ -6,7 +6,7 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
 import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static java.lang.String.format;
 import static software.amazon.awssdk.regions.Region.US_EAST_1;
 
@@ -100,7 +100,7 @@ public class ScoreApiDeployer {
 
   @SneakyThrows
   private URI resolveS3Endpoint(ClusterRunModes clusterRunMode, ScoreS3Config scoreS3Config) {
-    if (clusterRunMode == PRODUCTION) {
+    if (clusterRunMode == SERVER) {
       return scoreS3Config.getUrl().toURI();
     } else if (clusterRunMode == LOCAL) {
       return resolveS3LocalUrl(scoreS3Config);

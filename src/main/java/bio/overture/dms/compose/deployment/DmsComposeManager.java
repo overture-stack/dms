@@ -177,7 +177,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       int containerPort,
       int hostPort,
       boolean runningInDocker) {
-    if (runModes == ClusterRunModes.PRODUCTION) {
+    if (runModes == ClusterRunModes.SERVER) {
       throw new NotImplementedException("");
     }
     if (runModes == ClusterRunModes.LOCAL) {

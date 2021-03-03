@@ -2,7 +2,7 @@ package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static java.lang.String.format;
 
 import bio.overture.dms.cli.question.QuestionFactory;
@@ -35,7 +35,7 @@ public class ArrangerQuestionnaire {
             .getAnswer();
 
     URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
+    if (clusterRunMode == SERVER) {
       // TODO: check either this or pass the gateway url.
       serverUrl =
           questionFactory

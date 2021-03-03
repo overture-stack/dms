@@ -2,7 +2,7 @@ package bio.overture.dms.compose.deployment.ego;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static bio.overture.dms.core.util.Exceptions.buildIllegalStateException;
 import static bio.overture.dms.ego.client.EgoService.createEgoService;
 
@@ -63,7 +63,7 @@ public class EgoHelper {
       // 8080 is the internal port in the cluster network, not changeable
       return new URL("http://" + EGO_API.toString() + ":8080");
     } else {
-      return new URL("http://localhost:" + egoApiConfig.getHostPort());
+      return egoApiConfig.getUrl();
     }
   }
 
@@ -80,7 +80,7 @@ public class EgoHelper {
     if (clusterRunMode == LOCAL) {
       egoClient =
           egoClientFactory2.buildNoAuthEgoClient(getLocalEgoApiUrl(egoConfig.getApi()).toString());
-    } else if (clusterRunMode == PRODUCTION) {
+    } else if (clusterRunMode == SERVER) {
       egoClient = egoClientFactory2.buildNoAuthEgoClient(egoConfig.getApi().getUrl().toString());
     } else {
       throw buildIllegalStateException(

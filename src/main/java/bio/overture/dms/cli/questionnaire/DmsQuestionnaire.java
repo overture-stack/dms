@@ -1,11 +1,12 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.compose.properties.ComposeProperties;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.HealthCheckConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import java.net.URL;
@@ -58,6 +59,7 @@ public class DmsQuestionnaire {
     this.terminal = terminal;
   }
 
+  @SneakyThrows
   public DmsConfig buildDmsConfig() {
     val clusterRunMode =
         questionFactory
@@ -65,20 +67,34 @@ public class DmsQuestionnaire {
                 ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
             .getAnswer();
 
-    URL dmsGatewayUrl = null;
-    if (clusterRunMode == PRODUCTION) {
+    URL dmsGatewayUrl;
+    int gatewayPort = 80;
+
+    if (clusterRunMode == LOCAL) {
+      gatewayPort =
+          questionFactory
+              .newDefaultSingleQuestion(
+                  Integer.class, "What port would you like the Gateway to run on?", true, gatewayPort)
+              .getAnswer();
+      dmsGatewayUrl = new URL("http://localhost:" + gatewayPort);
+    } else {
       dmsGatewayUrl =
           questionFactory
-              .newUrlSingleQuestion("What is the DMS Gateway URL?", false, null)
+              .newUrlSingleQuestion("What is the DMS Gateway URL (example: http://dms.cancercollaboratory.org)?", false, null)
               .getAnswer();
     }
 
+    val gatewayConfig = GatewayConfig.builder()
+        .hostPort(gatewayPort)
+        .url(dmsGatewayUrl)
+        .build();
+
     printHeader("EGO");
-    val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode);
+    val egoConfig = egoQuestionnaire.buildEgoConfig(gatewayConfig);
     printHeader("SONG");
-    val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode);
+    val songConfig = songQuestionnaire.buildSongConfig(gatewayConfig);
     printHeader("SCORE");
-    val scoreConfig = scoreQuestionnaire.buildScoreConfig(dmsGatewayUrl, clusterRunMode);
+    val scoreConfig = scoreQuestionnaire.buildScoreConfig(gatewayConfig);
     printHeader("ELASTICSEARCH");
     val elasticConfig = elasticsearchQuestionnaire.buildConfig();
     printHeader("MAESTRO");
@@ -91,6 +107,7 @@ public class DmsQuestionnaire {
     val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig);
 
     return DmsConfig.builder()
+        .gateway(gatewayConfig)
         .gatewayUrl(dmsGatewayUrl)
         .clusterRunMode(clusterRunMode)
         .healthCheck(HealthCheckConfig.builder()

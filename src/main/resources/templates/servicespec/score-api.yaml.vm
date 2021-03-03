@@ -21,7 +21,8 @@ TaskTemplate:
 #else
       - S3_ENDPOINT=$dmsConfig.score.s3.url
 #end
-      - S3_PRESIGNEDURL_OVERRIDE_HOST=http://localhost:8080/minio-api
+      # todo fix this to read from configs
+      - S3_PRESIGNEDURL_OVERRIDE_HOST=http://localhost:80/minio-server
       - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
       - S3_SECRETKEY=$dmsConfig.score.s3.secretKey
       - S3_SIGV4ENABLED=true
@@ -56,14 +57,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #2 GiB
       MemoryBytes: 2147483648
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -110,17 +111,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "api"
-      Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.score.api.hostPort
-      PublishMode: "ingress"
-#else
-EndpointSpec: null
-#end
 Labels: null
 
