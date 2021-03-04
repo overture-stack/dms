@@ -70,47 +70,47 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
     val completableFutures = new ArrayList<CompletableFuture<?>>();
 
-    val egoFuture =
-        runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
-            .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI, messenger), executorService);
-    completableFutures.add(egoFuture);
-
-    val songDbFuture =
-        CompletableFuture.runAsync(
-            getDeployRunnable(dmsConfig, SONG_DB, messenger), executorService);
-    completableFutures.add(songDbFuture);
+//    val egoFuture =
+//        runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
+//            .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI, messenger), executorService);
+//    completableFutures.add(egoFuture);
+//
+//    val songDbFuture =
+//        CompletableFuture.runAsync(
+//            getDeployRunnable(dmsConfig, SONG_DB, messenger), executorService);
+//    completableFutures.add(songDbFuture);
 
     // Song API can only deploy once EgoApi and SongDb are BOTH healthy
-    val songApiFuture =
-        songDbFuture.runAfterBothAsync(
-            egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
-    completableFutures.add(songApiFuture);
+//    val songApiFuture =
+//        songDbFuture.runAfterBothAsync(
+//            egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
+//    completableFutures.add(songApiFuture);
+//
+//    if (dmsConfig.getScore().getS3().isUseMinio()) {
+//      val minioFuture =
+//          CompletableFuture.runAsync(
+//              getDeployRunnable(dmsConfig, MINIO_API, messenger), executorService);
+//      completableFutures.add(minioFuture);
+//    }
+//
+//    // Score API can only deploy once EgoApi is healthy
+//    val scoreApiFuture =
+//        egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
+//    completableFutures.add(scoreApiFuture);
 
-    if (dmsConfig.getScore().getS3().isUseMinio()) {
-      val minioFuture =
-          CompletableFuture.runAsync(
-              getDeployRunnable(dmsConfig, MINIO_API, messenger), executorService);
-      completableFutures.add(minioFuture);
-    }
-
-    // Score API can only deploy once EgoApi is healthy
-    val scoreApiFuture =
-        egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
-    completableFutures.add(scoreApiFuture);
-
-//    val elasticMaestroFuture =
-//        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
-//            .thenRunAsync(
-//                getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
-//                executorService);
-//    completableFutures.add(elasticMaestroFuture);
+    val elasticMaestroFuture =
+        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
+            .thenRunAsync(
+                getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
+                executorService);
+    completableFutures.add(elasticMaestroFuture);
 
 //    val arrangerFuture =
 //        elasticMaestroFuture
 //            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
 //            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
 //    completableFutures.add(arrangerFuture);
-//
+////
 //    val dmsUIFuture =
 //        arrangerFuture.thenRunAsync(
 //            getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);

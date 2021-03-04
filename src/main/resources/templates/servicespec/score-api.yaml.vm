@@ -5,7 +5,7 @@
 Name: score-api
 TaskTemplate:
   ContainerSpec:
-    Image: "score_score-server:latest"
+    Image: "overture/score-server:edge"
     Env:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=amazon,collaboratory,prod,secure,jwt

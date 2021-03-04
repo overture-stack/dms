@@ -7,22 +7,33 @@ TaskTemplate:
   ContainerSpec:
     Image: "ghcr.io/overture-stack/maestro:3.7.0"
     Env:
-      - management.health.elasticsearch.enabled=false
-      - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
-      - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_NAME=$dmsConfig.maestro.fileCentricIndexName
-      - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_ALIAS=$dmsConfig.maestro.fileCentricAlias
-      - MAESTRO_REPOSITORIES_0_CODE=song.overture
-      - MAESTRO_DISABLEEVENTINDEXING=true
-      - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
-      - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:8080
-      - MAESTRO_REPOSITORIES_0_NAME=song.overture
-      - SPRING_CODEC_MAXINMEMORYSIZE=-1
-      - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
-      - MAESTRO_REPOSITORIES_0_COUNTRY=local_song_country
+    - management.health.elasticsearch.enabled=false
+    - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
+    - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_NAME=$dmsConfig.maestro.fileCentricIndexName
+    - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_ALIAS=$dmsConfig.maestro.fileCentricAlias
+    - MAESTRO_REPOSITORIES_0_CODE=song.overture
+    - maestro.disableEventIndexing=true
+    - maestro.disableIndexing=true
+    - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
+    - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:8080
+    - MAESTRO_REPOSITORIES_0_NAME=song.overture
+    - SPRING_CODEC_MAXINMEMORYSIZE=-1
+    - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
+    - MAESTRO_REPOSITORIES_0_COUNTRY=local_song_country
+    - SERVER.USE_FORWARD_HEADERS=true
+    - server.forward-headers-strategy=native
+    - springdoc.api-docs.path=/v3/api-docs
+    - springdoc.swagger-ui.url=/maestro/v3/api-docs
+    - springdoc.webjars.prefix=/maestro/webjars
+    - springdoc.swagger-ui.path=/api-docs
+    - springdoc.swagger-ui.configUrl=/maestro/v3/api-docs/swagger-config
+    - logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+    - logging.level.root=DEBUG
+    - spring.http.log-request-details=true
 #if( $dmsConfig.elasticsearch.security.enabled )
-      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_USER=elastic
-      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_PASSWORD=$dmsConfig.elasticsearch.security.rootPassword
-      - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_ENABLED=$dmsConfig.elasticsearch.security.enabled
+    - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_USER=elastic
+    - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_PASSWORD=$dmsConfig.elasticsearch.security.rootPassword
+    - MAESTRO_ELASTICSEARCH_CLIENT_BASICAUTH_ENABLED=$dmsConfig.elasticsearch.security.enabled
 #end
     Duration: null
     StopGracePeriod: 120000000000
