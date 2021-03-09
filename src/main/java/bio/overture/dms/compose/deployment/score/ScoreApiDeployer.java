@@ -115,9 +115,18 @@ public class ScoreApiDeployer {
   private URI resolveS3LocalUrl(ScoreS3Config scoreS3Config) {
     if (dockerProperties.getRunAs() && scoreS3Config.isUseMinio()) {
       return new URI("http://" + MINIO_API.toString() + ":" + MINIO_API_CONTAINER_PORT);
-    } else {
-      return scoreS3Config.getUrl().toURI();
     }
+
+    // this is needed to allow dms to create buckets in local dev mode
+    // the proxy will override the host header which will alter the url signature
+    // we need to create the buckets while bypassing the proxy since we are outside
+    // the docker network
+    if (scoreS3Config.isUseMinio() && !dockerProperties.getRunAs()) {
+      return new URI("http://localhost:" + scoreS3Config.getHostPort());
+    }
+
+    // no minio
+    return scoreS3Config.getUrl().toURI();
   }
 
   private EgoScoreProvisioner buildEgoScoreProvisioner(

@@ -1,5 +1,8 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 
@@ -9,6 +12,7 @@ import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongApiConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongDbConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import lombok.NonNull;
@@ -36,8 +40,8 @@ public class SongQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public SongConfig buildSongConfig(@NonNull GatewayConfig gatewayConfig) {
-    val apiConfig = processSongApiConfig(gatewayConfig);
+  public SongConfig buildSongConfig(ClusterRunModes clusterRunModes, @NonNull GatewayConfig gatewayConfig) {
+    val apiConfig = processSongApiConfig(clusterRunModes, gatewayConfig);
     val dbConfig = processSongDbConfig();
     return SongConfig.builder().api(apiConfig).db(dbConfig).build();
   }
@@ -51,9 +55,15 @@ public class SongQuestionnaire {
   }
 
   @SneakyThrows
-  private SongApiConfig processSongApiConfig(GatewayConfig gatewayConfig) {
+  private SongApiConfig processSongApiConfig(ClusterRunModes clusterRunModes, GatewayConfig gatewayConfig) {
     val apiBuilder = SongApiConfig.builder();
-    apiBuilder.url(gatewayConfig.getUrl().toURI().resolve("/song-api").toURL());
+    val info = resolveServiceConnectionInfo(clusterRunModes,
+        gatewayConfig,
+        questionFactory,
+        SONG_API.toString(), 9010);
+    apiBuilder.url(info.serverUrl);
+    apiBuilder.hostPort(info.port);
+
     apiBuilder.appCredential(processSongAppCreds());
     return apiBuilder.build();
   }

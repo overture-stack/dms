@@ -87,13 +87,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "api"
-      Protocol: "tcp"
-      TargetPort: 9000
-      PublishedPort: $dmsConfig.score.s3.hostPort
-      PublishMode: "ingress"
 Labels: null
 

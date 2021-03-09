@@ -8,6 +8,7 @@ TaskTemplate:
     Image: "overture/ego-ui:edge"
     Env:
       - REACT_APP_API=$dmsConfig.ego.api.url
+      - PUBLIC_URL=$dmsConfig.ego.ui.url
       - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
     Mounts: null
     Duration: null
@@ -79,13 +80,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "ego-ui"
-      Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.ego.ui.hostPort
-      PublishMode: "ingress"
 Labels: null
 

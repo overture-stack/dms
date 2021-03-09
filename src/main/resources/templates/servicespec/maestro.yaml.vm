@@ -5,7 +5,7 @@
 Name: maestro
 TaskTemplate:
   ContainerSpec:
-    Image: "ghcr.io/overture-stack/maestro:3.7.0"
+    Image: "ghcr.io/overture-stack/maestro:edge"
     Env:
     - management.health.elasticsearch.enabled=false
     - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
@@ -13,19 +13,19 @@ TaskTemplate:
     - MAESTRO_ELASTICSEARCH_INDEXES_FILECENTRIC_ALIAS=$dmsConfig.maestro.fileCentricAlias
     - MAESTRO_REPOSITORIES_0_CODE=song.overture
     - maestro.disableEventIndexing=true
-    - maestro.disableIndexing=true
+    - maestro.disableIndexing=false
     - MAESTRO_ELASTICSEARCH_INDEXES_ANALYSISCENTRIC_ENABLED=false
     - MAESTRO_REPOSITORIES_0_URL=http://${composeServiceResources.SONG_API.toString()}:8080
     - MAESTRO_REPOSITORIES_0_NAME=song.overture
     - SPRING_CODEC_MAXINMEMORYSIZE=-1
     - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
     - MAESTRO_REPOSITORIES_0_COUNTRY=local_song_country
-    - SERVER.USE_FORWARD_HEADERS=true
-    - server.forward-headers-strategy=native
-    - springdoc.api-docs.path=/v3/api-docs
+    #- springdoc.api-docs.path=/v3/api-docs
     - springdoc.swagger-ui.url=/maestro/v3/api-docs
     - springdoc.webjars.prefix=/maestro/webjars
     - springdoc.swagger-ui.path=/api-docs
+    - springdoc.serverOverride.enabled=true
+    - springdoc.serverOverride.value=$dmsConfig.maestro.url
     - springdoc.swagger-ui.configUrl=/maestro/v3/api-docs/swagger-config
     - logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
     - logging.level.root=DEBUG
@@ -99,13 +99,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "http"
-      Protocol: "tcp"
-      TargetPort: 11235
-      PublishedPort: $dmsConfig.maestro.hostPort
-      PublishMode: "ingress"
 Labels: null
 

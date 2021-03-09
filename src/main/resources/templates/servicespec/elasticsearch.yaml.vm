@@ -27,14 +27,6 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
-    HealthCheck:
-      # 30s
-      Interval: 30000000000
-      # 30s
-      Timeout: 30000000000
-      Retries: 5
-      # 20s
-      StartPeriod: 20000000000
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
@@ -86,13 +78,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "http"
-      Protocol: "tcp"
-      TargetPort: 9200
-      PublishedPort: $dmsConfig.elasticsearch.hostPort
-      PublishMode: "ingress"
 Labels: null
 

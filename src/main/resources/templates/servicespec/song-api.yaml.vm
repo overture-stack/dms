@@ -5,7 +5,7 @@
 Name: song-api
 TaskTemplate:
   ContainerSpec:
-    Image: "song-test"
+    Image: "overture/song-server:edge"
     Env:
       - SERVER_PORT=8080
       - SPRING_FLYWAY_ENABLED=true
@@ -24,7 +24,7 @@ TaskTemplate:
       - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
       - ID_USELOCAL=true
       - SWAGGER_HOST=$dmsConfig.song.api.url.host:$dmsConfig.song.api.url.port
-      - SWAGGER_BASEURL=#if($dmsConfig.song.api.url.path == '')/#{else}$dmsConfig.song.api.url.path#end
+      - SWAGGER_BASEPATH=#if($dmsConfig.song.api.url.path == '')/#{else}$dmsConfig.song.api.url.path#end
       - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:8080
       - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.appCredential.clientId
       - SCORE_CLIENTCREDENTIALS_SECRET=$dmsConfig.song.api.appCredential.clientSecret

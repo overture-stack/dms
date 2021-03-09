@@ -41,7 +41,7 @@ public class ElasticsearchDeployer {
             runInDocker);
     try {
       ServiceDeployer.waitForOk(
-          "http://" + host + "/_cluster/health?wait_for_status=yellow",
+          dmsConfig.getElasticsearch().getUrl() + "/_cluster/health?wait_for_status=yellow",
           "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword(),
           dmsConfig.getHealthCheck().getRetries(),
           dmsConfig.getHealthCheck().getDelaySec());

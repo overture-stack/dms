@@ -1,7 +1,8 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
-import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 
 import bio.overture.dms.cli.question.QuestionFactory;
@@ -41,9 +42,9 @@ public class ScoreQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ScoreConfig buildScoreConfig(GatewayConfig gatewayConfig) {
-    val s3Config = processScoreS3Config(gatewayConfig);
-    val apiConfig = processScoreApiConfig(gatewayConfig);
+  public ScoreConfig buildScoreConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+    val s3Config = processScoreS3Config(clusterRunMode, gatewayConfig);
+    val apiConfig = processScoreApiConfig(clusterRunMode, gatewayConfig);
     return ScoreConfig.builder().api(apiConfig).s3(s3Config).build();
   }
 
@@ -56,8 +57,16 @@ public class ScoreQuestionnaire {
   }
 
   @SneakyThrows
-  private ScoreApiConfig processScoreApiConfig(GatewayConfig gatewayConfig) {
+  private ScoreApiConfig processScoreApiConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = ScoreApiConfig.builder();
+
+    val info = resolveServiceConnectionInfo(clusterRunMode,
+        gatewayConfig,
+        questionFactory,
+        SCORE_API.toString(), 9020);
+
+    apiBuilder.hostPort(info.port);
+    apiBuilder.url(info.serverUrl);
 
     val objectBucket =
         questionFactory
@@ -78,15 +87,13 @@ public class ScoreQuestionnaire {
                 "dms.state")
             .getAnswer();
     apiBuilder.stateBucket(stateBucket);
-    apiBuilder.url(gatewayConfig.getUrl().toURI().resolve("/score-api").toURL());
     apiBuilder.appCredential(processScoreAppCreds());
     return apiBuilder.build();
   }
 
   @SneakyThrows
-  private ScoreS3Config processScoreS3Config(GatewayConfig gatewayConfig) {
+  private ScoreS3Config processScoreS3Config(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val s3Builder = ScoreS3Config.builder();
-
     val useExternalS3 =
         questionFactory
             .newDefaultSingleQuestion(
@@ -166,17 +173,9 @@ public class ScoreQuestionnaire {
       s3Builder.accessKey(minioAccessKey);
       s3Builder.secretKey(minioSecretKey);
 
-      // Only portforward when in local mode
-      val s3Port =
-          questionFactory
-              .newDefaultSingleQuestion(
-                  Integer.class,
-                  "What port would you like to expose the MINIO service on?",
-                  true,
-                  9021)
-                .getAnswer();
-        s3Builder.hostPort(s3Port);
-        s3Builder.url(createLocalhostUrl(s3Port));
+      val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, MINIO_API.toString(), 9021);
+      s3Builder.hostPort(info.port);
+      s3Builder.url(info.serverUrl);
     }
     return s3Builder.build();
   }

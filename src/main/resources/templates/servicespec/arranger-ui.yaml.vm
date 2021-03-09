@@ -5,9 +5,10 @@
 Name: arranger-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/arranger-ui:2.9.0"
+    Image: "caravinci/arranger-ui:dms-path-test"
     Env:
       - PORT=8080
+      - REACT_APP_BASE_URL=arranger-ui
       - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:5050
     Mounts: null
     Duration: null
@@ -83,13 +84,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "ui"
-      Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.arranger.ui.hostPort
-      PublishMode: "ingress"
 Labels: null
 

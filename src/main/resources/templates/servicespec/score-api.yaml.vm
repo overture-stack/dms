@@ -21,8 +21,7 @@ TaskTemplate:
 #else
       - S3_ENDPOINT=$dmsConfig.score.s3.url
 #end
-      # todo fix this to read from configs
-      - S3_PRESIGNEDURL_OVERRIDE_HOST=http://localhost:80/minio-server
+      - S3_PRESIGNEDURL_OVERRIDE_HOST=$dmsConfig.score.s3.url
       - S3_ACCESSKEY=$dmsConfig.score.s3.accessKey
       - S3_SECRETKEY=$dmsConfig.score.s3.secretKey
       - S3_SIGV4ENABLED=true

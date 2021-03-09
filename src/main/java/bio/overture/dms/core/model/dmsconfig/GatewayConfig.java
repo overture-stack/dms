@@ -18,9 +18,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @AllArgsConstructor
 @JsonInclude(NON_EMPTY)
 public class GatewayConfig {
+  @Builder.Default private boolean pathBased = true;
   @Min(value = 2000)
   @Builder.Default
   private int hostPort = 80;
-
   @NotNull private URL url;
 }

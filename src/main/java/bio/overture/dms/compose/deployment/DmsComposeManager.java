@@ -69,34 +69,41 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     swarmService.initializeSwarm();
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
     val completableFutures = new ArrayList<CompletableFuture<?>>();
+    CompletableFuture<Void> gateway;
+    if (dmsConfig.getGateway().isPathBased() || dmsConfig.getClusterRunMode() == ClusterRunModes.SERVER) {
+      gateway = runAsync(getDeployRunnable(dmsConfig, GATEWAY, messenger), executorService);
+      completableFutures.add(gateway);
+    } else {
+      gateway = CompletableFuture.completedFuture(null);
+    }
 
-//    val egoFuture =
-//        runAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
-//            .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI, messenger), executorService);
-//    completableFutures.add(egoFuture);
-//
-//    val songDbFuture =
-//        CompletableFuture.runAsync(
-//            getDeployRunnable(dmsConfig, SONG_DB, messenger), executorService);
-//    completableFutures.add(songDbFuture);
+    val egoFuture =
+        gateway.thenRunAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
+            .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI, messenger), executorService);
+    completableFutures.add(egoFuture);
+
+    val songDbFuture =
+        CompletableFuture.runAsync(
+            getDeployRunnable(dmsConfig, SONG_DB, messenger), executorService);
+    completableFutures.add(songDbFuture);
 
     // Song API can only deploy once EgoApi and SongDb are BOTH healthy
-//    val songApiFuture =
-//        songDbFuture.runAfterBothAsync(
-//            egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
-//    completableFutures.add(songApiFuture);
-//
-//    if (dmsConfig.getScore().getS3().isUseMinio()) {
-//      val minioFuture =
-//          CompletableFuture.runAsync(
-//              getDeployRunnable(dmsConfig, MINIO_API, messenger), executorService);
-//      completableFutures.add(minioFuture);
-//    }
-//
-//    // Score API can only deploy once EgoApi is healthy
-//    val scoreApiFuture =
-//        egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
-//    completableFutures.add(scoreApiFuture);
+    val songApiFuture =
+        songDbFuture.runAfterBothAsync(
+            egoFuture, () -> songApiDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(songApiFuture);
+
+    if (dmsConfig.getScore().getS3().isUseMinio()) {
+      val minioFuture =
+          CompletableFuture.runAsync(
+              getDeployRunnable(dmsConfig, MINIO_API, messenger), executorService);
+      completableFutures.add(minioFuture);
+    }
+
+    // Score API can only deploy once EgoApi is healthy
+    val scoreApiFuture =
+        egoFuture.thenRunAsync(() -> scoreApiDeployer.deploy(dmsConfig), executorService);
+    completableFutures.add(scoreApiFuture);
 
     val elasticMaestroFuture =
         runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
@@ -105,16 +112,16 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
                 executorService);
     completableFutures.add(elasticMaestroFuture);
 
-//    val arrangerFuture =
-//        elasticMaestroFuture
-//            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
-//            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
-//    completableFutures.add(arrangerFuture);
-////
-//    val dmsUIFuture =
-//        arrangerFuture.thenRunAsync(
-//            getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);
-//    completableFutures.add(dmsUIFuture);
+    val arrangerFuture =
+        elasticMaestroFuture
+            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_SERVER, messenger), executorService)
+            .thenRunAsync(getDeployRunnable(dmsConfig, ARRANGER_UI, messenger), executorService);
+    completableFutures.add(arrangerFuture);
+
+    val dmsUIFuture =
+        arrangerFuture.thenRunAsync(
+            getDeployRunnable(dmsConfig, DMS_UI, messenger), executorService);
+    completableFutures.add(dmsUIFuture);
 
     CountDownLatch latch = new CountDownLatch(1);
     CompletableFuture.runAsync(
