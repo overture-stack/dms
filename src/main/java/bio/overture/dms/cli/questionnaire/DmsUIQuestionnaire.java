@@ -1,12 +1,18 @@
 package bio.overture.dms.cli.questionnaire;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.DmsUIConfig;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.DMS_UI;
 
 @Component
 public class DmsUIQuestionnaire {
@@ -18,16 +24,8 @@ public class DmsUIQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public DmsUIConfig buildConfig(MaestroConfig maestroConfig) {
-    val uiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class,
-                "What port would you like to expose the DMS UI on?",
-                true,
-                DmsUIConfig.DEFAULT_PORT)
-            .getAnswer();
-
+  public DmsUIConfig buildConfig(MaestroConfig maestroConfig, ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+    val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, DMS_UI.toString(), DmsUIConfig.DEFAULT_PORT);
     String projectId =
         questionFactory
             .newDefaultSingleQuestion(
@@ -62,7 +60,8 @@ public class DmsUIQuestionnaire {
                 .name(projectName)
                 .indexAlias(elasticSearchIndexOrAlias)
                 .build())
-        .hostPort(uiPort)
+        .url(info.serverUrl)
+        .hostPort(info.port)
         .build();
   }
 }

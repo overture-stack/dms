@@ -5,6 +5,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.net.URL;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class ElasticsearchConfig {
   @Builder.Default private int hostPort = DEFAULT_PORT;
   @NonNull private Security security;
 
+  URL url;
   @Data
   @Builder
   @NoArgsConstructor

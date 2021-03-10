@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.validation.constraints.Min;
 import lombok.*;
 
+import java.net.URL;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,6 +18,8 @@ public class DmsUIConfig {
   @Min(value = 2000)
   @Builder.Default
   private int hostPort = 8000;
+
+  @NonNull URL url;
 
   private ArrangerProjectConfig projectConfig;
 

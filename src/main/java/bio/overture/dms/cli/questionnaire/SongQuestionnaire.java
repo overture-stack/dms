@@ -1,14 +1,14 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
-import static java.lang.String.format;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongApiConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongDbConfig;
@@ -16,6 +16,7 @@ import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,8 +40,8 @@ public class SongQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public SongConfig buildSongConfig(@NonNull ClusterRunModes clusterRunMode) {
-    val apiConfig = processSongApiConfig(clusterRunMode);
+  public SongConfig buildSongConfig(ClusterRunModes clusterRunModes, @NonNull GatewayConfig gatewayConfig) {
+    val apiConfig = processSongApiConfig(clusterRunModes, gatewayConfig);
     val dbConfig = processSongDbConfig();
     return SongConfig.builder().api(apiConfig).db(dbConfig).build();
   }
@@ -53,30 +54,16 @@ public class SongQuestionnaire {
         .build();
   }
 
-  private SongApiConfig processSongApiConfig(ClusterRunModes clusterRunMode) {
+  @SneakyThrows
+  private SongApiConfig processSongApiConfig(ClusterRunModes clusterRunModes, GatewayConfig gatewayConfig) {
     val apiBuilder = SongApiConfig.builder();
+    val info = resolveServiceConnectionInfo(clusterRunModes,
+        gatewayConfig,
+        questionFactory,
+        SONG_API.toString(), 9010);
+    apiBuilder.url(info.serverUrl);
+    apiBuilder.hostPort(info.port);
 
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the SONG api on?", true, 9010)
-            .getAnswer();
-    apiBuilder.hostPort(apiPort);
-
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the SONG server base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      serverUrl = createLocalhostUrl(apiPort);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
-    apiBuilder.url(serverUrl);
     apiBuilder.appCredential(processSongAppCreds());
     return apiBuilder.build();
   }
@@ -96,12 +83,6 @@ public class SongQuestionnaire {
       dbBuilder.databasePassword(dbPassword);
     }
 
-    val dbPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the SONG db on?", true, 9011)
-            .getAnswer();
-    dbBuilder.hostPort(dbPort);
     return dbBuilder.build();
   }
 }

@@ -1,0 +1,9 @@
+- ego ui doesn't support path url (assumes root)
+    - workaround is to expose ui in local mode on a specific port, won't work on prod
+- song swagger doesn't work properly behind proxy
+    - can be fixed in song quickly
+- dms (non docker) cannot provision buckets since the reverse proxy rewrite the host which invalidates the presigned url signature
+  rewriting the host is needed for urls generated from score
+  - workaround had to connect dms on localhost port for minio
+- minio ui doesn't work on the reverse proxy /minio-server (redirects issue)
+    - only works on the minio port forwarded.

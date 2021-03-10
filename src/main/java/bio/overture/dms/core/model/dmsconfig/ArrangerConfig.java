@@ -28,6 +28,8 @@ public class ArrangerConfig {
     @Min(value = 2000)
     @Builder.Default
     private int hostPort = 8080;
+
+    private URL url;
   }
 
   @Data

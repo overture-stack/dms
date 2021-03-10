@@ -5,11 +5,11 @@
 Name: dms-ui
 TaskTemplate:
   ContainerSpec:
-    # change to a specific tag
-    Image: "overture/dms-ui:edge"
+    Image: "overture/dms-ui:0.6.0-f08019f"
     Env:
       - NEXT_PUBLIC_EGO_API_ROOT=$dmsConfig.ego.api.url
       - NEXT_PUBLIC_EGO_CLIENT_ID=dms
+      - ASSET_PREFIX=/dms-ui
       - NEXT_PUBLIC_ARRANGER_PROJECT_ID=$dmsConfig.dmsUI.projectConfig.id
       - NEXT_PUBLIC_ARRANGER_GRAPHQL_FIELD=$dmsConfig.dmsUI.projectConfig.name
       - NEXT_PUBLIC_ARRANGER_INDEX=$dmsConfig.dmsUI.projectConfig.indexAlias
@@ -33,14 +33,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1 GiB
       MemoryBytes: 1073741824
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -88,13 +88,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "ui"
-      Protocol: "tcp"
-      TargetPort: 3000
-      PublishedPort: $dmsConfig.dmsUI.hostPort
-      PublishMode: "ingress"
 Labels: null
 

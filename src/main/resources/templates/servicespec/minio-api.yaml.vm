@@ -33,14 +33,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #2 GiB
       MemoryBytes: 2147483648
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -87,6 +87,9 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
+
+# this is needed for the dms to provision buckets in local mode when running without docker
+# i.e. (during development)
 EndpointSpec:
   Mode: "vip"
   Ports:

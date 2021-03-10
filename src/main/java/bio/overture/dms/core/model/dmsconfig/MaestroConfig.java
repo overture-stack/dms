@@ -5,6 +5,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.net.URL;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,4 +19,5 @@ public class MaestroConfig {
   @Builder.Default private int hostPort = DEFAULT_PORT;
   @Builder.Default private String fileCentricIndexName = FILE_CENTRIC_INDEX_NAME;
   @Builder.Default private String fileCentricAlias = FILE_CENTRIC_ALIAS_NAME;
+  URL url;
 }

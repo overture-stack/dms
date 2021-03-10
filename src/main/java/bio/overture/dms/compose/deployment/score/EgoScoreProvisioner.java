@@ -18,7 +18,5 @@ public class EgoScoreProvisioner implements Runnable {
 
   @Override
   public void run() {
-    simpleProvisionService.provisionGroupWritePermission(dmsGroupName, scorePolicyName);
-    simpleProvisionService.provisionApplication(scoreAppCredential);
   }
 }

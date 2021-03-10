@@ -5,7 +5,7 @@
 Name: ego-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego:a3a21b49"
+    Image: "overture/ego:369abd0d"
     Env:
     - SERVER_PORT=8080
     - SPRING_FLYWAY_ENABLED=true
@@ -26,6 +26,7 @@ TaskTemplate:
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
     - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredential.clientId
     - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredential.clientSecret
+    - INITIALIZATION_APPLICATIONS_0_REDIRECTURI=$dmsConfig.dmsUI.url/logged-in
     - REFRESHTOKEN_COOKIEISSECURE=true
     - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.api.url.host
     - APITOKEN_DURATIONDAYS=$dmsConfig.ego.api.tokenDurationDays
@@ -72,14 +73,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #2 GiB
       MemoryBytes: 2147483648
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -126,13 +127,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "api"
-      Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.ego.api.hostPort
-      PublishMode: "ingress"
 Labels: null
 

@@ -20,8 +20,9 @@ public class EgoApiDbDeployer {
 
   /** Constants */
   private static final String DMS_ADMIN_GROUP_NAME = "dms-admin";
-
   private static final String DMS_POLICY_NAME = "DMS";
+  private static final String SONG_POLICY_NAME = "SONG";
+  public static final String SCORE_POLICY_NAME = "SCORE";
 
   /** Dependencies */
   private final ServiceDeployer serviceDeployer;
@@ -49,8 +50,6 @@ public class EgoApiDbDeployer {
 
     messenger.send("⏳ Waiting for '%s' service to be healthy..", EGO_API.toString());
     egoHelper.waitForEgoApiHealthy(dmsConfig.getClusterRunMode(), dmsConfig.getEgo());
-    //    messenger.send("✔️ Service '%s' is healthy. ", EGO_API.toString());
-
     //    messenger.send("⏳ Provisioning needed data for '%s' ", EGO_API.toString());
     provision(dmsConfig);
     //    messenger.send("✔️ Provisioning for '%s' completed", EGO_API.toString());
@@ -58,17 +57,22 @@ public class EgoApiDbDeployer {
   }
 
   private void provision(DmsConfig dmsConfig) {
-    buildEgoDmsProvisioner(dmsConfig.getEgo()).run();
+    buildEgoDmsProvisioner(dmsConfig).run();
   }
 
-  private EgoDMSProvisioner buildEgoDmsProvisioner(EgoConfig egoConfig) {
-    val egoService = egoHelper.buildEgoService(egoConfig);
+  private EgoDMSProvisioner buildEgoDmsProvisioner(DmsConfig dmsConfig) {
+    val egoService = egoHelper.buildEgoService(dmsConfig.getEgo());
     val simpleProvisionService = createSimpleProvisionService(egoService);
     return EgoDMSProvisioner.builder()
         .simpleProvisionService(simpleProvisionService)
         .dmsGroupName(DMS_ADMIN_GROUP_NAME)
         .dmsPolicyName(DMS_POLICY_NAME)
-        .egoUiAppCredential(egoConfig.getUi().getUiAppCredential())
+        .scorePolicyName(SCORE_POLICY_NAME)
+        .songPolicyName(SONG_POLICY_NAME)
+        .egoService(egoService)
+        .songAppCredential(dmsConfig.getSong().getApi().getAppCredential())
+        .scoreAppCredential(dmsConfig.getScore().getApi().getAppCredential())
+        .egoUiAppCredential(dmsConfig.getEgo().getUi().getUiAppCredential())
         .build();
   }
 }

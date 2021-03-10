@@ -133,7 +133,7 @@ function main {
 	all_dms_params=$@
 
 	# Constants
-	repo_name="overture/dms"
+	repo_name="ghcr.io/overture-stack/dms"
 	volume_name="dms-config"
 	config_filename=$CONFIG_FILENAME
 
