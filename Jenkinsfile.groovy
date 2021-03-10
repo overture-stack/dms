@@ -3,6 +3,10 @@ import groovy.json.JsonOutput
 def version = "UNKNOWN"
 def commit = "UNKNOWN"
 def repo = "UNKNOWN"
+def dmsRepo = "dms"
+def dmsGatewayRepo = "dms-gateway"
+def dmsVersionHelperRepo = "dms-version-helper"
+def dockerOrg = "ghcr.io/overture-stack"
 
 def pom(path, target) {
     return [pattern: "${path}/pom.xml", target: "${target}.pom"]
@@ -92,14 +96,16 @@ spec:
             }
             steps {
                 container('docker') {
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker build --network=host --target client -f  Dockerfile . -t overture/dms:edge -t overture/dms:${version}-${commit}"
-                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t overture/dms-version-helper:edge"
-                    sh "docker push overture/dms:${version}-${commit}"
-                    sh "docker push overture/dms:edge"
-                    sh "docker push overture/dms-version-helper:edge"
+                    sh "docker build --network=host --target client -f  Dockerfile . -t ${dockerOrg}/${dmsRepo}:edge -t ${dockerOrg}/${dmsRepo}:${version}-${commit}"
+                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:edge"
+                    sh "docker build --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:edge"
+                    sh "docker push ${dockerOrg}/${dmsRepo}:${version}-${commit}"
+                    sh "docker push ${dockerOrg}/${dmsRepo}:edge"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}:edge"
+                    sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:edge"
                 }
             }
         }
@@ -113,14 +119,17 @@ spec:
                         sh "git tag ${version}"
                         sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/overture-stack/dms --tags"
                     }
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker build --network=host --target client -f Dockerfile . -t overture/dms:latest -t overture/dms:${version}"
-                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t overture/dms-version-helper:latest"
-                    sh "docker push overture/dms:${version}"
-                    sh "docker push overture/dms:latest"
-                    sh "docker push overture/dms-version-helper:latest"
+                    sh "docker build --network=host --target client -f Dockerfile . -t ${dockerOrg}/${dmsRepo}:latest -t ${dockerOrg}/${dmsRepo}:${version}"
+                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:latest"
+                    sh "docker build --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:latest -t ${dockerOrg}/${dmsGatewayRepo}:${version}"
+                    sh "docker push ${dockerOrg}/${dmsRepo}:${version}"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}:${version}"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}:latest"
+                    sh "docker push ${dockerOrg}/${dmsRepo}:latest"
+                    sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:latest"
                 }
             }
         }

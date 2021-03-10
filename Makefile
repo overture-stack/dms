@@ -6,8 +6,9 @@ CURL_EXE := $(shell which curl)
 MVN_EXE := $(shell which mvn)
 
 # Variables
-DOCKER_ORG := overture
+DOCKER_ORG := ghcr.io/overture-stack
 DOCKER_REPO := dms
+DOCKER_GATEWAY_REPO := dms-gateway
 DOCKER_TAG := test
 DOCKER_IMAGE_NAME := $(DOCKER_ORG)/$(DOCKER_REPO):$(DOCKER_TAG)
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -76,6 +77,9 @@ package-no-tests:
 build-image:
 	@$(DOCKER_EXE) build -t $(DOCKER_IMAGE_NAME) ./
 
+build-gateway:
+	docker build ./nginx/path-based -t $(DOCKER_ORG)/$(DOCKER_GATEWAY_REPO):edge --no-cache -f./nginx/path-based/Dockerfile
+
 push-image: build-image
 	@$(DOCKER_EXE) push $(DOCKER_IMAGE_NAME)
 
@@ -87,4 +91,3 @@ BEARER_TOKEN := $(shell cat jwt.txt | sed 's/\s\+//g')
 #NOTE: make sure the whole dms cluster is running
 start-transfer-shell: build-transfer-shell-image
 	@$(DOCKER_EXE) run --rm -it --network dms-swarm-network -e CLIENT_ACCESS_TOKEN=$(BEARER_TOKEN) -e ACCESSTOKEN=$(BEARER_TOKEN) genomic-transfer-helper:latest bash
-

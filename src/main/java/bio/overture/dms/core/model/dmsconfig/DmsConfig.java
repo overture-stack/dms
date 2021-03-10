@@ -19,8 +19,7 @@ import lombok.Value;
 @JsonInclude(NON_EMPTY)
 public class DmsConfig {
 
-  private final URL gatewayUrl;
-
+  @NonNull private final GatewayConfig gateway;
   @NonNull private final HealthCheckConfig healthCheck;
 
   @NonNull private final ClusterRunModes clusterRunMode;

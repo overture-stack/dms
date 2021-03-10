@@ -23,12 +23,6 @@ public class EgoSongProvisioner implements Runnable {
 
   @Override
   public void run() {
-    simpleProvisionService.provisionGroupWritePermission(dmsGroupName, songPolicyName);
-    simpleProvisionService.provisionApplication(appCredential);
-    provisionScoreAppPermissions();
   }
 
-  private void provisionScoreAppPermissions() {
-    egoService.createApplicationPermission(appCredential.getName(), scorePolicyName, WRITE);
-  }
 }

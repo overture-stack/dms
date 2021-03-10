@@ -1,14 +1,13 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
-import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
-import static java.lang.String.format;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
@@ -43,10 +42,9 @@ public class ScoreQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ScoreConfig buildScoreConfig(
-      @Nullable URL dmsGatewayUrl, @NonNull ClusterRunModes clusterRunMode) {
-    val s3Config = processScoreS3Config(dmsGatewayUrl, clusterRunMode);
-    val apiConfig = processScoreApiConfig(clusterRunMode);
+  public ScoreConfig buildScoreConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+    val s3Config = processScoreS3Config(clusterRunMode, gatewayConfig);
+    val apiConfig = processScoreApiConfig(clusterRunMode, gatewayConfig);
     return ScoreConfig.builder().api(apiConfig).s3(s3Config).build();
   }
 
@@ -58,8 +56,17 @@ public class ScoreQuestionnaire {
         .build();
   }
 
-  private ScoreApiConfig processScoreApiConfig(ClusterRunModes clusterRunMode) {
+  @SneakyThrows
+  private ScoreApiConfig processScoreApiConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = ScoreApiConfig.builder();
+
+    val info = resolveServiceConnectionInfo(clusterRunMode,
+        gatewayConfig,
+        questionFactory,
+        SCORE_API.toString(), 9020);
+
+    apiBuilder.hostPort(info.port);
+    apiBuilder.url(info.serverUrl);
 
     val objectBucket =
         questionFactory
@@ -80,36 +87,13 @@ public class ScoreQuestionnaire {
                 "dms.state")
             .getAnswer();
     apiBuilder.stateBucket(stateBucket);
-
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the SCORE server base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      val apiPort =
-          questionFactory
-              .newDefaultSingleQuestion(
-                  Integer.class, "What port would you like to expose the SCORE api on?", true, 9020)
-              .getAnswer();
-      apiBuilder.hostPort(apiPort);
-
-      serverUrl = createLocalhostUrl(apiPort);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
-    apiBuilder.url(serverUrl);
     apiBuilder.appCredential(processScoreAppCreds());
     return apiBuilder.build();
   }
 
   @SneakyThrows
-  private ScoreS3Config processScoreS3Config(URL dmsGatewayUrl, ClusterRunModes clusterRunMode) {
+  private ScoreS3Config processScoreS3Config(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val s3Builder = ScoreS3Config.builder();
-
     val useExternalS3 =
         questionFactory
             .newDefaultSingleQuestion(
@@ -189,33 +173,11 @@ public class ScoreQuestionnaire {
       s3Builder.accessKey(minioAccessKey);
       s3Builder.secretKey(minioSecretKey);
 
-      // Only portforward when in local mode
-      if (clusterRunMode == LOCAL) {
-        val s3Port =
-            questionFactory
-                .newDefaultSingleQuestion(
-                    Integer.class,
-                    "What port would you like to expose the MINIO service on?",
-                    true,
-                    9021)
-                .getAnswer();
-        s3Builder.hostPort(s3Port);
-        s3Builder.url(createLocalhostUrl(s3Port));
-      } else if (clusterRunMode == PRODUCTION) {
-        s3Builder.hostPort(null);
-        s3Builder.url(resolveMinioProdUrl(dmsGatewayUrl));
-      } else {
-        throw new IllegalStateException(
-            format(
-                "The clusterRunMode '%s' is unknown and cannot be processed",
-                clusterRunMode.name()));
-      }
+      val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, MINIO_API.toString(), 9021);
+      s3Builder.hostPort(info.port);
+      s3Builder.url(info.serverUrl);
     }
     return s3Builder.build();
   }
 
-  @SneakyThrows
-  private static URL resolveMinioProdUrl(@NonNull URL dmsGatewayUrl) {
-    return new URL(dmsGatewayUrl.toString() + "/minio");
-  }
 }

@@ -1,11 +1,17 @@
 package bio.overture.dms.cli.questionnaire;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
+import bio.overture.dms.core.model.enums.ClusterRunModes;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
+import static bio.overture.dms.compose.model.ComposeServiceResources.MAESTRO;
 
 @Component
 public class MaestroQuestionnaire {
@@ -17,15 +23,10 @@ public class MaestroQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public MaestroConfig buildConfig() {
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class,
-                "What port would you like to expose the Maestro on?",
-                true,
-                MaestroConfig.DEFAULT_PORT)
-            .getAnswer();
+  public MaestroConfig buildConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+
+    val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, MAESTRO.toString(), MaestroConfig.DEFAULT_PORT);
+
 
     String aliasName =
         questionFactory
@@ -57,7 +58,8 @@ public class MaestroQuestionnaire {
     }
 
     return MaestroConfig.builder()
-        .hostPort(apiPort)
+        .hostPort(info.port)
+        .url(info.serverUrl)
         .fileCentricIndexName(indexName)
         .fileCentricAlias(aliasName)
         .build();

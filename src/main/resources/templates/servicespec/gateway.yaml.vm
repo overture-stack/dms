@@ -2,17 +2,14 @@
 #  SwaggerEditor: https://editor.swagger.io/
 #  OpenAPI: https://docs.docker.com/engine/api/v1.40.yaml
 # All durations are in nanotime
-Name: arranger-server
+Name: gateway
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/arranger-server:2.9.0"
+    # todo change this to point to a version
+    Image: "ghcr.io/overture-stack/dms-gateway:0.13.0"
     Env:
-      - PORT=5050
-      - ES_HOST=http://${composeServiceResources.ELASTICSEARCH.toString()}:9200
-#if( $dmsConfig.elasticsearch.security.enabled )
-      - ES_USER=elastic
-      - ES_PASS=$dmsConfig.elasticsearch.security.rootPassword
-#end
+      - NGINX_PORT=80
+      - NGINX_HOST=localhost
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
@@ -22,37 +19,14 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
-# TODO figure out why health check call not working
-    HealthCheck: null
-##      Test: ["CMD", "wget", "-q", "-O-",
-##             "--header=\"Content-Type: application/json\"",
-##             "--post-data='{\"query\": \"{ __schema { __typename } }\"}'",
-##             "http://localhost:5050/admin/graphql"]
-##      Interval: 10000000000
-##      Timeout: 10000000000
-##      Retries: 5
+    HealthCheck:
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null
-  Resources:
-    Limits:
-#if( $dmsConfig.clusterRunMode == 'SERVER')
-      #2 GiB
-      MemoryBytes: 2147483648
-#end
-      #unlimited.
-      NanoCPUs: 0
-    Reservations:
-#if( $dmsConfig.clusterRunMode == 'SERVER')
-      #1.5 GiB
-      MemoryBytes: 1610612736
-#end
-      #unlimited.
-      NanoCPUs: 0
   RestartPolicy:
     Condition: "on-failure"
-    # 5s
-    Delay: 5000000000
+    # 10s
+    Delay: 10000000000
     MaxAttempts: 0
     # unbounded
     Window: 0
@@ -90,5 +64,13 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "http"
+      Protocol: "tcp"
+      TargetPort: 80
+      PublishedPort: $dmsConfig.gateway.hostPort
+      PublishMode: "ingress"
 Labels: null
 

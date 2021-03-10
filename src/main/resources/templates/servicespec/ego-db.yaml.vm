@@ -85,13 +85,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "psql"
-      Protocol: "tcp"
-      TargetPort: 5432
-      PublishedPort: $dmsConfig.ego.db.hostPort
-      PublishMode: "ingress"
 Labels: null
 

@@ -6,7 +6,7 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
 import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static java.lang.String.format;
 import static software.amazon.awssdk.regions.Region.US_EAST_1;
 
@@ -76,7 +76,6 @@ public class ScoreApiDeployer {
   }
 
   private void provision(DmsConfig dmsConfig) {
-    buildEgoScoreProvisioner(dmsConfig.getEgo(), dmsConfig.getScore().getApi()).run();
     provisionS3Buckets(dmsConfig.getClusterRunMode(), dmsConfig.getScore());
   }
 
@@ -100,7 +99,7 @@ public class ScoreApiDeployer {
 
   @SneakyThrows
   private URI resolveS3Endpoint(ClusterRunModes clusterRunMode, ScoreS3Config scoreS3Config) {
-    if (clusterRunMode == PRODUCTION) {
+    if (clusterRunMode == SERVER) {
       return scoreS3Config.getUrl().toURI();
     } else if (clusterRunMode == LOCAL) {
       return resolveS3LocalUrl(scoreS3Config);
@@ -115,21 +114,18 @@ public class ScoreApiDeployer {
   private URI resolveS3LocalUrl(ScoreS3Config scoreS3Config) {
     if (dockerProperties.getRunAs() && scoreS3Config.isUseMinio()) {
       return new URI("http://" + MINIO_API.toString() + ":" + MINIO_API_CONTAINER_PORT);
-    } else {
-      return scoreS3Config.getUrl().toURI();
     }
-  }
 
-  private EgoScoreProvisioner buildEgoScoreProvisioner(
-      EgoConfig egoConfig, ScoreApiConfig scoreApiConfig) {
-    val egoService = egoHelper.buildEgoService(egoConfig);
-    val simpleProvisionService = createSimpleProvisionService(egoService);
-    return EgoScoreProvisioner.builder()
-        .simpleProvisionService(simpleProvisionService)
-        .dmsGroupName(DMS_ADMIN_GROUP_NAME)
-        .scorePolicyName(SCORE_POLICY_NAME)
-        .scoreAppCredential(scoreApiConfig.getAppCredential())
-        .build();
+    // this is needed to allow dms to create buckets in local dev mode
+    // the proxy will override the host header which will alter the url signature
+    // we need to create the buckets while bypassing the proxy since we are outside
+    // the docker network
+    if (scoreS3Config.isUseMinio() && !dockerProperties.getRunAs()) {
+      return new URI("http://localhost:" + scoreS3Config.getHostPort());
+    }
+
+    // no minio
+    return scoreS3Config.getUrl().toURI();
   }
 
   private static Region resolveS3Region(ScoreS3Config scoreS3Config) {

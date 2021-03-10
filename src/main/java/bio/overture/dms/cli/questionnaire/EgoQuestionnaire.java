@@ -1,8 +1,11 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
+import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -10,6 +13,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoDbConfig;
@@ -18,9 +22,12 @@ import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.JwtConfig.JwtDuration;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOClientConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
+
 import java.net.URL;
+import java.util.List;
 import java.util.function.BiConsumer;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -50,43 +57,25 @@ public class EgoQuestionnaire {
   }
 
   // TODO: add inputEgoConfig, so that an existing ego config can be updated
-  public EgoConfig buildEgoConfig(@NonNull ClusterRunModes clusterRunMode) {
-    val apiConfig = processEgoApiConfig(clusterRunMode);
+  public EgoConfig buildEgoConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+    val apiConfig = processEgoApiConfig(runModes, gatewayConfig);
     val dbConfig = processEgoDbConfig();
-    val uiConfig = processEgoUiConfig(clusterRunMode);
+    val uiConfig = processEgoUiConfig(runModes, gatewayConfig);
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
   @SneakyThrows
-  private EgoUiConfig processEgoUiConfig(ClusterRunModes clusterRunMode) {
+  private EgoUiConfig processEgoUiConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val egoUiConfig = new EgoUiConfig();
-
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the EGO ui on?", true, 9002)
-            .getAnswer();
-    egoUiConfig.setHostPort(apiPort);
-
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the EGO-UI base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      serverUrl = createLocalhostUrl(egoUiConfig.getHostPort());
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
-    egoUiConfig.setUrl(serverUrl);
-    egoUiConfig.setUiAppCredential(processUiAppCreds(serverUrl));
+    val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, EGO_UI.toString(), 9002);
+    egoUiConfig.setHostPort(info.port);
+    egoUiConfig.setUrl(info.serverUrl);
+    egoUiConfig.setUiAppCredential(processUiAppCreds(info.serverUrl));
     return egoUiConfig;
   }
 
-  private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode) {
+  @SneakyThrows
+  private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
         questionFactory
@@ -120,41 +109,29 @@ public class EgoQuestionnaire {
             .getAnswer();
     apiBuilder.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
 
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the EGO api on?", true, 9000)
-            .getAnswer();
-    apiBuilder.hostPort(apiPort);
-
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the EGO server base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      serverUrl = createLocalhostUrl(apiPort);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
-    apiBuilder.url(serverUrl);
+    val info = resolveServiceConnectionInfo(clusterRunMode, gatewayConfig, questionFactory, EGO_API.toString(), 9000);
+    apiBuilder.hostPort(info.port);
+    apiBuilder.url(info.serverUrl);
 
     val apiConfig = apiBuilder.build();
-
     apiConfig.setSso(new SSOConfig());
 
-    val ssoProviderSelection =
-        questionFactory
-            .newMCQuestion(
-                SSOProviders.class, "What SSO providers would you like to enable?", false, null)
-            .getAnswer();
+    boolean answered = false;
+    List<SSOProviders> ssoProviderSelection = null;
+    while (!answered) {
+      ssoProviderSelection =
+          questionFactory
+              .newMCQuestion(
+                  SSOProviders.class, "What SSO providers would you like to enable?", false, null)
+              .getAnswer();
+      if (ssoProviderSelection != null && ssoProviderSelection.size() > 0) {
+        answered = true;
+      }
+    }
 
     ssoProviderSelection.forEach(
         p -> {
-          val clientConfig = processSSOClientConfig(clusterRunMode, serverUrl, p.toString());
+          val clientConfig = processSSOClientConfig(info.serverUrl, p.toString());
           p.setClientConfig(apiConfig.getSso(), clientConfig);
         });
 
@@ -177,18 +154,10 @@ public class EgoQuestionnaire {
       dbBuilder.databasePassword(dbPassword);
     }
 
-    val dbPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "What port would you like to expose the EGO db on?", true, 9001)
-            .getAnswer();
-    dbBuilder.hostPort(dbPort);
-
     return dbBuilder.build();
   }
 
-  private SSOClientConfig processSSOClientConfig(
-      ClusterRunModes clusterRunMode, URL serverUrl, String providerType) {
+  private SSOClientConfig processSSOClientConfig(URL serverUrl, String providerType) {
     val clientConfigBuilder = SSOClientConfig.builder();
 
     val clientId =
@@ -207,16 +176,6 @@ public class EgoQuestionnaire {
 
     var preEstablishedRedirectUri =
         format("%s/oauth/login/%s", serverUrl, providerType.toLowerCase());
-    if (clusterRunMode == PRODUCTION) {
-      preEstablishedRedirectUri =
-          questionFactory
-              .newDefaultSingleQuestion(
-                  String.class,
-                  format("What is the %s pre-established redirect url?", providerType),
-                  true,
-                  preEstablishedRedirectUri)
-              .getAnswer();
-    }
     clientConfigBuilder.preEstablishedRedirectUri(preEstablishedRedirectUri);
     return clientConfigBuilder.build();
   }

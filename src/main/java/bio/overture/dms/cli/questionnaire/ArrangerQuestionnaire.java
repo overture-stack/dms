@@ -1,12 +1,16 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.PRODUCTION;
+import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static java.lang.String.format;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.compose.deployment.DmsComposeManager;
 import bio.overture.dms.core.model.dmsconfig.ArrangerConfig;
+import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import java.net.URL;
 import lombok.NonNull;
@@ -24,43 +28,21 @@ public class ArrangerQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ArrangerConfig buildConfig(ClusterRunModes clusterRunMode) {
-    val apiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class,
-                "What port would you like to expose the Arranger API on?",
-                true,
-                ArrangerConfig.ArrangerApiConfig.DEFAULT_PORT)
-            .getAnswer();
+  public ArrangerConfig buildConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
 
-    URL serverUrl;
-    if (clusterRunMode == PRODUCTION) {
-      // TODO: check either this or pass the gateway url.
-      serverUrl =
-          questionFactory
-              .newUrlSingleQuestion("What will the Arranger server base url be?", false, null)
-              .getAnswer();
-    } else if (clusterRunMode == LOCAL) {
-      serverUrl = createLocalhostUrl(apiPort);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
+    val info = resolveServiceConnectionInfo(clusterRunMode,
+        gatewayConfig,
+        questionFactory,
+        ARRANGER_SERVER.toString(),
+        5050);
 
-    val uiPort =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class,
-                "What port would you like to expose the Arranger UI on?",
-                true,
-                ArrangerConfig.ArrangerUIConfig.DEFAULT_PORT)
-            .getAnswer();
-
+    val uiHostInfo = resolveServiceConnectionInfo(clusterRunMode,
+        gatewayConfig, questionFactory,
+        ARRANGER_UI.toString(),
+        ArrangerConfig.ArrangerUIConfig.DEFAULT_PORT);
     return ArrangerConfig.builder()
-        .api(ArrangerConfig.ArrangerApiConfig.builder().hostPort(apiPort).url(serverUrl).build())
-        .ui(ArrangerConfig.ArrangerUIConfig.builder().hostPort(uiPort).build())
+        .api(ArrangerConfig.ArrangerApiConfig.builder().hostPort(info.port).url(info.serverUrl).build())
+        .ui(ArrangerConfig.ArrangerUIConfig.builder().url(uiHostInfo.serverUrl).hostPort(uiHostInfo.port).build())
         .build();
   }
 }

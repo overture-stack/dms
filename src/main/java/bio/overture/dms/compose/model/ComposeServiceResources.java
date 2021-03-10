@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = PRIVATE)
 public enum ComposeServiceResources {
+  GATEWAY("gateway"),
   EGO_API("ego-api"),
   EGO_DB("ego-db"),
   EGO_UI("ego-ui"),

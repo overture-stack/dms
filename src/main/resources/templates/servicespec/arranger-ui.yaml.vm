@@ -5,9 +5,11 @@
 Name: arranger-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/arranger-ui:2.9.0"
+    Image: "overture/arranger-ui:2.11.1-056c5ed"
     Env:
       - PORT=8080
+      # no slash at beginning is intended otherwise arranger won't work correctly
+      - REACT_APP_BASE_URL=arranger-ui
       - REACT_APP_ARRANGER_ADMIN_ROOT=http://${composeServiceResources.ARRANGER_SERVER.toString()}:5050
     Mounts: null
     Duration: null
@@ -28,14 +30,14 @@ TaskTemplate:
     Configs: null
   Resources:
     Limits:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1 GiB
       MemoryBytes: 1073741824
 #end
       #unlimited.
       NanoCPUs: 0
     Reservations:
-#if( $dmsConfig.clusterRunMode == 'PRODUCTION')
+#if( $dmsConfig.clusterRunMode == 'SERVER')
       #1.5 GiB
       MemoryBytes: 1610612736
 #end
@@ -83,13 +85,5 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
-EndpointSpec:
-  Mode: "vip"
-  Ports:
-    - Name: "ui"
-      Protocol: "tcp"
-      TargetPort: 8080
-      PublishedPort: $dmsConfig.arranger.ui.hostPort
-      PublishMode: "ingress"
 Labels: null
 
