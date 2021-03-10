@@ -96,11 +96,21 @@ spec:
             }
             steps {
                 container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker build --network=host --target client -f  Dockerfile . -t overture/dms:edge -t overture/dms:${version}-${commit}"
+                    sh "docker build --network=host --target latest-version-helper -f Dockerfile . -t overture/dms-version-helper:edge"
+                    sh "docker push overture/dms:${version}-${commit}"
+                    sh "docker push overture/dms:edge"
+                    sh "docker push overture/dms-version-helper:edge"
+                }
+                container('docker') {
                     withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
                     sh "docker build --network=host --target client -f  Dockerfile . -t ${dockerOrg}/${dmsRepo}:edge -t ${dockerOrg}/${dmsRepo}:${version}-${commit}"
-                    sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:edge"
+                    sh "docker build --network=host --target latest-version-helper -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:edge"
                     sh "docker build --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:edge"
                     sh "docker push ${dockerOrg}/${dmsRepo}:${version}-${commit}"
                     sh "docker push ${dockerOrg}/${dmsRepo}:edge"
@@ -130,6 +140,16 @@ spec:
                     sh "docker push ${dockerOrg}/${dmsGatewayRepo}:latest"
                     sh "docker push ${dockerOrg}/${dmsRepo}:latest"
                     sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:latest"
+                }
+                container('docker') {
+                  withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                      sh 'docker login -u $USERNAME -p $PASSWORD'
+                  }
+                  sh "docker build --network=host --target client -f Dockerfile . -t overture/dms:latest -t overture/dms:${version}"
+                  sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t overture/dms-version-helper:latest"
+                  sh "docker push overture/dms:${version}"
+                  sh "docker push overture/dms:latest"
+                  sh "docker push overture/dms-version-helper:latest"
                 }
             }
         }
