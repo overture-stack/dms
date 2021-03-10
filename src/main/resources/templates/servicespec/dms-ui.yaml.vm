@@ -6,10 +6,11 @@ Name: dms-ui
 TaskTemplate:
   ContainerSpec:
     # change to a specific tag
-    Image: "overture/dms-ui:edge"
+    Image: "overture/dms-ui:0.6.0-f08019f"
     Env:
       - NEXT_PUBLIC_EGO_API_ROOT=$dmsConfig.ego.api.url
       - NEXT_PUBLIC_EGO_CLIENT_ID=dms
+      - ASSET_PREFIX=/dms-ui
       - NEXT_PUBLIC_ARRANGER_PROJECT_ID=$dmsConfig.dmsUI.projectConfig.id
       - NEXT_PUBLIC_ARRANGER_GRAPHQL_FIELD=$dmsConfig.dmsUI.projectConfig.name
       - NEXT_PUBLIC_ARRANGER_INDEX=$dmsConfig.dmsUI.projectConfig.indexAlias

@@ -25,6 +25,8 @@ server {
     set $egoui http://ego-ui:8080;
 
     # this is for the minio ui browser
+    # won't work if you change it to something else it's reserved
+    # by minio to be /minio
     location /minio {
         # break is important for score upload
         proxy_set_header Host minio-api:9000;
@@ -103,8 +105,8 @@ server {
         proxy_redirect  off;
     }
 
-    location /portal {
-        rewrite /portal/(.*) /$1  break;
+    location /dms-ui {
+        rewrite /dms-ui/(.*) /$1  break;
         proxy_pass $dms_ui;
         proxy_redirect  off;
     }

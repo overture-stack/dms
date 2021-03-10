@@ -8,10 +8,14 @@ import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.ElasticsearchConfig;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.net.URL;
 
 @Slf4j
 @Component
@@ -29,19 +33,19 @@ public class ElasticsearchDeployer {
     this.messenger = messenger;
   }
 
+  @SneakyThrows
   public void deploy(boolean runInDocker, @NonNull DmsConfig dmsConfig) {
     serviceDeployer.deploy(dmsConfig, ELASTICSEARCH, true);
     messenger.send("⏳ Waiting for '%s' service to be healthy..", ELASTICSEARCH.toString());
-    val host =
-        DmsComposeManager.resolveServiceHost(
-            ELASTICSEARCH,
-            dmsConfig.getClusterRunMode(),
-            ElasticsearchConfig.DEFAULT_PORT,
-            dmsConfig.getElasticsearch().getHostPort(),
-            runInDocker);
+
+
+    URL baseUrl = dmsConfig.getElasticsearch().getUrl();
+    if (runInDocker) {
+      baseUrl = new URI("http://" + ELASTICSEARCH.toString() + ":" + ElasticsearchConfig.DEFAULT_PORT).toURL();
+    }
     try {
       ServiceDeployer.waitForOk(
-          dmsConfig.getElasticsearch().getUrl() + "/_cluster/health?wait_for_status=yellow",
+          baseUrl + "/_cluster/health?wait_for_status=yellow",
           "elastic:" + dmsConfig.getElasticsearch().getSecurity().getRootPassword(),
           dmsConfig.getHealthCheck().getRetries(),
           dmsConfig.getHealthCheck().getDelaySec());

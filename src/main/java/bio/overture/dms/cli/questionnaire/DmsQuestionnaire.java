@@ -12,6 +12,7 @@ import bio.overture.dms.core.model.dmsconfig.HealthCheckConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -79,10 +80,19 @@ public class DmsQuestionnaire {
       dmsGatewayUrl =
           questionFactory
               .newUrlSingleQuestion("What is the base DMS Gateway URL (example: dms.cancercollaboratory.org)?",
-       false,
-    null
-          ).getAnswer();
-
+                  false,
+                  null
+              ).getAnswer();
+    } else {
+      gatewayPort =
+          questionFactory
+              .newDefaultSingleQuestion(
+                  Integer.class,
+                  "What port will the gateway be exposed on?",
+                  true,
+                  80
+              ).getAnswer();
+      dmsGatewayUrl = new URI("http", null, "localhost", gatewayPort, null, null, null).toURL();
     }
     gatewayConfig = GatewayConfig.builder()
         .hostPort(gatewayPort)
@@ -98,12 +108,13 @@ public class DmsQuestionnaire {
     val elasticConfig = elasticsearchQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     printHeader("MAESTRO");
     val maestroConfig = maestroQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    printHeader("ARRANGER");
+    // there are no questions for arranger
+    //printHeader("ARRANGER");
     val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     printHeader("DMS UI");
     // we pass maestro's config to read the alias name to be used
     // in case the user changed the default.
-    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig);
+    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig);
 
     return DmsConfig.builder()
         .gateway(gatewayConfig)

@@ -5,7 +5,7 @@
 Name: ego-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego:edge"
+    Image: "overture/ego:369abd0d"
     Env:
     - SERVER_PORT=8080
     - SPRING_FLYWAY_ENABLED=true
@@ -26,6 +26,7 @@ TaskTemplate:
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN
     - INITIALIZATION_APPLICATIONS_0_CLIENTID=$dmsConfig.ego.api.dmsAppCredential.clientId
     - INITIALIZATION_APPLICATIONS_0_CLIENTSECRET=$dmsConfig.ego.api.dmsAppCredential.clientSecret
+    - INITIALIZATION_APPLICATIONS_0_REDIRECTURI=$dmsConfig.dmsUI.url/logged-in
     - REFRESHTOKEN_COOKIEISSECURE=true
     - REFRESHTOKEN_DOMAIN=$dmsConfig.ego.api.url.host
     - APITOKEN_DURATIONDAYS=$dmsConfig.ego.api.tokenDurationDays

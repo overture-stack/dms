@@ -5,7 +5,7 @@
 Name: gateway
 TaskTemplate:
   ContainerSpec:
-    Image: "ghcr.io/overture-stack/dms-gateway:test"
+    Image: "ghcr.io/overture-stack/dms-gateway:0.13.0"
     Env:
       - NGINX_PORT=80
       - NGINX_HOST=localhost
@@ -78,7 +78,7 @@ EndpointSpec:
     - Name: "http"
       Protocol: "tcp"
       TargetPort: 80
-      PublishedPort: 80
+      PublishedPort: $dmsConfig.gateway.hostPort
       PublishMode: "ingress"
 Labels: null
 

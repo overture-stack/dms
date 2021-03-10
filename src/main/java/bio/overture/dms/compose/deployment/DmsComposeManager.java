@@ -16,11 +16,15 @@ import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.swarm.properties.DockerProperties;
 import bio.overture.dms.swarm.service.SwarmService;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang.NotImplementedException;
@@ -65,6 +69,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   }
 
   @Override
+  @SneakyThrows
   public void deploy(@NonNull DmsConfig dmsConfig) {
     swarmService.initializeSwarm();
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
@@ -149,15 +154,16 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       DmsConfig dmsConfig, Boolean dmsRunningInDocker, Messenger messenger) {
     return () -> {
       serviceDeployer.deploy(dmsConfig, MAESTRO, true);
-      val host =
-          DmsComposeManager.resolveServiceHost(
-              MAESTRO,
-              dmsConfig.getClusterRunMode(),
-              MaestroConfig.DEFAULT_PORT,
-              dmsConfig.getMaestro().getHostPort(),
-              dmsRunningInDocker);
+      URL maestroUrl = dmsConfig.getMaestro().getUrl();
+      if (dmsRunningInDocker) {
+        try {
+          maestroUrl = new URL("http://" + MAESTRO.toString() + ":" + MaestroConfig.DEFAULT_PORT);
+        } catch (MalformedURLException e) {
+          throw new RuntimeException(e);
+        }
+      }
       try {
-        ServiceDeployer.waitForOk("http://" + host, dmsConfig.getHealthCheck().getRetries(),
+        ServiceDeployer.waitForOk(maestroUrl.toString(), dmsConfig.getHealthCheck().getRetries(),
             dmsConfig.getHealthCheck().getDelaySec());
       } catch (Exception e) {
         messenger.send("❌ Health check failed for Maestro");

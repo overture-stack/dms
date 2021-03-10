@@ -76,7 +76,6 @@ public class ScoreApiDeployer {
   }
 
   private void provision(DmsConfig dmsConfig) {
-    buildEgoScoreProvisioner(dmsConfig.getEgo(), dmsConfig.getScore().getApi()).run();
     provisionS3Buckets(dmsConfig.getClusterRunMode(), dmsConfig.getScore());
   }
 
@@ -127,18 +126,6 @@ public class ScoreApiDeployer {
 
     // no minio
     return scoreS3Config.getUrl().toURI();
-  }
-
-  private EgoScoreProvisioner buildEgoScoreProvisioner(
-      EgoConfig egoConfig, ScoreApiConfig scoreApiConfig) {
-    val egoService = egoHelper.buildEgoService(egoConfig);
-    val simpleProvisionService = createSimpleProvisionService(egoService);
-    return EgoScoreProvisioner.builder()
-        .simpleProvisionService(simpleProvisionService)
-        .dmsGroupName(DMS_ADMIN_GROUP_NAME)
-        .scorePolicyName(SCORE_POLICY_NAME)
-        .scoreAppCredential(scoreApiConfig.getAppCredential())
-        .build();
   }
 
   private static Region resolveS3Region(ScoreS3Config scoreS3Config) {

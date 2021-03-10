@@ -87,5 +87,16 @@ RollbackConfig:
 Networks:
   - Target: $dmsConfig.network
     Aliases: null
+
+# this is needed for the dms to provision buckets in local mode when running without docker
+# i.e. (during development)
+EndpointSpec:
+  Mode: "vip"
+  Ports:
+    - Name: "api"
+      Protocol: "tcp"
+      TargetPort: 9000
+      PublishedPort: $dmsConfig.score.s3.hostPort
+      PublishMode: "ingress"
 Labels: null
 
