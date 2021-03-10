@@ -10,15 +10,6 @@ TaskTemplate:
     Env:
       - NGINX_PORT=80
       - NGINX_HOST=localhost
-      - EGO_HOST=ego-api.dms.local
-      - EGO_UI_HOST=ego-ui.dms.local
-      - ES_HOST=ego-api.dms.local
-      - SONG_HOST=song-api.dms.local
-      - SCORE_HOST=score-api.dms.local
-      - MAESTRO_HOST=maestro.dms.local
-      - ARRANGER_HOST=arranger-server.dms.local
-      - ARRANGER_UI_HOST=arranger-ui.dms.local
-      - DMS_UI_HOST=dms-ui.dms.local
     Mounts: null
     Duration: null
     StopGracePeriod: 120000000000
