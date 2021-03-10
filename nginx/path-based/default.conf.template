@@ -21,6 +21,7 @@ server {
     set $es http://elasticsearch:9200;
     set $maestro http://maestro:11235;
     set $arranger_ui http://arranger-ui:8080;
+    set $arranger_server http://arranger-server:5050;
     set $dms_ui http://dms-ui:3000;
     set $egoui http://ego-ui:8080;
 
@@ -102,6 +103,12 @@ server {
     location /arranger-ui {
         rewrite /arranger-ui/(.*) /$1  break;
         proxy_pass $arranger_ui;
+        proxy_redirect  off;
+    }
+
+    location /arranger-server {
+        rewrite /arranger-server/(.*) /$1  break;
+        proxy_pass $arranger_server;
         proxy_redirect  off;
     }
 

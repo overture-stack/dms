@@ -17,7 +17,7 @@ TaskTemplate:
     Mounts:
       - Type: volume
         Source: elasticsearch-data
-        Target: /var/lib/elasticsearch
+        Target: /usr/share/elasticsearch/data
         ReadOnly: false
     Duration: null
     StopGracePeriod: 120000000000

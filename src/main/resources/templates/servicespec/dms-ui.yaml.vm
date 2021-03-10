@@ -5,7 +5,6 @@
 Name: dms-ui
 TaskTemplate:
   ContainerSpec:
-    # change to a specific tag
     Image: "overture/dms-ui:0.6.0-f08019f"
     Env:
       - NEXT_PUBLIC_EGO_API_ROOT=$dmsConfig.ego.api.url
