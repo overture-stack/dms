@@ -74,12 +74,12 @@ public class DmsQuestionnaire {
             .getAnswer();
 
     GatewayConfig gatewayConfig = null;
-    URL dmsGatewayUrl = new URL("http://localhost:80");
+    URL dmsGatewayUrl;
     int gatewayPort = 80;
     if (clusterRunMode == SERVER) {
       dmsGatewayUrl =
           questionFactory
-              .newUrlSingleQuestion("What is the base DMS Gateway URL (example: dms.cancercollaboratory.org)?",
+              .newUrlSingleQuestion("What is the base DMS Gateway URL (example: http://dms.cancercollaboratory.org)?",
                   false,
                   null
               ).getAnswer();
