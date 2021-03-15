@@ -5,7 +5,7 @@
 Name: maestro
 TaskTemplate:
   ContainerSpec:
-    Image: "ghcr.io/overture-stack/maestro:3.8.0-993b837"
+    Image: "ghcr.io/overture-stack/maestro:3.8.0"
     Env:
     - management.health.elasticsearch.enabled=false
     - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
@@ -20,7 +20,6 @@ TaskTemplate:
     - SPRING_CODEC_MAXINMEMORYSIZE=-1
     - MAESTRO_REPOSITORIES_0_ORGANIZATION=local_song_organization
     - MAESTRO_REPOSITORIES_0_COUNTRY=local_song_country
-    #- springdoc.api-docs.path=/v3/api-docs
     - springdoc.swagger-ui.url=/maestro/v3/api-docs
     - springdoc.webjars.prefix=/maestro/webjars
     - springdoc.swagger-ui.path=/api-docs

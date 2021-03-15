@@ -15,12 +15,14 @@ TaskTemplate:
     - DEFAULT_USER_FIRSTUSERASADMIN=true
     - SPRING_DATASOURCE_PASSWORD=$dmsConfig.ego.db.databasePassword
     - SPRING_DATASOURCE_URL=jdbc:postgresql://${composeServiceResources.EGO_DB.toString()}:5432/ego?stringtype=unspecified
+#if($dmsConfig.ego.api.url.port > 0)
     - SWAGGER_HOST=$dmsConfig.ego.api.url.host:$dmsConfig.ego.api.url.port
+#else
+    - SWAGGER_HOST=$dmsConfig.ego.api.url.host
+#end
     - SWAGGER_BASEURL=#if($dmsConfig.ego.api.url.path == '')/#{else}$dmsConfig.ego.api.url.path#end
-#if( $dmsConfig.clusterRunMode == 'LOCAL')
     - LOGIN_NONCE_SECURE=false
     - LOGIN_NONCE_SAMESITE=lax
-#end
     - INITIALIZATION_ENABLED=true
     - INITIALIZATION_APPLICATIONS_0_NAME=$dmsConfig.ego.api.dmsAppCredential.name
     - INITIALIZATION_APPLICATIONS_0_TYPE=ADMIN

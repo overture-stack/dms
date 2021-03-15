@@ -5,7 +5,6 @@
 Name: gateway
 TaskTemplate:
   ContainerSpec:
-    # todo change this to point to a version
     Image: "ghcr.io/overture-stack/dms-gateway:0.13.0"
     Env:
       - NGINX_PORT=80

@@ -76,16 +76,8 @@ public class EgoHelper {
             .restClientFactory(basicRestClientFactory)
             .build();
 
-    EgoClient egoClient = null;
-    if (clusterRunMode == LOCAL) {
-      egoClient =
+    EgoClient egoClient =
           egoClientFactory2.buildNoAuthEgoClient(getLocalEgoApiUrl(egoConfig.getApi()).toString());
-    } else if (clusterRunMode == SERVER) {
-      egoClient = egoClientFactory2.buildNoAuthEgoClient(egoConfig.getApi().getUrl().toString());
-    } else {
-      throw buildIllegalStateException(
-          "The clusterRunMode '%s' could not be processed", clusterRunMode);
-    }
 
     // Attempt to get the public key several times
     Failsafe.with(RETRY_POLICY).get(egoClient::getPublicKey);

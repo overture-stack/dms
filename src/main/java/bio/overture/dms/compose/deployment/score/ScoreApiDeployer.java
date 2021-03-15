@@ -99,15 +99,7 @@ public class ScoreApiDeployer {
 
   @SneakyThrows
   private URI resolveS3Endpoint(ClusterRunModes clusterRunMode, ScoreS3Config scoreS3Config) {
-    if (clusterRunMode == SERVER) {
-      return scoreS3Config.getUrl().toURI();
-    } else if (clusterRunMode == LOCAL) {
-      return resolveS3LocalUrl(scoreS3Config);
-    } else {
-      throw new IllegalStateException(
-          format(
-              "The clusterRunMode '%s' is unknown and cannot be processed", clusterRunMode.name()));
-    }
+    return resolveS3LocalUrl(scoreS3Config);
   }
 
   @SneakyThrows
