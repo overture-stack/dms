@@ -5,7 +5,7 @@
 Name: maestro
 TaskTemplate:
   ContainerSpec:
-    Image: "ghcr.io/overture-stack/maestro:3.8.0-9a71f01"
+    Image: "ghcr.io/overture-stack/maestro:3.8.0"
     Env:
     - management.health.elasticsearch.enabled=false
     - MAESTRO.ELASTICSEARCH.CLUSTERNODES=${composeServiceResources.ELASTICSEARCH.toString()}:9200
