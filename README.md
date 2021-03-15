@@ -31,6 +31,11 @@ docker exec -it $(docker service ps ego-db --no-trunc --format '{{ .Name }}.{{.I
 11. Run `make start-transfer-shell`. This will automatically run the `genomic-transfer-helper` and load the contents of `jwt.txt` as the JWT to allow authorized access to song and score.
 12. Once logged into the container, you can use the score and song clients. Run `./song-client/bin/sing ping` and `curl $(curl -sL http://score-api:8080/download/ping)` to do a health check.
 
+## Gateway
+The gateway is based on nginx.
+the config template file is under ./nginx/path-based, there is also a docker file
+tagging the gateway is done in Jenkinsfile, it will always have a new tag with the same version as the dms version.
+
 ## Tips
 ### Checking for OOM messages when a container/service is killed
 Sometimes, if the reserved/limit memory is too low, a container will get killed by the kernel. To find out if this is the case, run

@@ -23,7 +23,11 @@ TaskTemplate:
       - AUTH_SERVER_SCOPE_SYSTEM=SONG.WRITE
       - AUTH_JWT_PUBLICKEYURL=http://${composeServiceResources.EGO_API.toString()}:8080/oauth/token/public_key
       - ID_USELOCAL=true
+#if($dmsConfig.song.api.url.port > 0)
       - SWAGGER_HOST=$dmsConfig.song.api.url.host:$dmsConfig.song.api.url.port
+#else
+      - SWAGGER_HOST=$dmsConfig.song.api.url.host
+#end
       - SWAGGER_BASEPATH=#if($dmsConfig.song.api.url.path == '')/#{else}$dmsConfig.song.api.url.path#end
       - SCORE_URL=http://${composeServiceResources.SCORE_API.toString()}:8080
       - SCORE_CLIENTCREDENTIALS_ID=$dmsConfig.song.api.appCredential.clientId
