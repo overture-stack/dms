@@ -93,7 +93,7 @@ public class DmsQuestionnaire {
           questionFactory
               .newDefaultSingleQuestion(String.class,"What is the absolute path for the SSL certificate ?",
                   false,
-                  "/etc/letsencrypt/live/" + dmsGatewayUrl.getHost() + "/"
+                  "/etc/letsencrypt/"
               ).getAnswer();
 
       gatewayPort = 443;

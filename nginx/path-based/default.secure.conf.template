@@ -8,8 +8,11 @@ server {
     listen       443 ssl;
     server_name  ${NGINX_HOST};
     # https://serverspace.us/support/help/ssl-certificate-on-nginx-ubuntu-20-04/
-    ssl_certificate /dms/ssl/fullchain.pem;
-    ssl_certificate_key /dms/ssl/privkey.pem;
+    # these paths are based on mounting /etc/letsencrypt/ assuming certbot, although
+    # this would work with any cert in the same dir structure
+    # this is needed this way to support symlinks that certbot needs to auto renew
+    ssl_certificate /dms/ssl/live/${NGINX_HOST}/fullchain.pem;
+    ssl_certificate_key /dms/ssl/live/${NGINX_HOST}/privkey.pem;
 
     # https://www.techrepublic.com/article/how-to-enable-ssl-on-nginx/
     ssl_protocols TLSv1.2 TLSv1.3;

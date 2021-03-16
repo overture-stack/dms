@@ -83,10 +83,15 @@ EndpointSpec:
       PublishedPort: $dmsConfig.gateway.hostPort
       PublishMode: "ingress"
 #else
+    - Name: "http"
+      Protocol: "tcp"
+      TargetPort: 80
+      PublishedPort: 80
+      PublishMode: "ingress"
     - Name: "https"
       Protocol: "tcp"
       TargetPort: 443
-      PublishedPort: $dmsConfig.gateway.hostPort
+      PublishedPort: 443
       PublishMode: "ingress"
 #end
 Labels: null

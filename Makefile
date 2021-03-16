@@ -6,10 +6,10 @@ CURL_EXE := $(shell which curl)
 MVN_EXE := $(shell which mvn)
 
 # Variables
-DOCKER_ORG := basharlabadi
+DOCKER_ORG := ghcr.io/overture-stack
 DOCKER_REPO := dms
 DOCKER_GATEWAY_REPO := dms-gateway
-DOCKER_TAG := test-3
+DOCKER_TAG := test
 DOCKER_IMAGE_NAME := $(DOCKER_ORG)/$(DOCKER_REPO):$(DOCKER_TAG)
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MY_UID := $$(id -u)
