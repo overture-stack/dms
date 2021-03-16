@@ -1,6 +1,5 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 
 import bio.overture.dms.cli.question.QuestionFactory;
@@ -73,16 +72,31 @@ public class DmsQuestionnaire {
                 ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
             .getAnswer();
 
-    GatewayConfig gatewayConfig = null;
+    GatewayConfig gatewayConfig;
     URL dmsGatewayUrl;
-    int gatewayPort = 80;
+    int gatewayPort;
+    String sslPath = "/etc/ssl/dms";
     if (clusterRunMode == SERVER) {
       dmsGatewayUrl =
           questionFactory
-              .newUrlSingleQuestion("What is the base DMS Gateway URL (example: http://dms.cancercollaboratory.org)?",
+              .newUrlSingleQuestion("What is the base DMS Gateway URL (example: https://dms.cancercollaboratory.org)?",
                   false,
                   null
               ).getAnswer();
+
+      if (dmsGatewayUrl.getPort() <= 0) {
+        dmsGatewayUrl = new URI("https", null, dmsGatewayUrl.getHost(),
+            443, null, null, null).toURL();
+      }
+
+       sslPath =
+          questionFactory
+              .newDefaultSingleQuestion(String.class,"What is the absolute path for the SSL certificate ?",
+                  false,
+                  "/etc/letsencrypt/live/" + dmsGatewayUrl.getHost() + "/"
+              ).getAnswer();
+
+      gatewayPort = 443;
     } else {
       gatewayPort =
           questionFactory
@@ -92,12 +106,16 @@ public class DmsQuestionnaire {
                   true,
                   80
               ).getAnswer();
-      dmsGatewayUrl = new URI("http", null, "localhost", gatewayPort, null, null, null).toURL();
+      dmsGatewayUrl = new URI("http", null, "localhost",
+          gatewayPort, null, null, null).toURL();
     }
+
     gatewayConfig = GatewayConfig.builder()
         .hostPort(gatewayPort)
         .url(dmsGatewayUrl)
+        .sslDir(sslPath)
         .build();
+
     printHeader("EGO");
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode, gatewayConfig);
     printHeader("SONG");

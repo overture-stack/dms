@@ -41,3 +41,6 @@ tagging the gateway is done in Jenkinsfile, it will always have a new tag with t
 Sometimes, if the reserved/limit memory is too low, a container will get killed by the kernel. To find out if this is the case, run
 `journalctl -k | grep -i -e memory -e oom`. For java apps, the status `"task: non-zero exit (137)"` is usually the case.
 
+## useful commands:
+- `docker service ps --no-trunc {serviceName}`
+- `journalctl -u docker.service | tail -n 50 `
