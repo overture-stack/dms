@@ -18,8 +18,8 @@ import lombok.Value;
 @NoArgsConstructor(force = true, access = PRIVATE)
 @JsonInclude(NON_EMPTY)
 public class DmsConfig {
-
   @NonNull private final GatewayConfig gateway;
+
   @NonNull private final HealthCheckConfig healthCheck;
 
   @NonNull private final ClusterRunModes clusterRunMode;

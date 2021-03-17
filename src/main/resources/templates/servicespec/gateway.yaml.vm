@@ -5,11 +5,21 @@
 Name: gateway
 TaskTemplate:
   ContainerSpec:
-    Image: "ghcr.io/overture-stack/dms-gateway:0.13.0"
+#if( $dmsConfig.clusterRunMode == 'SERVER')
+    Image: "ghcr.io/overture-stack/dms-gateway-secure:edge"
+#else
+    Image: "ghcr.io/overture-stack/dms-gateway:edge"
+#end
     Env:
-      - NGINX_PORT=80
-      - NGINX_HOST=localhost
-    Mounts: null
+      - NGINX_PORT=$dmsConfig.ego.api.url.port
+      - NGINX_HOST=$dmsConfig.gateway.url.host
+#if( $dmsConfig.clusterRunMode == 'SERVER')
+    Mounts:
+      - Type: bind
+        Source: $dmsConfig.gateway.sslDir
+        Target: /dms/ssl
+        ReadOnly: true
+#end
     Duration: null
     StopGracePeriod: 120000000000
     DNSConfig: null
@@ -66,10 +76,23 @@ Networks:
 EndpointSpec:
   Mode: "vip"
   Ports:
+#if ($dmsConfig.clusterRunMode == 'LOCAL')
     - Name: "http"
       Protocol: "tcp"
       TargetPort: 80
       PublishedPort: $dmsConfig.gateway.hostPort
       PublishMode: "ingress"
+#else
+    - Name: "http"
+      Protocol: "tcp"
+      TargetPort: 80
+      PublishedPort: 80
+      PublishMode: "ingress"
+    - Name: "https"
+      Protocol: "tcp"
+      TargetPort: 443
+      PublishedPort: 443
+      PublishMode: "ingress"
+#end
 Labels: null
 

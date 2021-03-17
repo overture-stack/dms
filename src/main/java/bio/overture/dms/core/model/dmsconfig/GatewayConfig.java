@@ -23,4 +23,5 @@ public class GatewayConfig {
   @Builder.Default
   private int hostPort = 80;
   @NotNull private URL url;
+  private String sslDir = "/etc/ssl/dms";
 }

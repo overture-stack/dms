@@ -78,8 +78,8 @@ build-image:
 	@$(DOCKER_EXE) build -t $(DOCKER_IMAGE_NAME) ./
 
 build-gateway:
-	docker build ./nginx/path-based -t $(DOCKER_ORG)/$(DOCKER_GATEWAY_REPO):edge --no-cache -f./nginx/path-based/Dockerfile
-
+	docker build --target insecure ./nginx/path-based -t $(DOCKER_ORG)/$(DOCKER_GATEWAY_REPO):edge --no-cache -f./nginx/path-based/Dockerfile
+	docker build --target secure ./nginx/path-based -t $(DOCKER_ORG)/$(DOCKER_GATEWAY_REPO)-secure:edge --no-cache -f./nginx/path-based/Dockerfile
 push-image: build-image
 	@$(DOCKER_EXE) push $(DOCKER_IMAGE_NAME)
 

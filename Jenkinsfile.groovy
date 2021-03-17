@@ -111,7 +111,8 @@ spec:
                     }
                     sh "docker build --network=host --target client -f  Dockerfile . -t ${dockerOrg}/${dmsRepo}:edge -t ${dockerOrg}/${dmsRepo}:${version}-${commit}"
                     sh "docker build --network=host --target latest-version-helper -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:edge"
-                    sh "docker build --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:edge"
+                    sh "docker build --target insecure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:edge"
+                    sh "docker build --target secure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}-secure:edge"
                     sh "docker push ${dockerOrg}/${dmsRepo}:${version}-${commit}"
                     sh "docker push ${dockerOrg}/${dmsRepo}:edge"
                     sh "docker push ${dockerOrg}/${dmsGatewayRepo}:edge"
@@ -134,10 +135,13 @@ spec:
                     }
                     sh "docker build --network=host --target client -f Dockerfile . -t ${dockerOrg}/${dmsRepo}:latest -t ${dockerOrg}/${dmsRepo}:${version}"
                     sh "docker build --network=host --target latest-version-helper  -f Dockerfile . -t ${dockerOrg}/${dmsVersionHelperRepo}:latest"
-                    sh "docker build --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:latest -t ${dockerOrg}/${dmsGatewayRepo}:${version}"
+                    sh "docker build --target insecure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:latest -t ${dockerOrg}/${dmsGatewayRepo}:${version}"
+                    sh "docker build --target secure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}-secure:latest -t ${dockerOrg}/${dmsGatewayRepo}-secure:${version}"
                     sh "docker push ${dockerOrg}/${dmsRepo}:${version}"
                     sh "docker push ${dockerOrg}/${dmsGatewayRepo}:${version}"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}-secure:${version}"
                     sh "docker push ${dockerOrg}/${dmsGatewayRepo}:latest"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}-secure:latest"
                     sh "docker push ${dockerOrg}/${dmsRepo}:latest"
                     sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:latest"
                 }
