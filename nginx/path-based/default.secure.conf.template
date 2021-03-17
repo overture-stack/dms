@@ -1,0 +1,150 @@
+server {
+    listen 80;
+    server_name ${NGINX_HOST};
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen       443 ssl;
+    server_name  ${NGINX_HOST};
+    # https://serverspace.us/support/help/ssl-certificate-on-nginx-ubuntu-20-04/
+    # these paths are based on mounting /etc/letsencrypt/ assuming the use of certbot, although
+    # this would work with any cert in the same dir structure
+    # this is needed this way to support symlinks that certbot needs to auto renew
+    ssl_certificate /dms/ssl/live/${NGINX_HOST}/fullchain.pem;
+    ssl_certificate_key /dms/ssl/live/${NGINX_HOST}/privkey.pem;
+
+    # https://www.techrepublic.com/article/how-to-enable-ssl-on-nginx/
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    #ssl_dhparam /dms/ssl/dhparam.pem;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+    ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
+    ssl_session_timeout  10m;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off; # Requires nginx >= 1.5.9
+    # ssl_stapling on; # Requires nginx >= 1.3.7
+    # ssl_stapling_verify on; # Requires nginx => 1.3.7
+    #resolver 8.8.8.8 8.8.4.4 valid=300s;
+    #resolver_timeout 5s;
+
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # To allow special characters in headers
+    ignore_invalid_headers off;
+
+    # Allow any size file to be uploaded.
+    # Set to a value such as 1000m; to restrict file size to a specific value
+    client_max_body_size 0;
+
+    # To disable buffering
+    proxy_buffering off;
+
+    resolver 127.0.0.11 valid=1s;
+
+    set $ego http://ego-api:8080;
+    set $minio http://minio-api:9000;
+    set $song http://song-api:8080;
+    set $score http://score-api:8080;
+    set $es http://elasticsearch:9200;
+    set $maestro http://maestro:11235;
+    set $arranger_ui http://arranger-ui:8080;
+    set $arranger_server http://arranger-server:5050;
+    set $dms_ui http://dms-ui:3000;
+    set $egoui http://ego-ui:8080;
+
+    # this is for the minio ui browser
+    # won't work if you change it to something else it's reserved
+    # by minio to be /minio
+    location /minio {
+        # break is important for score upload
+        proxy_set_header Host minio-api:9000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 300;
+
+        # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        chunked_transfer_encoding off;
+        proxy_pass $minio;
+        # important for score upload.
+        proxy_redirect  off;
+    }
+
+    # configs from https://docs.minio.io/docs/setup-nginx-proxy-with-minio
+    location /minio-api {
+        # break is important for score upload
+        rewrite /minio-api/(.*) /$1 break;
+        proxy_set_header Host minio-api:9000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 300;
+
+        # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        chunked_transfer_encoding off;
+        proxy_pass $minio;
+        # important for score upload.
+        proxy_redirect  off;
+    }
+
+    location /ego-api {
+        rewrite /ego-api/(.*) /$1  break;
+        proxy_pass $ego;
+        proxy_redirect off;
+    }
+
+    location /ego-ui {
+        rewrite /ego-ui(.*) /$1  break;
+        proxy_pass $egoui;
+        proxy_redirect  off;
+    }
+
+    location /song-api {
+        rewrite /song-api/(.*) /$1  break;
+        proxy_pass $song;
+        proxy_redirect  off;
+    }
+
+    location /score-api {
+        rewrite /score-api/(.*) /$1  break;
+        proxy_pass  $score;
+        proxy_redirect  off;
+    }
+
+    location /elasticsearch {
+        rewrite /elasticsearch/(.*) /$1  break;
+        proxy_pass $es;
+        proxy_redirect  off;
+    }
+
+    location /maestro {
+        rewrite /maestro/(.*) /$1  break;
+        proxy_pass $maestro;
+        proxy_redirect  off;
+    }
+
+    location /arranger-ui {
+        rewrite /arranger-ui/(.*) /$1  break;
+        proxy_pass $arranger_ui;
+        proxy_redirect  off;
+    }
+
+    location /arranger-server {
+        rewrite /arranger-server/(.*) /$1  break;
+        proxy_pass $arranger_server;
+        proxy_redirect  off;
+    }
+
+    location /dms-ui {
+        rewrite /dms-ui/(.*) /$1  break;
+        proxy_pass $dms_ui;
+        proxy_redirect  off;
+    }
+}

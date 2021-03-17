@@ -75,12 +75,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
     val completableFutures = new ArrayList<CompletableFuture<?>>();
     CompletableFuture<Void> gateway;
-    if (dmsConfig.getGateway().isPathBased() || dmsConfig.getClusterRunMode() == ClusterRunModes.SERVER) {
-      gateway = runAsync(getDeployRunnable(dmsConfig, GATEWAY, messenger), executorService);
-      completableFutures.add(gateway);
-    } else {
-      gateway = CompletableFuture.completedFuture(null);
-    }
+    gateway = runAsync(getDeployRunnable(dmsConfig, GATEWAY, messenger), executorService);
+    completableFutures.add(gateway);
 
     val egoFuture =
         gateway.thenRunAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
@@ -111,7 +107,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     completableFutures.add(scoreApiFuture);
 
     val elasticMaestroFuture =
-        runAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
+        gateway.thenRunAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
             .thenRunAsync(
                 getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
                 executorService);
