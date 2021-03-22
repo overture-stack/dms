@@ -24,7 +24,7 @@ import picocli.CommandLine.Command;
     name = "destroy",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Destroy the cluster")
+    description = "Destroy the cluster and ALL the data")
 public class ClusterDestroyCommand implements Callable<Integer> {
 
   /** Dependencies */
@@ -33,14 +33,6 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   private final QuestionFactory questionFactory;
   private final DmsComposeManager dmsComposeManager;
   private final DmsConfigStore dmsConfigStore;
-
-  /** CLI Options */
-  @CommandLine.Option(
-      names = {"-v", "--volumes"},
-      required = false,
-      showDefaultValue = ALWAYS,
-      description = "Additionally destroy volumes")
-  private boolean destroyVolumes = false;
 
   @CommandLine.Option(
       names = {"-f", "--force"},
@@ -67,9 +59,13 @@ public class ClusterDestroyCommand implements Callable<Integer> {
     val result = dmsConfigStore.findStoredConfig();
     if (result.isPresent()) {
       t.printStatusLn(
-          "Starting cluster destruction: force=%s  destroyVolumes=%s", force, destroyVolumes);
-      val resolvedDestroyVolumes = resolveDestroyVolumes();
-      dmsComposeManager.destroy(result.get(), resolvedDestroyVolumes);
+          "Starting cluster destruction: force=%s", force);
+      val isConfirmed = confirmVolumesDeletion();
+      if (!isConfirmed) {
+        t.printStatusLn("Cluster destruction canceled.");
+        return 2;
+      }
+      dmsComposeManager.destroy(result.get(), true);
       t.printStatusLn("Finished cluster destruction");
       return 0;
     }
@@ -78,11 +74,11 @@ public class ClusterDestroyCommand implements Callable<Integer> {
     return 1;
   }
 
-  private boolean resolveDestroyVolumes() {
-    boolean askQuestion = !force && destroyVolumes;
-    boolean resolvedDestroyVolumes = force && destroyVolumes;
+  private boolean confirmVolumesDeletion() {
+    boolean askQuestion = !force;
+    boolean confirmedVolumeDestruction = force;
     if (askQuestion) {
-      resolvedDestroyVolumes =
+      confirmedVolumeDestruction =
           questionFactory
               .newSingleQuestion(
                   WARNING,
@@ -91,13 +87,10 @@ public class ClusterDestroyCommand implements Callable<Integer> {
                   true,
                   false)
               .getAnswer();
-      if (!resolvedDestroyVolumes) {
-        t.printStatus("Volumes will NOT be destroyed!");
-      }
     }
-    if (resolvedDestroyVolumes) {
+    if (confirmedVolumeDestruction) {
       t.printStatus("Forcefully destroying all volumes!");
     }
-    return resolvedDestroyVolumes;
+    return confirmedVolumeDestruction;
   }
 }

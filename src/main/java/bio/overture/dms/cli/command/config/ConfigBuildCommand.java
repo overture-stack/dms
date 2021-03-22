@@ -52,7 +52,7 @@ public class ConfigBuildCommand implements Callable<Integer> {
   public Integer call() throws Exception {
     t.printStatusLn("Starting interactive configuration");
     // TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
-    dmsConfigStore.apply(storedDmsConfig -> dmsQuestionnaire.buildDmsConfig());
+    dmsConfigStore.apply(dmsQuestionnaire::buildDmsConfig);
     t.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath());
     return 0;
   }

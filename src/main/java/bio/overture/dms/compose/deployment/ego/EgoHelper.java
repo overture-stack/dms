@@ -1,9 +1,6 @@
 package bio.overture.dms.compose.deployment.ego;
 
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
-import static bio.overture.dms.core.util.Exceptions.buildIllegalStateException;
 import static bio.overture.dms.ego.client.EgoService.createEgoService;
 
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
@@ -77,7 +74,7 @@ public class EgoHelper {
             .build();
 
     EgoClient egoClient =
-          egoClientFactory2.buildNoAuthEgoClient(getLocalEgoApiUrl(egoConfig.getApi()).toString());
+        egoClientFactory2.buildNoAuthEgoClient(getLocalEgoApiUrl(egoConfig.getApi()).toString());
 
     // Attempt to get the public key several times
     Failsafe.with(RETRY_POLICY).get(egoClient::getPublicKey);

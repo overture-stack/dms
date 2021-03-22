@@ -5,7 +5,7 @@
 Name: arranger-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/arranger-ui:2.11.1-8577ed4"
+    Image: "overture/arranger-ui:2.11.2"
     Env:
       - PORT=8080
       # no slash at beginning is intended otherwise arranger won't work correctly

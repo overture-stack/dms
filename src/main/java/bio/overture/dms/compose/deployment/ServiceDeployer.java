@@ -37,8 +37,6 @@ public class ServiceDeployer {
   private final Messenger messenger;
   private final ServiceSpecRenderEngine serviceSpecRenderEngine;
 
-
-
   @Autowired
   public ServiceDeployer(
       @NonNull SwarmService swarmService,

@@ -16,7 +16,6 @@ import picocli.CommandLine.Command;
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     subcommands = {
-      SummaryCommand.class,
       ConfigCommand.class,
       ClusterCommand.class,
       BashCompletionCommand.class

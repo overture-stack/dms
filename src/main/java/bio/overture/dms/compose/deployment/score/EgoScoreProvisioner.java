@@ -17,6 +17,5 @@ public class EgoScoreProvisioner implements Runnable {
   @NonNull private final AppCredential scoreAppCredential;
 
   @Override
-  public void run() {
-  }
+  public void run() {}
 }
