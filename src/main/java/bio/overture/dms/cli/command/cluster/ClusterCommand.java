@@ -9,12 +9,8 @@ import picocli.CommandLine.Command;
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     subcommands = {
-      ClusterApplyCommand.class,
-      ClusterDestroyCommand.class,
-      ClusterGetCommand.class,
-      ClusterRestartCommand.class,
       ClusterStartCommand.class,
       ClusterStopCommand.class,
-      ClusterStatusCommand.class
+      ClusterDestroyCommand.class,
     })
 public class ClusterCommand {}

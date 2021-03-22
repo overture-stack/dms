@@ -9,13 +9,7 @@ import picocli.CommandLine.Command;
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
     subcommands = {
-      ConfigCheckCommand.class,
       ConfigBuildCommand.class,
       ConfigGetCommand.class,
-      ConfigSetCommand.class,
-      ConfigDeleteCommand.class,
-      ConfigStatusCommand.class,
-      ConfigUpgradeCommand.class,
-      ConfigVersionCommand.class
     })
 public class ConfigCommand {}

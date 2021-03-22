@@ -3,9 +3,8 @@ package bio.overture.dms.core.model.dmsconfig;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-
 import java.net.URL;
+import lombok.*;
 
 @Data
 @Builder

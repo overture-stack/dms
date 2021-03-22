@@ -1,5 +1,8 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
+import static bio.overture.dms.compose.model.ComposeServiceResources.MAESTRO;
+
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
@@ -8,10 +11,6 @@ import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
-import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
-import static bio.overture.dms.compose.model.ComposeServiceResources.MAESTRO;
 
 @Component
 public class MaestroQuestionnaire {
@@ -25,8 +24,13 @@ public class MaestroQuestionnaire {
 
   public MaestroConfig buildConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
 
-    val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, MAESTRO.toString(), MaestroConfig.DEFAULT_PORT);
-
+    val info =
+        resolveServiceConnectionInfo(
+            runModes,
+            gatewayConfig,
+            questionFactory,
+            MAESTRO.toString(),
+            MaestroConfig.DEFAULT_PORT);
 
     String aliasName =
         questionFactory

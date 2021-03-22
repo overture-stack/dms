@@ -13,6 +13,8 @@ import static bio.overture.dms.core.util.Strings.isNotDefined;
 import static java.util.Objects.isNull;
 
 import bio.overture.dms.cli.model.enums.QuestionProfiles;
+import bio.overture.dms.cli.question.validation.EmailValidator;
+import bio.overture.dms.cli.question.validation.FileValidator;
 import bio.overture.dms.cli.question.validation.QuestionValidator;
 import bio.overture.dms.cli.question.validation.UrlQuestionValidator;
 import bio.overture.dms.cli.terminal.UrlInputReader;
@@ -42,6 +44,10 @@ public class QuestionFactory {
   private static final QuestionProfiles DEFAULT_QUESTION_PROFILE = QUESTION;
 
   private static final UrlQuestionValidator URL_QUESTION_VALIDATOR = new UrlQuestionValidator();
+
+  private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
+
+  private static final FileValidator FILE_VALIDATOR = new FileValidator();
 
   /** Dependencies */
   private final TextIO textIO;
@@ -83,6 +89,18 @@ public class QuestionFactory {
       @NonNull String question, boolean optional, URL defaultValue) {
     return newDefaultSingleQuestion(
         URL.class, question, optional, defaultValue, URL_QUESTION_VALIDATOR);
+  }
+
+  public SingleQuestion<String> newEmailQuestion(
+      @NonNull String question, boolean optional, String defaultVal) {
+    return newDefaultSingleQuestion(
+        String.class, question, optional, defaultVal, EMAIL_VALIDATOR);
+  }
+
+  public SingleQuestion<String> newFileQuestion(
+      @NonNull String question, boolean optional) {
+    return newDefaultSingleQuestion(
+        String.class, question, optional, null, FILE_VALIDATOR);
   }
 
   public SingleQuestion<String> newPasswordQuestion(@NonNull String question) {

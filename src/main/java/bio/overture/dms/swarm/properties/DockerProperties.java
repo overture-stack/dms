@@ -15,4 +15,5 @@ public class DockerProperties {
 
   @NotBlank private String host;
   @NotNull private Boolean runAs;
+  @NotNull private String dmsHomeHostPath;
 }

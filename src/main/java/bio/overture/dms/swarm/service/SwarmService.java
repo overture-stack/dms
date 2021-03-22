@@ -159,7 +159,9 @@ public class SwarmService {
                   val containerIds = e.getValue();
                   return executors.submit(
                       () -> {
+
                         deleteServiceAndWait(serviceName, containerIds, numRetries, poll);
+
                       });
                 })
             .collect(toUnmodifiableList());
@@ -177,8 +179,11 @@ public class SwarmService {
     // and so we create a unique monitor per thread. For more info, refer to
     // Guarded Blocks
     // https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html
-    val lock = new Object();
-    waitForContainerDeletion(lock, containerIds, numRetries, poll);
+    // ego-ui takes a long time to stop the container (the service stops quickly)
+    if (!serviceName.equalsIgnoreCase("ego-ui")) {
+      val lock = new Object();
+      waitForContainerDeletion(lock, containerIds, numRetries, poll);
+    }
   }
 
   private void deleteContainersByVolumes(Collection<String> volumeNames) {

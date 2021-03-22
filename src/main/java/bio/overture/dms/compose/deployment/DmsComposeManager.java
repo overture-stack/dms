@@ -16,7 +16,6 @@ import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.swarm.properties.DockerProperties;
 import bio.overture.dms.swarm.service.SwarmService;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -79,7 +78,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     completableFutures.add(gateway);
 
     val egoFuture =
-        gateway.thenRunAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
+        gateway
+            .thenRunAsync(() -> egoApiDbDeployer.deploy(dmsConfig), executorService)
             .thenRunAsync(getDeployRunnable(dmsConfig, EGO_UI, messenger), executorService);
     completableFutures.add(egoFuture);
 
@@ -107,7 +107,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     completableFutures.add(scoreApiFuture);
 
     val elasticMaestroFuture =
-        gateway.thenRunAsync(() -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
+        gateway
+            .thenRunAsync(
+                () -> elasticsearchDeployer.deploy(dmsRunningInDocker, dmsConfig), executorService)
             .thenRunAsync(
                 getMaestroDeployRunnable(dmsConfig, dmsRunningInDocker, messenger),
                 executorService);
@@ -159,7 +161,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
         }
       }
       try {
-        ServiceDeployer.waitForOk(maestroUrl.toString(), dmsConfig.getHealthCheck().getRetries(),
+        ServiceDeployer.waitForOk(
+            maestroUrl.toString(),
+            dmsConfig.getHealthCheck().getRetries(),
             dmsConfig.getHealthCheck().getDelaySec());
       } catch (Exception e) {
         messenger.send("❌ Health check failed for Maestro");

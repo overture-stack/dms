@@ -24,6 +24,6 @@ public class UrlQuestionValidator implements QuestionValidator<URL> {
       errors.add(
           format("The url protocol '%s' is not one of ['http', 'https']", url.getProtocol()));
     }
-    return null;
+    return errors.size() == 0 ? null : errors;
   }
 }

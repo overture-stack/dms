@@ -9,12 +9,8 @@ import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.HealthCheckConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
-
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
-import java.util.Map;
-
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -65,11 +61,13 @@ public class DmsQuestionnaire {
   }
 
   @SneakyThrows
-  public DmsConfig buildDmsConfig() {
+  public DmsConfig buildDmsConfig(DmsConfig oldConfig) {
     val clusterRunMode =
         questionFactory
             .newOneHotQuestion(
-                ClusterRunModes.class, "Select the cluster mode to configure: ", false, null)
+                ClusterRunModes.class, "Select the cluster mode to configure: ",
+        false,
+                null)
             .getAnswer();
 
     GatewayConfig gatewayConfig;
@@ -79,42 +77,39 @@ public class DmsQuestionnaire {
     if (clusterRunMode == SERVER) {
       dmsGatewayUrl =
           questionFactory
-              .newUrlSingleQuestion("What is the base DMS Gateway URL (example: https://dms.cancercollaboratory.org)?",
+              .newUrlSingleQuestion(
+                  "What is the base DMS Gateway URL (example: https://dms.cancercollaboratory.org)?",
                   false,
-                  null
-              ).getAnswer();
+                  null)
+              .getAnswer();
 
       if (dmsGatewayUrl.getPort() <= 0) {
-        dmsGatewayUrl = new URI("https", null, dmsGatewayUrl.getHost(),
-            443, null, null, null).toURL();
+        dmsGatewayUrl =
+            new URI("https", null, dmsGatewayUrl.getHost(), 443, null, null, null).toURL();
       }
 
-       sslPath =
+      sslPath =
           questionFactory
-              .newDefaultSingleQuestion(String.class,"What is the absolute path for the SSL certificate ?",
-                  false,
-                  "/etc/letsencrypt/"
-              ).getAnswer();
+              .newDefaultSingleQuestion(
+                  String.class,
+                  "What is the absolute path for the SSL certificate ?",
+                  true,
+                  "/etc/letsencrypt/")
+              .getAnswer();
 
       gatewayPort = 443;
     } else {
       gatewayPort =
           questionFactory
               .newDefaultSingleQuestion(
-                  Integer.class,
-                  "What port will the gateway be exposed on?",
-                  true,
-                  80
-              ).getAnswer();
-      dmsGatewayUrl = new URI("http", null, "localhost",
-          gatewayPort, null, null, null).toURL();
+                  Integer.class, "What port will the gateway be exposed on?", true, 80)
+              .getAnswer();
+
+      dmsGatewayUrl = new URI("http", null, "localhost", gatewayPort, null, null, null).toURL();
     }
 
-    gatewayConfig = GatewayConfig.builder()
-        .hostPort(gatewayPort)
-        .url(dmsGatewayUrl)
-        .sslDir(sslPath)
-        .build();
+    gatewayConfig =
+        GatewayConfig.builder().hostPort(gatewayPort).url(dmsGatewayUrl).sslDir(sslPath).build();
 
     printHeader("EGO");
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode, gatewayConfig);
@@ -127,18 +122,17 @@ public class DmsQuestionnaire {
     printHeader("MAESTRO");
     val maestroConfig = maestroQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     // there are no questions for arranger
-    //printHeader("ARRANGER");
+    // printHeader("ARRANGER");
     val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     printHeader("DMS UI");
     // we pass maestro's config to read the alias name to be used
     // in case the user changed the default.
-    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig);
+    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig, egoConfig);
 
     return DmsConfig.builder()
         .gateway(gatewayConfig)
         .clusterRunMode(clusterRunMode)
-        .healthCheck(HealthCheckConfig.builder()
-            .build())
+        .healthCheck(HealthCheckConfig.builder().build())
         .version(buildProperties.getVersion())
         .network(composeProperties.getNetwork())
         .ego(egoConfig)
@@ -156,6 +150,13 @@ public class DmsQuestionnaire {
     return new URL("http://localhost:" + port);
   }
 
+  public static <T>  T resolveDefault(T existingValue, T defaultVal) {
+    if (existingValue == null) {
+      return defaultVal;
+    }
+    return existingValue;
+  }
+
   private void printHeader(@NonNull String title) {
     val line = "===============";
     terminal.println();
@@ -168,11 +169,12 @@ public class DmsQuestionnaire {
   }
 
   @SneakyThrows
-  static ServiceUrlInfo resolveServiceConnectionInfo(ClusterRunModes clusterRunMode,
-                                                                GatewayConfig gatewayConfig,
-                                                                QuestionFactory questionFactory,
-                                                                String serviceName,
-                                                                int defaultApiPort) {
+  static ServiceUrlInfo resolveServiceConnectionInfo(
+      ClusterRunModes clusterRunMode,
+      GatewayConfig gatewayConfig,
+      QuestionFactory questionFactory,
+      String serviceName,
+      int defaultApiPort) {
     URL serverUrl;
     int apiPort = defaultApiPort;
     if (gatewayConfig.isPathBased()) {
@@ -184,7 +186,10 @@ public class DmsQuestionnaire {
         apiPort =
             questionFactory
                 .newDefaultSingleQuestion(
-                    Integer.class, "What port would you like to expose " + serviceName + " on?", true, defaultApiPort)
+                    Integer.class,
+                    "What port would you like to expose " + serviceName + " on?",
+                    true,
+                    defaultApiPort)
                 .getAnswer();
         serverUrl = createLocalhostUrl(apiPort);
       }

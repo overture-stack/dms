@@ -1,8 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
-import static bio.overture.dms.compose.model.ComposeServiceResources.SCORE_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 
@@ -14,7 +12,6 @@ import bio.overture.dms.core.model.dmsconfig.SongConfig.SongApiConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig.SongDbConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
-import java.net.URL;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -40,7 +37,8 @@ public class SongQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public SongConfig buildSongConfig(ClusterRunModes clusterRunModes, @NonNull GatewayConfig gatewayConfig) {
+  public SongConfig buildSongConfig(
+      ClusterRunModes clusterRunModes, @NonNull GatewayConfig gatewayConfig) {
     val apiConfig = processSongApiConfig(clusterRunModes, gatewayConfig);
     val dbConfig = processSongDbConfig();
     return SongConfig.builder().api(apiConfig).db(dbConfig).build();
@@ -55,12 +53,12 @@ public class SongQuestionnaire {
   }
 
   @SneakyThrows
-  private SongApiConfig processSongApiConfig(ClusterRunModes clusterRunModes, GatewayConfig gatewayConfig) {
+  private SongApiConfig processSongApiConfig(
+      ClusterRunModes clusterRunModes, GatewayConfig gatewayConfig) {
     val apiBuilder = SongApiConfig.builder();
-    val info = resolveServiceConnectionInfo(clusterRunModes,
-        gatewayConfig,
-        questionFactory,
-        SONG_API.toString(), 9010);
+    val info =
+        resolveServiceConnectionInfo(
+            clusterRunModes, gatewayConfig, questionFactory, SONG_API.toString(), 9010);
     apiBuilder.url(info.serverUrl);
     apiBuilder.hostPort(info.port);
 
@@ -70,18 +68,9 @@ public class SongQuestionnaire {
 
   private SongDbConfig processSongDbConfig() {
     val dbBuilder = SongDbConfig.builder();
-
-    val isSetDBPassword =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Boolean.class, "Would you like to set the database password for SONG?", false, null)
-            .getAnswer();
-
-    if (isSetDBPassword) {
-      val dbPassword =
+    val dbPassword =
           questionFactory.newPasswordQuestion("What should the SONG db password be?").getAnswer();
-      dbBuilder.databasePassword(dbPassword);
-    }
+    dbBuilder.databasePassword(dbPassword);
 
     return dbBuilder.build();
   }

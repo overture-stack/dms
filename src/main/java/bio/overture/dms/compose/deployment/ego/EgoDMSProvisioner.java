@@ -1,13 +1,13 @@
 package bio.overture.dms.compose.deployment.ego;
 
+import static bio.overture.dms.ego.model.PermissionMasks.WRITE;
+
 import bio.overture.dms.compose.deployment.SimpleProvisionService;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.ego.client.EgoService;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
-import static bio.overture.dms.ego.model.PermissionMasks.WRITE;
 
 /** Provisions necessary DMS groups, application and permissions in EGO in an idempotent manner */
 @Builder
