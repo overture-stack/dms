@@ -7,7 +7,6 @@ import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_DB;
 import bio.overture.dms.compose.deployment.ServiceDeployer;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

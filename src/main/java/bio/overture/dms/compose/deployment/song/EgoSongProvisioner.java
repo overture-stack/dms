@@ -1,7 +1,5 @@
 package bio.overture.dms.compose.deployment.song;
 
-import static bio.overture.dms.ego.model.PermissionMasks.WRITE;
-
 import bio.overture.dms.compose.deployment.SimpleProvisionService;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.ego.client.EgoService;
@@ -22,7 +20,5 @@ public class EgoSongProvisioner implements Runnable {
   @NonNull private final EgoService egoService;
 
   @Override
-  public void run() {
-  }
-
+  public void run() {}
 }

@@ -1,11 +1,8 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -13,7 +10,6 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
-import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoDbConfig;
@@ -25,7 +21,6 @@ import bio.overture.dms.core.model.dmsconfig.EgoConfig.SSOConfig;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
-
 import java.net.URL;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -67,7 +62,9 @@ public class EgoQuestionnaire {
   @SneakyThrows
   private EgoUiConfig processEgoUiConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val egoUiConfig = new EgoUiConfig();
-    val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, EGO_UI.toString(), 9002);
+    val info =
+        resolveServiceConnectionInfo(
+            runModes, gatewayConfig, questionFactory, EGO_UI.toString(), 9002);
     egoUiConfig.setHostPort(info.port);
     egoUiConfig.setUrl(info.serverUrl);
     egoUiConfig.setUiAppCredential(processUiAppCreds(info.serverUrl));
@@ -75,7 +72,8 @@ public class EgoQuestionnaire {
   }
 
   @SneakyThrows
-  private EgoApiConfig processEgoApiConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+  private EgoApiConfig processEgoApiConfig(
+      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
         questionFactory
@@ -109,7 +107,9 @@ public class EgoQuestionnaire {
             .getAnswer();
     apiBuilder.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
 
-    val info = resolveServiceConnectionInfo(clusterRunMode, gatewayConfig, questionFactory, EGO_API.toString(), 9000);
+    val info =
+        resolveServiceConnectionInfo(
+            clusterRunMode, gatewayConfig, questionFactory, EGO_API.toString(), 9000);
     apiBuilder.hostPort(info.port);
     apiBuilder.url(info.serverUrl);
 
@@ -141,18 +141,9 @@ public class EgoQuestionnaire {
 
   private EgoDbConfig processEgoDbConfig() {
     val dbBuilder = EgoDbConfig.builder();
-
-    val isSetDBPassword =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Boolean.class, "Would you like to set the database password for EGO?", false, null)
-            .getAnswer();
-
-    if (isSetDBPassword) {
-      val dbPassword =
-          questionFactory.newPasswordQuestion("What should the EGO db password be?").getAnswer();
+    val dbPassword =
+          questionFactory.newPasswordQuestion("What should the EGO db password be ?").getAnswer();
       dbBuilder.databasePassword(dbPassword);
-    }
 
     return dbBuilder.build();
   }
@@ -274,7 +265,6 @@ public class EgoQuestionnaire {
     GOOGLE(SSOConfig::setGoogle),
     LINKEDIN(SSOConfig::setLinkedin),
     GITHUB(SSOConfig::setGithub),
-    FACEBOOK(SSOConfig::setFacebook),
     ORCID(SSOConfig::setOrcid);
 
     private final BiConsumer<SSOConfig, SSOClientConfig> setter;

@@ -1,6 +1,5 @@
 package bio.overture.dms.cli.questionnaire;
 
-import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.createLocalhostUrl;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -12,8 +11,8 @@ import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
-import bio.overture.dms.core.util.Nullable;
 import bio.overture.dms.core.util.RandomGenerator;
+
 import java.net.URL;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -57,13 +56,13 @@ public class ScoreQuestionnaire {
   }
 
   @SneakyThrows
-  private ScoreApiConfig processScoreApiConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+  private ScoreApiConfig processScoreApiConfig(
+      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = ScoreApiConfig.builder();
 
-    val info = resolveServiceConnectionInfo(clusterRunMode,
-        gatewayConfig,
-        questionFactory,
-        SCORE_API.toString(), 9020);
+    val info =
+        resolveServiceConnectionInfo(
+            clusterRunMode, gatewayConfig, questionFactory, SCORE_API.toString(), 9020);
 
     apiBuilder.hostPort(info.port);
     apiBuilder.url(info.serverUrl);
@@ -92,7 +91,8 @@ public class ScoreQuestionnaire {
   }
 
   @SneakyThrows
-  private ScoreS3Config processScoreS3Config(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+  private ScoreS3Config processScoreS3Config(
+      ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val s3Builder = ScoreS3Config.builder();
     val useExternalS3 =
         questionFactory
@@ -123,10 +123,15 @@ public class ScoreQuestionnaire {
         s3Builder.s3Region(awsS3Region);
         s3Builder.url(awsS3Url);
       } else {
-        val externalS3Url =
+        URL externalS3Url =
             questionFactory
                 .newUrlSingleQuestion("What is the URL of the S3 service?", false, null)
                 .getAnswer();
+
+        // remove the trailing slash from the url because it breaks score
+        if (externalS3Url.toString().endsWith("/")) {
+          externalS3Url = new URL(externalS3Url.toString().substring(0, externalS3Url.toString().length() - 1));
+        }
         s3Builder.url(externalS3Url);
       }
 
@@ -173,11 +178,12 @@ public class ScoreQuestionnaire {
       s3Builder.accessKey(minioAccessKey);
       s3Builder.secretKey(minioSecretKey);
 
-      val info = resolveServiceConnectionInfo(runModes, gatewayConfig, questionFactory, MINIO_API.toString(), 9021);
+      val info =
+          resolveServiceConnectionInfo(
+              runModes, gatewayConfig, questionFactory, MINIO_API.toString(), 9021);
       s3Builder.hostPort(info.port);
       s3Builder.url(info.serverUrl);
     }
     return s3Builder.build();
   }
-
 }

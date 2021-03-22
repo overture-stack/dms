@@ -3,10 +3,10 @@ package bio.overture.dms.core.model.dmsconfig;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.net.URL;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import lombok.*;
-
-import java.net.URL;
 
 @Data
 @Builder
@@ -20,6 +20,20 @@ public class DmsUIConfig {
   private int hostPort = 8000;
 
   @NonNull URL url;
+
+  @NonNull
+  @Email
+  private String adminEmail;
+
+  private String ssoProviders;
+
+  @NonNull
+  @Builder.Default
+  private String labName = "Data Management System";
+
+  private String logoFileName;
+
+  private String assetsDir;
 
   private ArrangerProjectConfig projectConfig;
 

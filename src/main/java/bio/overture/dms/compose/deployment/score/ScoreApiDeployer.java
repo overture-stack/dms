@@ -1,13 +1,7 @@
 package bio.overture.dms.compose.deployment.score;
 
-import static bio.overture.dms.compose.deployment.SimpleProvisionService.createSimpleProvisionService;
 import static bio.overture.dms.compose.deployment.score.s3.S3ServiceFactory.buildS3Service;
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
-import static bio.overture.dms.compose.model.Constants.DMS_ADMIN_GROUP_NAME;
-import static bio.overture.dms.compose.model.Constants.SCORE_POLICY_NAME;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.LOCAL;
-import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
-import static java.lang.String.format;
 import static software.amazon.awssdk.regions.Region.US_EAST_1;
 
 import bio.overture.dms.compose.deployment.ServiceDeployer;
@@ -15,9 +9,7 @@ import bio.overture.dms.compose.deployment.ego.EgoHelper;
 import bio.overture.dms.compose.model.S3ObjectUploadRequest;
 import bio.overture.dms.core.Messenger;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
-import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig;
-import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.swarm.properties.DockerProperties;

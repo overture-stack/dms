@@ -5,11 +5,11 @@
 Name: ego-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego-ui:eabe9b0"
+    Image: "overture/ego-ui:4.1.0"
     Env:
       - REACT_APP_API=$dmsConfig.ego.api.url
       - PUBLIC_URL=$dmsConfig.ego.ui.url
-      - REACT_APP_PUBLIC_URL=/ego-ui
+      - REACT_APP_PUBLIC_PATH=/ego-ui
       - REACT_APP_EGO_CLIENT_ID=${composeServiceResources.EGO_UI.toString()}
     Mounts: null
     Duration: null
@@ -20,7 +20,11 @@ TaskTemplate:
     Hosts: null
     Hostname: null
     Secrets: null
-    HealthCheck: null
+    HealthCheck:
+      Test: ["CMD", "wget", "-O-", "http://localhost:8080/"]
+      Interval: 20000000000
+      Timeout: 10000000000
+      Retries: 5
     StopSignal: "SIGINT"
     Privileges: null
     Configs: null

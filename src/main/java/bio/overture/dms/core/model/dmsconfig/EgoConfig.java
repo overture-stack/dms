@@ -3,18 +3,19 @@ package bio.overture.dms.core.model.dmsconfig;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import bio.overture.dms.cli.questionnaire.EgoQuestionnaire;
 import bio.overture.dms.core.util.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Data
 @Builder
@@ -108,6 +109,16 @@ public class EgoConfig {
     @Nullable private SSOClientConfig facebook;
 
     @Nullable private SSOClientConfig orcid;
+
+    @JsonIgnore
+    public List<EgoQuestionnaire.SSOProviders> getConfiguredProviders() {
+      val array = new ArrayList<EgoQuestionnaire.SSOProviders>();
+      if (google != null) array.add(EgoQuestionnaire.SSOProviders.GOOGLE);
+      if (github != null) array.add(EgoQuestionnaire.SSOProviders.GITHUB);
+      if (linkedin != null) array.add(EgoQuestionnaire.SSOProviders.LINKEDIN);
+      if (orcid != null) array.add(EgoQuestionnaire.SSOProviders.ORCID);
+      return array;
+    }
   }
 
   @Data

@@ -30,3 +30,10 @@ docker:
   run-as: false
   # If blank, will use the system default docker daemon. Useful for using a remote docker daemon.
   host: ""
+
+  # this is needed to enable host mounts to be able to mount things
+  # like the custom logo for example in dms ui.
+  # since running in docker will hide the original host path we need to know
+  # it somehow, this is provided in dms-docker script as an env var.
+  # when running without docker, we get the home path from the system properties.
+  dmsHomeHostPath: /home/ubuntu/.dms

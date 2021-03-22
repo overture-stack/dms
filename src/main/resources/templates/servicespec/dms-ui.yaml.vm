@@ -5,7 +5,7 @@
 Name: dms-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/dms-ui:0.7.0"
+    Image: "overture/dms-ui:0.8.0"
     Env:
       - NEXT_PUBLIC_EGO_API_ROOT=$dmsConfig.ego.api.url
       - NEXT_PUBLIC_EGO_CLIENT_ID=dms
@@ -14,7 +14,17 @@ TaskTemplate:
       - NEXT_PUBLIC_ARRANGER_GRAPHQL_FIELD=$dmsConfig.dmsUI.projectConfig.name
       - NEXT_PUBLIC_ARRANGER_INDEX=$dmsConfig.dmsUI.projectConfig.indexAlias
       - NEXT_PUBLIC_ARRANGER_API_URL=$dmsConfig.arranger.api.url
-    Mounts: null
+      - NEXT_PUBLIC_ADMIN_EMAIL=$dmsConfig.dmsUI.adminEmail
+      - NEXT_PUBLIC_LAB_NAME=$dmsConfig.dmsUI.labName
+      - NEXT_PUBLIC_SSO_PROVIDERS=$dmsConfig.dmsUI.ssoProviders
+#if($dmsConfig.dmsUI.logoFileName)
+      - NEXT_PUBLIC_LOGO_FILENAME=$dmsConfig.dmsUI.logoFileName
+    Mounts:
+      - Type: bind
+        Source: $dmsConfig.dmsUI.assetsDir
+        Target: /usr/src/public/static/dms_user_assets
+        ReadOnly: true
+#end
     Duration: null
     StopGracePeriod: 120000000000
     DNSConfig: null
