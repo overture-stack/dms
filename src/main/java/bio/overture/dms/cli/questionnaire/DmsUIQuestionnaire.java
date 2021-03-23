@@ -71,7 +71,7 @@ public class DmsUIQuestionnaire {
       val dmsAssetsPath = dmsDir.resolve("assets").toAbsolutePath().toString();
       val exts = List.of("png", "svg", "jpg");
       val result = exts.stream().filter((ext) ->
-        new File(Paths.get(dmsAssetsPath, "dms_logo.png").toString()).exists()
+        new File(Paths.get(dmsAssetsPath, "dms_logo." + ext).toString()).exists()
       ).findFirst();
       if (result.isPresent()) {
         logoFileName = "dms_logo." + result.get();
