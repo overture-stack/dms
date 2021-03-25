@@ -1,5 +1,8 @@
 package bio.overture.dms.cli.command.config;
 
+import static bio.overture.dms.cli.model.Constants.MESSAGES.CONFIGURATION_SAVED_MSG;
+import static bio.overture.dms.cli.model.Constants.MESSAGES.PRE_REQ_NOTE;
+
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.questionnaire.DmsQuestionnaire;
 import bio.overture.dms.cli.terminal.Terminal;
@@ -10,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 @Component
 @Slf4j
@@ -36,24 +38,13 @@ public class ConfigBuildCommand implements Callable<Integer> {
     this.dmsQuestionnaire = dmsQuestionnaire;
   }
 
-  @Option(
-      names = {"--skip-answered"},
-      required = false,
-      description = "Skip previously answered questions, and jump to the first unanswered question")
-  private boolean skipAnswered = false;
-
-  @Option(
-      names = {"--skip-system-check"},
-      required = false,
-      description = "Skip the system check")
-  private boolean skipSystemCheck = false;
-
   @Override
   public Integer call() throws Exception {
-    t.printStatusLn("Starting interactive configuration");
+    t.print(PRE_REQ_NOTE);
+    t.printStatusLn("Starting interactive configuration...");
     // TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
     dmsConfigStore.apply(dmsQuestionnaire::buildDmsConfig);
-    t.printStatusLn("Wrote config file to %s", dmsConfigStore.getDmsConfigFilePath());
+    t.printStatusLn(CONFIGURATION_SAVED_MSG, dmsConfigStore.getDmsConfigFilePath());
     return 0;
   }
 }

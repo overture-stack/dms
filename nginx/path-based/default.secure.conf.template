@@ -58,6 +58,11 @@ server {
     # this is for the minio ui browser
     # won't work if you change it to something else it's reserved
     # by minio to be /minio
+
+    location / {
+        return 301 https://$server_name/dms-ui/explorer;
+    }
+
     location /minio {
         # break is important for score upload
         proxy_set_header Host minio-api:9000;

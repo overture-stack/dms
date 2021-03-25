@@ -21,15 +21,11 @@ public class DmsUIConfig {
 
   @NonNull URL url;
 
-  @NonNull
-  @Email
-  private String adminEmail;
+  @NonNull @Email private String adminEmail;
 
   private String ssoProviders;
 
-  @NonNull
-  @Builder.Default
-  private String labName = "Data Management System";
+  @NonNull @Builder.Default private String labName = "Data Management System";
 
   private String logoFileName;
 

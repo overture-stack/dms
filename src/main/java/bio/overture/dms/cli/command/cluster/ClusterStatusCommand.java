@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
     name = "status",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Display the cluster status")
+    description = "Display the cluster status.")
 public class ClusterStatusCommand implements Callable<Integer> {
 
   @Override

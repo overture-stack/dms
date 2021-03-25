@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
     name = "restart",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Restart a cluster")
+    description = "Restart a cluster.")
 public class ClusterRestartCommand implements Callable<Integer> {
 
   @Override

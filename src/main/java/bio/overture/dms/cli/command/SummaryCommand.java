@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
     name = "summary",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Display a summary of the cluster and configuration")
+    description = "Display a summary of the cluster and configuration.")
 public class SummaryCommand implements Callable<Integer> {
 
   @Override

@@ -1,5 +1,7 @@
 package bio.overture.dms.cli.command.cluster;
 
+import static bio.overture.dms.cli.model.Constants.MESSAGES.POST_DEPLOYMENT_MSG;
+
 import bio.overture.dms.cli.DmsConfigStore;
 import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.cli.util.VersionProvider;
@@ -16,7 +18,7 @@ import picocli.CommandLine.Command;
     name = "start",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Deploy a configuration to the cluster")
+    description = "Deploy a configuration to the cluster.")
 public class ClusterStartCommand implements Callable<Integer> {
 
   private final Terminal t;
@@ -40,6 +42,7 @@ public class ClusterStartCommand implements Callable<Integer> {
       t.printStatusLn("Starting deployment...");
       dmsComposeManager.deploy(result.get());
       t.printStatusLn("Deployment completed successfully");
+      t.printStatusLn(POST_DEPLOYMENT_MSG);
       return 0;
     }
 

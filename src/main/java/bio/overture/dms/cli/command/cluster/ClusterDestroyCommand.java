@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.command.cluster;
 
+import static bio.overture.dms.cli.model.Constants.CommandsQuestions.CONFIRM_DESTROY;
 import static bio.overture.dms.cli.model.enums.QuestionProfiles.WARNING;
 import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
@@ -24,8 +25,9 @@ import picocli.CommandLine.Command;
     name = "destroy",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Destroy the cluster and ALL the data")
+    description = "Destroy the cluster and ALL the data.")
 public class ClusterDestroyCommand implements Callable<Integer> {
+
 
   /** Dependencies */
   private final Terminal t;
@@ -58,8 +60,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
   public Integer call() throws Exception {
     val result = dmsConfigStore.findStoredConfig();
     if (result.isPresent()) {
-      t.printStatusLn(
-          "Starting cluster destruction: force=%s", force);
+      t.printStatusLn("Starting cluster destruction: force=%s", force);
       val isConfirmed = confirmVolumesDeletion();
       if (!isConfirmed) {
         t.printStatusLn("Cluster destruction canceled.");
@@ -83,7 +84,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
               .newSingleQuestion(
                   WARNING,
                   Boolean.class,
-                  "Are you sure you want to destroy the volumes for all services? This is IRREVERSIBLE ",
+                  CONFIRM_DESTROY,
                   true,
                   false)
               .getAnswer();

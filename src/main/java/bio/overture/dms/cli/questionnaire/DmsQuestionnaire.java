@@ -1,5 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.model.Constants.GATEWAY.*;
+import static bio.overture.dms.cli.model.Constants.GuidesURLS.*;
 import static bio.overture.dms.core.model.enums.ClusterRunModes.SERVER;
 
 import bio.overture.dms.cli.question.QuestionFactory;
@@ -62,12 +64,12 @@ public class DmsQuestionnaire {
 
   @SneakyThrows
   public DmsConfig buildDmsConfig(DmsConfig oldConfig) {
+    printHeader("CLUSTER MODE & GATEWAY");
+    terminal.println(DEPLOYMENT_MODE);
     val clusterRunMode =
         questionFactory
             .newOneHotQuestion(
-                ClusterRunModes.class, "Select the cluster mode to configure: ",
-        false,
-                null)
+                ClusterRunModes.class, CLUSTER_MODE_TO_CONFIGURE_AND_DEPLOY, false, null)
             .getAnswer();
 
     GatewayConfig gatewayConfig;
@@ -76,12 +78,7 @@ public class DmsQuestionnaire {
     String sslPath = "/etc/ssl/dms";
     if (clusterRunMode == SERVER) {
       dmsGatewayUrl =
-          questionFactory
-              .newUrlSingleQuestion(
-                  "What is the base DMS Gateway URL (example: https://dms.cancercollaboratory.org)?",
-                  false,
-                  null)
-              .getAnswer();
+          questionFactory.newUrlSingleQuestion(GATEWAY_BASE_URL, false, null).getAnswer();
 
       if (dmsGatewayUrl.getPort() <= 0) {
         dmsGatewayUrl =
@@ -90,19 +87,14 @@ public class DmsQuestionnaire {
 
       sslPath =
           questionFactory
-              .newDefaultSingleQuestion(
-                  String.class,
-                  "What is the absolute path for the SSL certificate ?",
-                  true,
-                  "/etc/letsencrypt/")
+              .newDefaultSingleQuestion(String.class, SSL_CERT_BASE_PATH, true, "/etc/letsencrypt/")
               .getAnswer();
 
       gatewayPort = 443;
     } else {
       gatewayPort =
           questionFactory
-              .newDefaultSingleQuestion(
-                  Integer.class, "What port will the gateway be exposed on?", true, 80)
+              .newDefaultSingleQuestion(Integer.class, GATEWAY_PORT, true, 80)
               .getAnswer();
 
       dmsGatewayUrl = new URI("http", null, "localhost", gatewayPort, null, null, null).toURL();
@@ -112,22 +104,27 @@ public class DmsQuestionnaire {
         GatewayConfig.builder().hostPort(gatewayPort).url(dmsGatewayUrl).sslDir(sslPath).build();
 
     printHeader("EGO");
+    terminal.println(GUIDE_EGO);
     val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode, gatewayConfig);
     printHeader("SONG");
+    terminal.println(GUIDE_SONG);
     val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode, gatewayConfig);
     printHeader("SCORE");
+    terminal.println(GUIDE_SCORE);
     val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode, gatewayConfig);
     printHeader("ELASTICSEARCH");
+    terminal.println(GUIDE_ES);
     val elasticConfig = elasticsearchQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     printHeader("MAESTRO");
+    terminal.println(GUIDE_MAESTRO);
     val maestroConfig = maestroQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    // there are no questions for arranger
-    // printHeader("ARRANGER");
     val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
     printHeader("DMS UI");
     // we pass maestro's config to read the alias name to be used
     // in case the user changed the default.
-    val dmsUIConfig = dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig, egoConfig);
+    terminal.println(GUIDE_DMSUI);
+    val dmsUIConfig =
+        dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig, egoConfig);
 
     return DmsConfig.builder()
         .gateway(gatewayConfig)
@@ -150,7 +147,7 @@ public class DmsQuestionnaire {
     return new URL("http://localhost:" + port);
   }
 
-  public static <T>  T resolveDefault(T existingValue, T defaultVal) {
+  public static <T> T resolveDefault(T existingValue, T defaultVal) {
     if (existingValue == null) {
       return defaultVal;
     }

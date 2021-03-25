@@ -17,7 +17,7 @@ import picocli.CommandLine.Option;
     name = "bash-completion",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Dump the bash-completion script")
+    description = "Dump the bash-completion script.")
 public class BashCompletionCommand implements Callable<Integer> {
 
   /** Dependencies */
