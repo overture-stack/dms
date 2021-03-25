@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.model.Constants.MaestroQuestions.ES_PASSWORD;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.ELASTICSEARCH;
 
@@ -32,18 +33,12 @@ public class ElasticsearchQuestionnaire {
             ELASTICSEARCH.toString(),
             ElasticsearchConfig.DEFAULT_PORT);
 
-    password =
-        questionFactory
-            .newPasswordQuestion("What should the superuser (elastic) password be?")
-            .getAnswer();
+    password = questionFactory.newPasswordQuestion(ES_PASSWORD).getAnswer();
 
     return ElasticsearchConfig.builder()
         .hostPort(info.port)
         .url(info.serverUrl)
-        .security(
-            ElasticsearchConfig.Security.builder()
-                .rootPassword(password)
-                .build())
+        .security(ElasticsearchConfig.Security.builder().rootPassword(password).build())
         .build();
   }
 }

@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.model.Constants.ScoreQuestions.*;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -12,7 +13,6 @@ import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreApiConfig;
 import bio.overture.dms.core.model.dmsconfig.ScoreConfig.ScoreS3Config;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
-
 import java.net.URL;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -31,7 +31,6 @@ public class ScoreQuestionnaire {
   private static final RandomGenerator RANDOM_GENERATOR =
       createRandomGenerator(ScoreQuestionnaire.class.getSimpleName());
   private static final String DEFAULT_SCORE_APP_CLIENT_ID = SCORE_API.toString();
-  private static final String DEFAULT_SCORE_APP_NAME = SCORE_API.toString();
 
   /** Dependencies */
   private final QuestionFactory questionFactory;
@@ -69,21 +68,13 @@ public class ScoreQuestionnaire {
 
     val objectBucket =
         questionFactory
-            .newDefaultSingleQuestion(
-                String.class,
-                "What is the name of the OBJECT bucket used for SCORE?",
-                true,
-                "dms.object")
+            .newDefaultSingleQuestion(String.class, OBJECT_BUCKET_NAME, true, "dms.object")
             .getAnswer();
     apiBuilder.objectBucket(objectBucket);
 
     val stateBucket =
         questionFactory
-            .newDefaultSingleQuestion(
-                String.class,
-                "What is the name of the STATE bucket used for SCORE?",
-                true,
-                "dms.state")
+            .newDefaultSingleQuestion(String.class, STATE_BUCKET_NAME, true, "dms.state")
             .getAnswer();
     apiBuilder.stateBucket(stateBucket);
     apiBuilder.appCredential(processScoreAppCreds());
@@ -96,11 +87,7 @@ public class ScoreQuestionnaire {
     val s3Builder = ScoreS3Config.builder();
     val useExternalS3 =
         questionFactory
-            .newDefaultSingleQuestion(
-                Boolean.class,
-                "Do you have an existing S3 service you would like to use with the SCORE service?",
-                false,
-                null)
+            .newDefaultSingleQuestion(Boolean.class, EXISTING_S3_YN, false, null)
             .getAnswer();
 
     val useMinio = !useExternalS3;
@@ -109,13 +96,13 @@ public class ScoreQuestionnaire {
     if (useExternalS3) {
       val useAwsS3 =
           questionFactory
-              .newDefaultSingleQuestion(Boolean.class, "Will you be using AWS S3?", false, null)
+              .newDefaultSingleQuestion(Boolean.class, USING_AWS_S3, false, null)
               .getAnswer();
 
       if (useAwsS3) {
         val awsS3Region =
             questionFactory
-                .newDefaultSingleQuestion(String.class, "What is the s3 region?", false, null)
+                .newDefaultSingleQuestion(String.class, AWS_S3_REGION, false, null)
                 .getAnswer();
 
         // https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
@@ -124,38 +111,32 @@ public class ScoreQuestionnaire {
         s3Builder.url(awsS3Url);
       } else {
         URL externalS3Url =
-            questionFactory
-                .newUrlSingleQuestion("What is the URL of the S3 service?", false, null)
-                .getAnswer();
+            questionFactory.newUrlSingleQuestion(EXT_S3_URL, false, null).getAnswer();
 
         // remove the trailing slash from the url because it breaks score
         if (externalS3Url.toString().endsWith("/")) {
-          externalS3Url = new URL(externalS3Url.toString().substring(0, externalS3Url.toString().length() - 1));
+          externalS3Url =
+              new URL(externalS3Url.toString().substring(0, externalS3Url.toString().length() - 1));
         }
         s3Builder.url(externalS3Url);
       }
 
       val s3AccessKey =
           questionFactory
-              .newDefaultSingleQuestion(String.class, "What is the S3 accessKey?", false, null)
+              .newDefaultSingleQuestion(String.class, S3_ACCESS_KEY, false, null)
               .getAnswer();
       s3Builder.accessKey(s3AccessKey);
 
       val s3SecretKey =
           questionFactory
-              .newDefaultSingleQuestion(String.class, "What is the S3 secretKey?", false, null)
+              .newDefaultSingleQuestion(String.class, S3_SECRET_KEY, false, null)
               .getAnswer();
       s3Builder.secretKey(s3SecretKey);
     } else {
       // Use minio
       val generateMinioCreds =
           questionFactory
-              .newDefaultSingleQuestion(
-                  Boolean.class,
-                  "MinIO will be used as the SCORE S3 Backend. Would you like to credentials to be generated? "
-                      + "If no, you will have to input them in the subsequent questions.",
-                  false,
-                  null)
+              .newDefaultSingleQuestion(Boolean.class, MINIO_CREATE_CREDS, false, null)
               .getAnswer();
 
       String minioAccessKey;
@@ -166,13 +147,11 @@ public class ScoreQuestionnaire {
       } else {
         minioAccessKey =
             questionFactory
-                .newDefaultSingleQuestion(
-                    String.class, "What should the MinIO accessKey be?", false, null)
+                .newDefaultSingleQuestion(String.class, MINIO_ACCESS_KEY, false, null)
                 .getAnswer();
         minioSecretKey =
             questionFactory
-                .newDefaultSingleQuestion(
-                    String.class, "What should the MinIO secretKey be?", false, null)
+                .newDefaultSingleQuestion(String.class, MINIO_SECRET_KEY, false, null)
                 .getAnswer();
       }
       s3Builder.accessKey(minioAccessKey);

@@ -93,14 +93,11 @@ public class QuestionFactory {
 
   public SingleQuestion<String> newEmailQuestion(
       @NonNull String question, boolean optional, String defaultVal) {
-    return newDefaultSingleQuestion(
-        String.class, question, optional, defaultVal, EMAIL_VALIDATOR);
+    return newDefaultSingleQuestion(String.class, question, optional, defaultVal, EMAIL_VALIDATOR);
   }
 
-  public SingleQuestion<String> newFileQuestion(
-      @NonNull String question, boolean optional) {
-    return newDefaultSingleQuestion(
-        String.class, question, optional, null, FILE_VALIDATOR);
+  public SingleQuestion<String> newFileQuestion(@NonNull String question, boolean optional) {
+    return newDefaultSingleQuestion(String.class, question, optional, null, FILE_VALIDATOR);
   }
 
   public SingleQuestion<String> newPasswordQuestion(@NonNull String question) {

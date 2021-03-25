@@ -3,6 +3,7 @@ package bio.overture.dms.cli.questionnaire;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.MAESTRO;
 
+import bio.overture.dms.cli.model.Constants;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.MaestroConfig;
@@ -36,7 +37,7 @@ public class MaestroQuestionnaire {
         questionFactory
             .newDefaultSingleQuestion(
                 String.class,
-                "What should the file centric alias be (must be different from index name)?",
+                Constants.MaestroQuestions.ALIAS,
                 true,
                 MaestroConfig.FILE_CENTRIC_ALIAS_NAME)
             .getAnswer();
@@ -45,7 +46,7 @@ public class MaestroQuestionnaire {
         questionFactory
             .newDefaultSingleQuestion(
                 String.class,
-                "What should the file centric index name be (must be different from alias)?",
+                Constants.MaestroQuestions.INDEX,
                 true,
                 MaestroConfig.FILE_CENTRIC_INDEX_NAME)
             .getAnswer();
@@ -55,7 +56,7 @@ public class MaestroQuestionnaire {
           questionFactory
               .newDefaultSingleQuestion(
                   String.class,
-                  "What should the file centric index be (must be different than alias name) ?",
+                  Constants.MaestroQuestions.INDEX,
                   true,
                   MaestroConfig.FILE_CENTRIC_INDEX_NAME)
               .getAnswer();

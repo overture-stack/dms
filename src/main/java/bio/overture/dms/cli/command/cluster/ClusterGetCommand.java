@@ -12,7 +12,7 @@ import picocli.CommandLine.Option;
     name = "get",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    description = "Get currently deployed configuration")
+    description = "Get currently deployed configuration.")
 public class ClusterGetCommand implements Callable<Integer> {
 
   @Option(

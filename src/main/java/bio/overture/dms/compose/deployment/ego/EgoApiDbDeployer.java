@@ -19,6 +19,7 @@ public class EgoApiDbDeployer {
 
   /** Constants */
   private static final String DMS_ADMIN_GROUP_NAME = "dms-admin";
+
   private static final String DMS_POLICY_NAME = "DMS";
   private static final String SONG_POLICY_NAME = "SONG";
   public static final String SCORE_POLICY_NAME = "SCORE";

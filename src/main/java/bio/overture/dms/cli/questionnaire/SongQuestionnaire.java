@@ -4,6 +4,7 @@ import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveService
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 
+import bio.overture.dms.cli.model.Constants;
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
@@ -69,7 +70,7 @@ public class SongQuestionnaire {
   private SongDbConfig processSongDbConfig() {
     val dbBuilder = SongDbConfig.builder();
     val dbPassword =
-          questionFactory.newPasswordQuestion("What should the SONG db password be?").getAnswer();
+        questionFactory.newPasswordQuestion(Constants.SongQuestions.PASSWORD).getAnswer();
     dbBuilder.databasePassword(dbPassword);
 
     return dbBuilder.build();

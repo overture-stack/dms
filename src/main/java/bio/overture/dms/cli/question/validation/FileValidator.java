@@ -1,9 +1,8 @@
 package bio.overture.dms.cli.question.validation;
 
-import lombok.val;
-
 import java.io.File;
 import java.util.List;
+import lombok.val;
 
 public class FileValidator implements QuestionValidator<String> {
 
