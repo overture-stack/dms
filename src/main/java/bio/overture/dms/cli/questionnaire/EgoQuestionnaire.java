@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.model.Constants.EgoQuestions.*;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
@@ -76,22 +77,17 @@ public class EgoQuestionnaire {
       ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
     val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many days should api keys be valid for?", true, 30)
-            .getAnswer();
+        questionFactory.newDefaultSingleQuestion(Integer.class, API_KEY_DAYS, true, 30).getAnswer();
     apiBuilder.tokenDurationDays(apiKeyDurationDays);
 
     val jwtUserDurationHours =
         questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many hours should USER JWTs be valid for?", true, 3)
+            .newDefaultSingleQuestion(Integer.class, JWT_HOURS_DURATION, true, 3)
             .getAnswer();
 
     val jwtAppDurationHours =
         questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class, "How many hours should APP JWTs be valid for?", true, 3)
+            .newDefaultSingleQuestion(Integer.class, APP_JWT_DURATION_HOURS, true, 3)
             .getAnswer();
 
     apiBuilder.jwt(
@@ -103,7 +99,7 @@ public class EgoQuestionnaire {
     val refreshTokenDurationHours =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, "How many hours should refresh tokens be valid for?", true, 12)
+                Integer.class, HOW_MANY_HOURS_SHOULD_REFRESH_TOKENS_BE_VALID_FOR, true, 12)
             .getAnswer();
     apiBuilder.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
 
@@ -121,8 +117,7 @@ public class EgoQuestionnaire {
     while (!answered) {
       ssoProviderSelection =
           questionFactory
-              .newMCQuestion(
-                  SSOProviders.class, "What SSO providers would you like to enable?", false, null)
+              .newMCQuestion(SSOProviders.class, IDENTITY_PROVIDERS, false, null)
               .getAnswer();
       if (ssoProviderSelection != null && ssoProviderSelection.size() > 0) {
         answered = true;
@@ -141,9 +136,8 @@ public class EgoQuestionnaire {
 
   private EgoDbConfig processEgoDbConfig() {
     val dbBuilder = EgoDbConfig.builder();
-    val dbPassword =
-          questionFactory.newPasswordQuestion("What should the EGO db password be ?").getAnswer();
-      dbBuilder.databasePassword(dbPassword);
+    val dbPassword = questionFactory.newPasswordQuestion(PASSWORD).getAnswer();
+    dbBuilder.databasePassword(dbPassword);
 
     return dbBuilder.build();
   }
@@ -154,14 +148,17 @@ public class EgoQuestionnaire {
     val clientId =
         questionFactory
             .newDefaultSingleQuestion(
-                String.class, format("What is the %s client id?", providerType), false, null)
+                String.class,
+                format(WHAT_IS_THE_S_CLIENT_ID, providerType.toUpperCase()),
+                false,
+                null)
             .getAnswer();
     clientConfigBuilder.clientId(clientId);
 
     val clientSecret =
         questionFactory
             .newDefaultSingleQuestion(
-                String.class, format("What is the %s client secret?", providerType), false, null)
+                String.class, format(WHAT_IS_THE_S_CLIENT_SECRET, providerType), false, null)
             .getAnswer();
     clientConfigBuilder.clientSecret(clientSecret);
 
@@ -182,83 +179,18 @@ public class EgoQuestionnaire {
 
   private AppCredential processDmsAppCreds(EgoApiConfig apiConfig) {
     if (isNull(apiConfig.getDmsAppCredential())) {
-      // doesnt exist, ask questions
-      val clientId =
-          questionFactory
-              .newDefaultSingleQuestion(
-                  String.class,
-                  "The EGO application with name '"
-                      + DEFAULT_DMS_APP_NAME
-                      + "' was not yet configured. Please input the clientId?",
-                  true,
-                  DEFAULT_DMS_APP_CLIENT_ID)
-              .getAnswer();
-
       val clientSecret = generateAppSecret();
       return AppCredential.builder()
           .name(DEFAULT_DMS_APP_NAME)
-          .clientId(clientId)
+          .clientId(DEFAULT_DMS_APP_CLIENT_ID)
           .clientSecret(clientSecret)
           .build();
-    } else {
-      // Ask if want to updated creds
-      val doUpdate =
-          questionFactory
-              .newDefaultSingleQuestion(
-                  Boolean.class,
-                  "A dms application configuration exists, would you like to update it?",
-                  true,
-                  false)
-              .getAnswer();
-      if (doUpdate) {
-        val creds = apiConfig.getDmsAppCredential();
-        // Do the update
-        val appName =
-            questionFactory
-                .newDefaultSingleQuestion(
-                    String.class,
-                    "The EGO application with name '"
-                        + DEFAULT_DMS_APP_NAME
-                        + "' is already configured. "
-                        + "Please input the name to update: ",
-                    true,
-                    creds.getName())
-                .getAnswer();
-
-        val clientId =
-            questionFactory
-                .newDefaultSingleQuestion(
-                    String.class,
-                    "The EGO application '"
-                        + DEFAULT_DMS_APP_CLIENT_ID
-                        + "' is already configured. Please input the clientId to update?",
-                    true,
-                    creds.getClientId())
-                .getAnswer();
-
-        val clientSecret = generateAppSecret();
-
-        return AppCredential.builder()
-            .name(appName)
-            .clientId(clientId)
-            .clientSecret(clientSecret)
-            .build();
-      }
-      return apiConfig.getDmsAppCredential();
     }
+    return apiConfig.getDmsAppCredential();
   }
 
   private String generateAppSecret() {
-    val charCount =
-        questionFactory
-            .newDefaultSingleQuestion(
-                Integer.class,
-                "How many characters should the randomly generated clientSecret contain?",
-                true,
-                DEFAULT_PASSWORD_LENGTH)
-            .getAnswer();
-
-    return RANDOM_GENERATOR.generateRandomAsciiString(charCount);
+    return RANDOM_GENERATOR.generateRandomAsciiString(DEFAULT_PASSWORD_LENGTH);
   }
 
   public enum SSOProviders {

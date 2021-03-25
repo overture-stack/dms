@@ -159,9 +159,7 @@ public class SwarmService {
                   val containerIds = e.getValue();
                   return executors.submit(
                       () -> {
-
                         deleteServiceAndWait(serviceName, containerIds, numRetries, poll);
-
                       });
                 })
             .collect(toUnmodifiableList());

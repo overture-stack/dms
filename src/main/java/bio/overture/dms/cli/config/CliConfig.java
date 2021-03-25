@@ -1,7 +1,7 @@
 package bio.overture.dms.cli.config;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_HEADER_HEADING;
+import static bio.overture.dms.cli.model.Constants.GuidesURLS.HELP_HEADER_GUIDE_URLS;
+import static picocli.CommandLine.Model.UsageMessageSpec.*;
 
 import bio.overture.dms.cli.command.DmsCommand;
 import bio.overture.dms.cli.util.CommandListRenderer;
@@ -31,6 +31,7 @@ public class CliConfig {
   public CommandLine commandLine() {
     val cmd = new CommandLine(dmsCommand, factory);
     val banner = new ProjectBanner(APPLICATION_NAME, "@|bold,green ", "|@");
+    cmd.getHelpSectionMap().put(SECTION_KEY_HEADER, (x) -> HELP_HEADER_GUIDE_URLS);
     cmd.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, new CommandListRenderer());
     addBannerToHelp(cmd, banner);
     return cmd;

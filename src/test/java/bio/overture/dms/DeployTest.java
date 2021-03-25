@@ -1,7 +1,7 @@
 package bio.overture.dms;
 
-import bio.overture.dms.cli.command.cluster.ClusterStartCommand;
 import bio.overture.dms.cli.command.cluster.ClusterDestroyCommand;
+import bio.overture.dms.cli.command.cluster.ClusterStartCommand;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;

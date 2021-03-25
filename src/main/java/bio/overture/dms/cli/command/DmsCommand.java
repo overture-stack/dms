@@ -15,10 +15,6 @@ import picocli.CommandLine.Command;
     name = "dms",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    subcommands = {
-      ConfigCommand.class,
-      ClusterCommand.class,
-      BashCompletionCommand.class
-    },
+    subcommands = {ConfigCommand.class, ClusterCommand.class},
     description = "DMS command")
 public class DmsCommand {}
