@@ -18,12 +18,12 @@ public final class Constants {
 
   public static final class MESSAGES {
     public static final String CONFIGURATION_SAVED_MSG =
-        "Your configuration file was successfully saved to: /root/.dms/config.yaml\n"
+              "Your configuration file was successfully saved to: /root/.dms/config.yaml\n"
             + "\n"
-            + "You may now deploy your configuration to your cluster.  For instructions, see:\n"
+            + "You may now deploy your configuration to your cluster. For instructions, see:\n"
             + "https://overture.bio/documentation/dms/installation/deploy/\n";
     public static final String PRE_REQ_NOTE =
-        "*****************************************************************************************************\n"
+              "*****************************************************************************************************\n"
             + "!!! NOTE !!!\n"
             + "\n"
             + "   Before starting, make sure you have completed all prerequisite setup steps here:\n"
@@ -32,12 +32,12 @@ public final class Constants {
             + "*****************************************************************************************************";
 
     public static final String POST_DEPLOYMENT_MSG =
-        "*****************************************************************************************************\n"
+              "*****************************************************************************************************\n"
             + "!!! NOTE !!!\n"
             + "\n"
-            + "Before using the DMS platform, please complete post-deployment verification \n"
-            + "and configuration steps required to check the health of your deployment.  For \n"
-            + "instructions, see:\n"
+            + "    Before using the DMS platform, please complete post-deployment verification \n"
+            + "    and configuration steps required to check the health of your deployment.  For \n"
+            + "    instructions, see:\n"
             + "    https://overture.bio/documentation/dms/installation/deploy-and-verify/\n"
             + "\n"
             + "*****************************************************************************************************";
@@ -55,7 +55,7 @@ public final class Constants {
 
   public static final class GuidesURLS {
     public static final String HELP_HEADER_GUIDE_URLS =
-        "\n"
+              "\n"
             + "Installation Guide: https://overture.bio/documentation/dms/installation/"
             + "\n"
             + "User Guide: https://overture.bio/documentation/dms/user-guide/"
@@ -131,9 +131,10 @@ public final class Constants {
             + "    The next 3 fields (Arranger Project ID, Project Name, Elasticsearch AliasName are \n"
             + "    required when you create your project in the Arranger administrative UI after  \n"
             + "    deployment.  The values you use MUST match the ones you supply here for the \n"
-            + "    DMS UI configuration.  The DMS UI interacts with Arranger and expects the same \n"
-            + "    values you input here.  For instructions on adding an Arranger project, see:\n"
+            + "    DMS UI configuration. The DMS UI interacts with Arranger and expects the same \n"
+            + "    values you input here. For instructions on adding an Arranger project, see:\n"
             + "    https://overture.bio/documentation/dms/installation/deploy-and-verify/\n"
+
             + "*****************************************************************************************************\n";
   }
 
