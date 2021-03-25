@@ -6,9 +6,9 @@ Name: gateway
 TaskTemplate:
   ContainerSpec:
 #if( $dmsConfig.clusterRunMode == 'SERVER')
-    Image: "ghcr.io/overture-stack/dms-gateway-secure:0.15.0"
+    Image: "ghcr.io/overture-stack/dms-gateway-secure:0.17.0"
 #else
-    Image: "ghcr.io/overture-stack/dms-gateway:0.15.0"
+    Image: "ghcr.io/overture-stack/dms-gateway:0.17.0"
 #end
     Env:
       - NGINX_PORT=$dmsConfig.ego.api.url.port
