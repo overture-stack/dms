@@ -5,7 +5,7 @@
 Name: ego-ui
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego-ui:4.1.0"
+    Image: "overture/ego-ui:4.2.0"
     Env:
       - REACT_APP_API=$dmsConfig.ego.api.url
       - PUBLIC_URL=$dmsConfig.ego.ui.url
