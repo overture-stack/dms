@@ -38,7 +38,7 @@ public final class Constants {
             + "    Before using the DMS platform, please complete post-deployment verification \n"
             + "    and configuration steps required to check the health of your deployment.  For \n"
             + "    instructions, see:\n"
-            + "    https://overture.bio/documentation/dms/installation/deploy-and-verify/\n"
+            + "    https://overture.bio/documentation/dms/installation/verify/\n"
             + "\n"
             + "*****************************************************************************************************";
   }
@@ -62,19 +62,19 @@ public final class Constants {
             + "\n"
             + "\n";
     public static final String GUIDE_DMSUI =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/dms-ui";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-dms-ui";
     public static final String GUIDE_MAESTRO =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/maestro";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-maestro";
     public static final String DEPLOYMENT_MODE =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/deployment-mode";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/#decide-local-or-server-deployment";
     public static final String GUIDE_EGO =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/ego";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-ego";
     public static final String GUIDE_SONG =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/song";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-song";
     public static final String GUIDE_SCORE =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/score";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-score";
     public static final String GUIDE_ES =
-        "Guide: https://overture.bio/documenation/dms/installation/configuration/elasticsearch";
+        "Guide: https://overture.bio/documentation/dms/installation/configuration/configure-dms/#configure-elasticsearch";
   }
 
   public static final class ScoreQuestions {
@@ -133,7 +133,7 @@ public final class Constants {
             + "    deployment.  The values you use MUST match the ones you supply here for the \n"
             + "    DMS UI configuration. The DMS UI interacts with Arranger and expects the same \n"
             + "    values you input here. For instructions on adding an Arranger project, see:\n"
-            + "    https://overture.bio/documentation/dms/installation/deploy-and-verify/\n"
+            + "    https://overture.bio/documentation/dms/installation/verify/#add-project-to-arranger-ui\n"
 
             + "*****************************************************************************************************\n";
   }
