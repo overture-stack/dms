@@ -1,7 +1,9 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
 import javax.validation.constraints.Min;
@@ -30,6 +32,10 @@ public class ArrangerConfig {
     private int hostPort = 8080;
 
     private URL url;
+
+    @JsonIgnore
+    private String image =  OVERTURE_ARRANGER_UI + ":" + ARRANGER_UI_TAG;
+
   }
 
   @Data
@@ -45,5 +51,8 @@ public class ArrangerConfig {
     private int hostPort = DEFAULT_PORT;
 
     @NonNull private URL url;
+
+    @JsonIgnore
+    private String image =  OVERTURE_ARRANGER_SERVER + ":" + ARRANGER_SERVER_TAG;
   }
 }

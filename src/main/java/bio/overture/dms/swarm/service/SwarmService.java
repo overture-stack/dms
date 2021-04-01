@@ -20,24 +20,15 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.core.util.SafeGet;
 import bio.overture.dms.swarm.model.DeploymentStates;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectVolumeResponse;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.exception.DockerException;
-import com.github.dockerjava.api.model.Container;
-import com.github.dockerjava.api.model.ContainerSpec;
-import com.github.dockerjava.api.model.Mount;
-import com.github.dockerjava.api.model.Network;
-import com.github.dockerjava.api.model.Service;
-import com.github.dockerjava.api.model.ServiceSpec;
-import com.github.dockerjava.api.model.SwarmNode;
-import com.github.dockerjava.api.model.SwarmNodeManagerStatus;
-import com.github.dockerjava.api.model.Task;
-import com.github.dockerjava.api.model.TaskSpec;
-import com.github.dockerjava.api.model.TaskStatus;
-import com.github.dockerjava.api.model.TaskStatusContainerStatus;
+import com.github.dockerjava.api.model.*;
 import com.google.common.base.Stopwatch;
 import java.time.Duration;
 import java.util.Collection;
@@ -235,8 +226,27 @@ public class SwarmService {
   }
 
   @SneakyThrows
-  public void pullImage(@NonNull String imageName) {
-    client.pullImageCmd(imageName).start().awaitCompletion();
+  public void pullImage(@NonNull String imageName, @NonNull String tag, Terminal t) {
+    client.pullImageCmd(imageName)
+        .withTag(tag)
+        .exec(
+        new PullImageResultCallback() {
+          @Override
+          public synchronized void onNext(PullResponseItem item) {
+            super.onNext(item);
+            if (item.getProgress() == null) {
+              t.resetLine();
+              t.print(item.getId() != null ? "[" + item.getId() + "] " + item.getStatus() : item.getStatus());
+            }
+            if (item.getProgress() != null) {
+              t.resetLine();
+              t.print("[" + item.getId() + "] " + item.getProgress());
+              return;
+            }
+
+          }
+        }
+    ).awaitCompletion();
   }
 
   public void createVolume(@NonNull String volumeName) {

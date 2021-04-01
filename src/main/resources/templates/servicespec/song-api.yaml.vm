@@ -5,7 +5,7 @@
 Name: song-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/song-server:4.5.0"
+    Image: $dmsConfig.song.api.image
     Env:
       - SERVER_PORT=8080
       - SPRING_FLYWAY_ENABLED=true

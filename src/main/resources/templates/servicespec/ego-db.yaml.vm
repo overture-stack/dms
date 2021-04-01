@@ -5,7 +5,7 @@
 Name: ego-db
 TaskTemplate:
   ContainerSpec:
-    Image: "postgres:11.1"
+    Image: $dmsConfig.ego.db.image
     Env:
       - POSTGRES_DB=ego
       - POSTGRES_PASSWORD=$dmsConfig.ego.db.databasePassword

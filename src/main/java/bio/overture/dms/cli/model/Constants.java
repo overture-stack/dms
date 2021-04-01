@@ -16,7 +16,39 @@ public final class Constants {
     public static String PASSWORD = "What should the SONG database password be?";
   }
 
+  public static final class DockerImagesConstants {
+    public static final String OVERTURE_EGO_UI = "overture/ego-ui";
+    public static final String OVERTURE_ARRANGER_UI = "overture/arranger-ui";
+    public static final String OVERTURE_DMS_UI = "overture/dms-ui";
+    public static final String OVERTURE_ARRANGER_SERVER = "overture/arranger-server";
+    public static final String OVERTURE_EGO = "overture/ego";
+    public static final String OVERTURE_SONG_SERVER = "overture/song-server";
+    public static final String OVERTURE_SCORE_SERVER = "overture/score-server";
+    public static final String POSTGRES = "postgres";
+    public static final String MINIO_MINIO = "minio/minio";
+    public static final String DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH = "docker.elastic.co/elasticsearch/elasticsearch";
+    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY = "ghcr.io/overture-stack/dms-gateway";
+    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE = "ghcr.io/overture-stack/dms-gateway-secure";
+    public static final String GHCR_IO_OVERTURE_STACK_MAESTRO = "ghcr.io/overture-stack/maestro";
+
+    public static final String EGO_UI_TAG = "4.2.0";
+    public static final String ARRANGER_UI_TAG = "2.12.3";
+    public static final String ARRANGER_SERVER_TAG = "2.12.3";
+    public static final String SCORE_SERVER_TAG = "5.3.0";
+    public static final String EGO_TAG = "4.4.0";
+    public static final String SONG_SERVER_TAG = "4.5.0";
+    public static final String POSTGRES_TAG = "11.1";
+    public static final String MINIO_TAG = "RELEASE.2018-05-11T00-29-24Z";
+    public static final String ES_TAG = "7.6.0";
+    public static final String DMS_GATEWAY_TAG = "1.0.0";
+    public static final String MAESTRO_TAG = "3.8.0";
+    public static final String DMS_UI_TAG = "1.0.2";
+  }
+
   public static final class MESSAGES {
+    public static final String CHECK_DOCKER_IMAGES_MSG = "Checking if docker images exists & downloading missing ones, this can take few minutes depending on the connection speed.. ";
+    public static final String CHECK_COMPLETED = "Check completed.";
+
     public static final String CONFIGURATION_SAVED_MSG =
               "Your configuration file was successfully saved to: /root/.dms/config.yaml\n"
             + "\n"

@@ -1,5 +1,6 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
@@ -54,6 +55,10 @@ public class EgoConfig {
     @NotNull private URL url;
 
     private AppCredential dmsAppCredential;
+
+    @JsonIgnore
+    private String image =  OVERTURE_EGO + ":" + EGO_TAG;
+
   }
 
   @Data
@@ -75,6 +80,9 @@ public class EgoConfig {
     public boolean isDatabasePasswordDefined() {
       return isDefined(databasePassword);
     }
+
+    @JsonIgnore
+    private String image =  POSTGRES + ":" + POSTGRES_TAG;
   }
 
   @Data
@@ -91,6 +99,9 @@ public class EgoConfig {
     private int hostPort = 9002;
 
     private AppCredential uiAppCredential;
+
+    @JsonIgnore
+    private String image =  OVERTURE_EGO_UI + ":" + EGO_UI_TAG;
   }
 
   @Data

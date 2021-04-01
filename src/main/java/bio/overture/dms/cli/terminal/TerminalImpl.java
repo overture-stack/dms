@@ -40,4 +40,20 @@ public class TerminalImpl implements Terminal {
     }
     return this;
   }
+
+  @Override
+  public Terminal resetLine() {
+    if (!silent) {
+      textTerminal.resetLine();
+    }
+    return this;
+  }
+
+  public Terminal clear() {
+    final String ANSI_CLS = "\033[2J";
+    final String ANSI_HOME = "\033[H";
+    textTerminal.print(ANSI_CLS + ANSI_HOME);
+    return this;
+  }
+
 }

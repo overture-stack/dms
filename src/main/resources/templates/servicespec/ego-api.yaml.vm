@@ -5,7 +5,7 @@
 Name: ego-api
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/ego:4.4.0"
+    Image: $dmsConfig.ego.api.image
     Env:
     - SERVER_PORT=8080
     - SPRING_FLYWAY_ENABLED=true

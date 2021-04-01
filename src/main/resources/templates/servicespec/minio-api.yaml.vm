@@ -5,7 +5,7 @@
 Name: minio-api
 TaskTemplate:
   ContainerSpec:
-    Image: "minio/minio:RELEASE.2018-05-11T00-29-24Z"
+    Image: $dmsConfig.score.s3.minioImage
     Env:
       - MINIO_ACCESS_KEY=$dmsConfig.score.s3.accessKey
       - MINIO_SECRET_KEY=$dmsConfig.score.s3.secretKey
