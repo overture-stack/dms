@@ -42,7 +42,6 @@ public class ConfigBuildCommand implements Callable<Integer> {
   public Integer call() throws Exception {
     t.print(PRE_REQ_NOTE);
     t.printStatusLn("Starting interactive configuration...");
-    // TODO: Fix this so that the storedDmsConfig is input into the buildDmsConfig method
     dmsConfigStore.apply(dmsQuestionnaire::buildDmsConfig);
     t.printStatusLn(CONFIGURATION_SAVED_MSG, dmsConfigStore.getDmsConfigFilePath());
     return 0;

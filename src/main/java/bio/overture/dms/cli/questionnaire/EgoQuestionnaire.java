@@ -11,6 +11,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
+import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoApiConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig.EgoDbConfig;
@@ -24,7 +25,10 @@ import bio.overture.dms.core.model.enums.ClusterRunModes;
 import bio.overture.dms.core.util.RandomGenerator;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -53,8 +57,11 @@ public class EgoQuestionnaire {
   }
 
   // TODO: add inputEgoConfig, so that an existing ego config can be updated
-  public EgoConfig buildEgoConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
-    val apiConfig = processEgoApiConfig(runModes, gatewayConfig);
+  public EgoConfig buildEgoConfig(ClusterRunModes runModes,
+                                  GatewayConfig gatewayConfig,
+                                  EgoConfig existingConfig) {
+
+    val apiConfig = processEgoApiConfig(runModes, gatewayConfig, existingConfig, existingConfig == null);
     val dbConfig = processEgoDbConfig();
     val uiConfig = processEgoUiConfig(runModes, gatewayConfig);
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
@@ -64,8 +71,7 @@ public class EgoQuestionnaire {
   private EgoUiConfig processEgoUiConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
     val egoUiConfig = new EgoUiConfig();
     val info =
-        resolveServiceConnectionInfo(
-            runModes, gatewayConfig, questionFactory, EGO_UI.toString(), 9002);
+        resolveServiceConnectionInfo(gatewayConfig, EGO_UI.toString(), 9002);
     egoUiConfig.setHostPort(info.port);
     egoUiConfig.setUrl(info.serverUrl);
     egoUiConfig.setUiAppCredential(processUiAppCreds(info.serverUrl));
@@ -74,20 +80,23 @@ public class EgoQuestionnaire {
 
   @SneakyThrows
   private EgoApiConfig processEgoApiConfig(
-      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig, EgoConfig existingConfig, boolean newConfig) {
     val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
-        questionFactory.newDefaultSingleQuestion(Integer.class, API_KEY_DAYS, true, 30).getAnswer();
+        questionFactory.newDefaultSingleQuestion(Integer.class, API_KEY_DAYS,
+            true, getDefaultValue(() -> existingConfig.getApi().getTokenDurationDays(), 30, newConfig)).getAnswer();
     apiBuilder.tokenDurationDays(apiKeyDurationDays);
 
     val jwtUserDurationHours =
         questionFactory
-            .newDefaultSingleQuestion(Integer.class, JWT_HOURS_DURATION, true, 3)
+            .newDefaultSingleQuestion(Long.class, JWT_HOURS_DURATION, true,
+                getDefaultValue(() -> TimeUnit.MILLISECONDS.toHours(existingConfig.getApi().getJwt().getUser().getDurationMs()), 3L, newConfig))
             .getAnswer();
 
     val jwtAppDurationHours =
         questionFactory
-            .newDefaultSingleQuestion(Integer.class, APP_JWT_DURATION_HOURS, true, 3)
+            .newDefaultSingleQuestion(Long.class, APP_JWT_DURATION_HOURS, true,
+                getDefaultValue(() -> TimeUnit.MILLISECONDS.toHours(existingConfig.getApi().getJwt().getApp().getDurationMs()), 3L, newConfig))
             .getAnswer();
 
     apiBuilder.jwt(
@@ -99,13 +108,14 @@ public class EgoQuestionnaire {
     val refreshTokenDurationHours =
         questionFactory
             .newDefaultSingleQuestion(
-                Integer.class, HOW_MANY_HOURS_SHOULD_REFRESH_TOKENS_BE_VALID_FOR, true, 12)
+                Long.class, HOW_MANY_HOURS_SHOULD_REFRESH_TOKENS_BE_VALID_FOR,
+        true,
+                getDefaultValue(() -> TimeUnit.MILLISECONDS.toHours(existingConfig.getApi().getRefreshTokenDurationMS()), 12L, newConfig))
             .getAnswer();
+
     apiBuilder.refreshTokenDurationMS(HOURS.toMillis(refreshTokenDurationHours));
 
-    val info =
-        resolveServiceConnectionInfo(
-            clusterRunMode, gatewayConfig, questionFactory, EGO_API.toString(), 9000);
+    val info = resolveServiceConnectionInfo(gatewayConfig, EGO_API.toString(), 9000);
     apiBuilder.hostPort(info.port);
     apiBuilder.url(info.serverUrl);
 
@@ -132,6 +142,10 @@ public class EgoQuestionnaire {
 
     apiConfig.setDmsAppCredential(processDmsAppCreds(apiConfig));
     return apiConfig;
+  }
+
+  private <T>  T getDefaultValue(Supplier<T> supplier, T defaultVal, boolean newConfig) {
+    return newConfig ? defaultVal : supplier.get();
   }
 
   private EgoDbConfig processEgoDbConfig() {

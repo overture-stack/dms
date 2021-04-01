@@ -62,12 +62,6 @@ public class DmsConfigStore {
 
   public void apply(Function<DmsConfig, DmsConfig> transformation) {
     val storedDmsConfig = findStoredConfig().orElse(null);
-
-    // TODO: ideally, this is how a null is treated
-    //    findStoredConfig()
-    //        .map(transformation::apply)
-    //        .ifPresent(this::save);
-
     val dmsConfig = transformation.apply(storedDmsConfig);
     save(dmsConfig);
   }
