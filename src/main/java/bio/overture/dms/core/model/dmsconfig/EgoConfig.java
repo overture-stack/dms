@@ -56,9 +56,7 @@ public class EgoConfig {
 
     private AppCredential dmsAppCredential;
 
-    @JsonIgnore
-    private String image =  OVERTURE_EGO + ":" + EGO_TAG;
-
+    @JsonIgnore private String image = OVERTURE_EGO + ":" + EGO_TAG;
   }
 
   @Data
@@ -81,8 +79,7 @@ public class EgoConfig {
       return isDefined(databasePassword);
     }
 
-    @JsonIgnore
-    private String image =  POSTGRES + ":" + POSTGRES_TAG;
+    @JsonIgnore private String image = POSTGRES + ":" + POSTGRES_TAG;
   }
 
   @Data
@@ -100,8 +97,7 @@ public class EgoConfig {
 
     private AppCredential uiAppCredential;
 
-    @JsonIgnore
-    private String image =  OVERTURE_EGO_UI + ":" + EGO_UI_TAG;
+    @JsonIgnore private String image = OVERTURE_EGO_UI + ":" + EGO_UI_TAG;
   }
 
   @Data

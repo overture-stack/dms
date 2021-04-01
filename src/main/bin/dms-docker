@@ -175,7 +175,7 @@ function main {
 		docker_opts="$docker_opts -p 5005:5005"
 		set -x
 	fi
-	docker_opts="$docker_opts -e DOCKER_RUNAS=true -e DMS_HOME_HOST_PATH=$DMS_HOME"
+	docker_opts="$docker_opts -e DOCKER_RUNAS=true -e DOCKER_DMSHOMEHOSTPATH=$DMS_HOME -e DOCKER_TAG=$dms_version"
 	# create dms-swarm-network if it doesn't exist, this is important for first run
 	# since the dms uses that in its run options
 	found_network=$(docker network ls --filter name=${NETWORK_NAME} --format="{{ .Name }}")

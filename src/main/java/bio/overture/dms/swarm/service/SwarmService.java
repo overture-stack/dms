@@ -227,26 +227,29 @@ public class SwarmService {
 
   @SneakyThrows
   public void pullImage(@NonNull String imageName, @NonNull String tag, Terminal t) {
-    client.pullImageCmd(imageName)
+    client
+        .pullImageCmd(imageName)
         .withTag(tag)
         .exec(
-        new PullImageResultCallback() {
-          @Override
-          public synchronized void onNext(PullResponseItem item) {
-            super.onNext(item);
-            if (item.getProgress() == null) {
-              t.resetLine();
-              t.print(item.getId() != null ? "[" + item.getId() + "] " + item.getStatus() : item.getStatus());
-            }
-            if (item.getProgress() != null) {
-              t.resetLine();
-              t.print("[" + item.getId() + "] " + item.getProgress());
-              return;
-            }
-
-          }
-        }
-    ).awaitCompletion();
+            new PullImageResultCallback() {
+              @Override
+              public synchronized void onNext(PullResponseItem item) {
+                super.onNext(item);
+                if (item.getProgress() == null) {
+                  t.resetLine();
+                  t.print(
+                      item.getId() != null
+                          ? "[" + item.getId() + "] " + item.getStatus()
+                          : item.getStatus());
+                }
+                if (item.getProgress() != null) {
+                  t.resetLine();
+                  t.print("[" + item.getId() + "] " + item.getProgress());
+                  return;
+                }
+              }
+            })
+        .awaitCompletion();
   }
 
   public void createVolume(@NonNull String volumeName) {

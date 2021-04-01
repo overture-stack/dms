@@ -81,12 +81,7 @@ public class ClusterDestroyCommand implements Callable<Integer> {
     if (askQuestion) {
       confirmedVolumeDestruction =
           questionFactory
-              .newSingleQuestion(
-                  WARNING,
-                  Boolean.class,
-                  CONFIRM_DESTROY,
-                  true,
-                  false)
+              .newSingleQuestion(WARNING, Boolean.class, CONFIRM_DESTROY, true, false)
               .getAnswer();
     }
     if (confirmedVolumeDestruction) {

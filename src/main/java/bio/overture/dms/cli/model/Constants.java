@@ -10,8 +10,10 @@ public final class Constants {
   public static final String CONFIG_FILE_NAME = "config.yaml";
 
   public static final class CommandsQuestions {
-    public static final String CONFIRM_DESTROY = "Are you sure you want to destroy the volumes for all services, all data will be lost and This is IRREVERSIBLE ? ";
+    public static final String CONFIRM_DESTROY =
+        "Are you sure you want to destroy the volumes for all services, all data will be lost and This is IRREVERSIBLE ? ";
   }
+
   public static final class SongQuestions {
     public static String PASSWORD = "What should the SONG database password be?";
   }
@@ -26,9 +28,12 @@ public final class Constants {
     public static final String OVERTURE_SCORE_SERVER = "overture/score-server";
     public static final String POSTGRES = "postgres";
     public static final String MINIO_MINIO = "minio/minio";
-    public static final String DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH = "docker.elastic.co/elasticsearch/elasticsearch";
-    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY = "ghcr.io/overture-stack/dms-gateway";
-    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE = "ghcr.io/overture-stack/dms-gateway-secure";
+    public static final String DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH =
+        "docker.elastic.co/elasticsearch/elasticsearch";
+    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY =
+        "ghcr.io/overture-stack/dms-gateway";
+    public static final String GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE =
+        "ghcr.io/overture-stack/dms-gateway-secure";
     public static final String GHCR_IO_OVERTURE_STACK_MAESTRO = "ghcr.io/overture-stack/maestro";
 
     public static final String EGO_UI_TAG = "4.2.0";
@@ -46,16 +51,17 @@ public final class Constants {
   }
 
   public static final class MESSAGES {
-    public static final String CHECK_DOCKER_IMAGES_MSG = "Checking if docker images exists & downloading missing ones, this can take few minutes depending on the connection speed.. ";
+    public static final String CHECK_DOCKER_IMAGES_MSG =
+        "Checking if docker images exists & downloading missing ones, this can take few minutes depending on the connection speed.. ";
     public static final String CHECK_COMPLETED = "Check completed.";
 
     public static final String CONFIGURATION_SAVED_MSG =
-              "Your configuration file was successfully saved to: /root/.dms/config.yaml\n"
+        "Your configuration file was successfully saved to: /root/.dms/config.yaml\n"
             + "\n"
             + "You may now deploy your configuration to your cluster. For instructions, see:\n"
             + "https://overture.bio/documentation/dms/installation/deploy/\n";
     public static final String PRE_REQ_NOTE =
-              "*****************************************************************************************************\n"
+        "*****************************************************************************************************\n"
             + "!!! NOTE !!!\n"
             + "\n"
             + "   Before starting, make sure you have completed all prerequisite setup steps here:\n"
@@ -64,7 +70,7 @@ public final class Constants {
             + "*****************************************************************************************************";
 
     public static final String POST_DEPLOYMENT_MSG =
-              "*****************************************************************************************************\n"
+        "*****************************************************************************************************\n"
             + "!!! NOTE !!!\n"
             + "\n"
             + "    Before using the DMS platform, please complete post-deployment verification \n"
@@ -87,7 +93,7 @@ public final class Constants {
 
   public static final class GuidesURLS {
     public static final String HELP_HEADER_GUIDE_URLS =
-              "\n"
+        "\n"
             + "Installation Guide: https://overture.bio/documentation/dms/installation/"
             + "\n"
             + "User Guide: https://overture.bio/documentation/dms/user-guide/"
@@ -157,7 +163,7 @@ public final class Constants {
     public static final String ALIAS =
         "What is the Elasticsearch alias name you will configure in Arranger (to be referenced by DMS UI and ALSO must match the alias name previously supplied for Maestro) be? ";
     public static final String ARRANGER_QUESTIONS_NOTE =
-              "\n*****************************************************************************************************\n"
+        "\n*****************************************************************************************************\n"
             + "!!! NOTE !!!\n"
             + "\n"
             + "    The next 3 fields (Arranger Project ID, Project Name, Elasticsearch AliasName are \n"
@@ -166,7 +172,6 @@ public final class Constants {
             + "    DMS UI configuration. The DMS UI interacts with Arranger and expects the same \n"
             + "    values you input here. For instructions on adding an Arranger project, see:\n"
             + "    https://overture.bio/documentation/dms/installation/verify/#add-project-to-arranger-ui\n"
-
             + "*****************************************************************************************************\n";
   }
 

@@ -37,8 +37,7 @@ public class DmsUIConfig {
 
   public static final int DEFAULT_PORT = 8000;
 
-  @JsonIgnore
-  private String image =  OVERTURE_DMS_UI + ":" + DMS_UI_TAG;
+  @JsonIgnore private String image = OVERTURE_DMS_UI + ":" + DMS_UI_TAG;
 
   @Data
   @Builder
