@@ -5,7 +5,7 @@
 Name: elasticsearch
 TaskTemplate:
   ContainerSpec:
-    Image: "docker.elastic.co/elasticsearch/elasticsearch:7.6.0"
+    Image: $dmsConfig.elasticsearch.image
     Env:
       - discovery.type=single-node
       - cluster.name=dms.elasticsearch

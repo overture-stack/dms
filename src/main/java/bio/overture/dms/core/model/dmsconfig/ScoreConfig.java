@@ -1,5 +1,6 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
@@ -44,6 +45,9 @@ public class ScoreConfig {
     public boolean isS3RegionDefined() {
       return isDefined(s3Region);
     }
+
+    @JsonIgnore
+    private String minioImage =  MINIO_MINIO + ":" + MINIO_TAG;
   }
 
   @Data
@@ -63,5 +67,8 @@ public class ScoreConfig {
     private int hostPort = 9020;
 
     private AppCredential appCredential;
+
+    @JsonIgnore
+    private String image =  OVERTURE_SCORE_SERVER + ":" + SCORE_SERVER_TAG;
   }
 }

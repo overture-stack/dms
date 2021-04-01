@@ -5,7 +5,7 @@
 Name: arranger-server
 TaskTemplate:
   ContainerSpec:
-    Image: "overture/arranger-server:2.12.3"
+    Image: $dmsConfig.arranger.api.image
     Env:
       - PORT=5050
       - ES_HOST=http://${composeServiceResources.ELASTICSEARCH.toString()}:9200
