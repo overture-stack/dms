@@ -1,6 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.model.Constants.EgoQuestions.*;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.getDefaultValue;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_API;
 import static bio.overture.dms.compose.model.ComposeServiceResources.EGO_UI;
@@ -10,6 +11,7 @@ import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.EgoConfig;
@@ -57,30 +59,33 @@ public class EgoQuestionnaire {
   }
 
   // TODO: add inputEgoConfig, so that an existing ego config can be updated
-  public EgoConfig buildEgoConfig(ClusterRunModes runModes,
-                                  GatewayConfig gatewayConfig,
-                                  EgoConfig existingConfig) {
+  public EgoConfig buildEgoConfig(GatewayConfig gatewayConfig,
+                                  EgoConfig existingConfig,
+                                  Terminal t) {
 
-    val apiConfig = processEgoApiConfig(runModes, gatewayConfig, existingConfig, existingConfig == null);
-    val dbConfig = processEgoDbConfig();
-    val uiConfig = processEgoUiConfig(runModes, gatewayConfig);
+    val apiConfig = processEgoApiConfig(gatewayConfig, existingConfig, existingConfig == null);
+    val dbConfig = processEgoDbConfig(existingConfig, t);
+    val uiConfig = processEgoUiConfig(gatewayConfig, existingConfig);
     return EgoConfig.builder().api(apiConfig).db(dbConfig).ui(uiConfig).build();
   }
 
   @SneakyThrows
-  private EgoUiConfig processEgoUiConfig(ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+  private EgoUiConfig processEgoUiConfig(GatewayConfig gatewayConfig, EgoConfig existingConfig) {
     val egoUiConfig = new EgoUiConfig();
     val info =
         resolveServiceConnectionInfo(gatewayConfig, EGO_UI.toString(), 9002);
     egoUiConfig.setHostPort(info.port);
     egoUiConfig.setUrl(info.serverUrl);
-    egoUiConfig.setUiAppCredential(processUiAppCreds(info.serverUrl));
+    if (isNull(existingConfig) || isNull(existingConfig.getUi().getUiAppCredential())) {
+      egoUiConfig.setUiAppCredential(processUiAppCreds(info.serverUrl));
+    } else {
+      egoUiConfig.setUiAppCredential(existingConfig.getUi().getUiAppCredential());
+    }
     return egoUiConfig;
   }
 
   @SneakyThrows
-  private EgoApiConfig processEgoApiConfig(
-      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig, EgoConfig existingConfig, boolean newConfig) {
+  private EgoApiConfig processEgoApiConfig(GatewayConfig gatewayConfig, EgoConfig existingConfig, boolean newConfig) {
     val apiBuilder = EgoApiConfig.builder();
     val apiKeyDurationDays =
         questionFactory.newDefaultSingleQuestion(Integer.class, API_KEY_DAYS,
@@ -120,8 +125,32 @@ public class EgoQuestionnaire {
     apiBuilder.url(info.serverUrl);
 
     val apiConfig = apiBuilder.build();
-    apiConfig.setSso(new SSOConfig());
 
+    configureSSOProviders(existingConfig, info, apiConfig);
+
+    if (isNull(existingConfig) || isNull(existingConfig.getApi().getDmsAppCredential())) {
+      apiConfig.setDmsAppCredential(processDmsAppCreds(apiConfig));
+    } else {
+      apiConfig.setDmsAppCredential(existingConfig.getApi().getDmsAppCredential());
+    }
+
+    return apiConfig;
+  }
+
+  private void configureSSOProviders(EgoConfig existingConfig, DmsQuestionnaire.ServiceUrlInfo info, EgoApiConfig apiConfig) {
+    if (!isNull(existingConfig) && !isNull(existingConfig.getApi().getSso())) {
+      val reuseConfigurations =
+          questionFactory
+              .newDefaultSingleQuestion(Boolean.class, "You have already configured the SSO providers, do you want to keep the same configurations ?", false, null)
+              .getAnswer();
+
+      if (reuseConfigurations) {
+        apiConfig.setSso(existingConfig.getApi().getSso());
+        return;
+      }
+    }
+
+    apiConfig.setSso(new SSOConfig());
     boolean answered = false;
     List<SSOProviders> ssoProviderSelection = null;
     while (!answered) {
@@ -136,27 +165,26 @@ public class EgoQuestionnaire {
 
     ssoProviderSelection.forEach(
         p -> {
-          val clientConfig = processSSOClientConfig(info.serverUrl, p.toString());
+          val clientConfig = processSSOClientConfig(info.serverUrl, p.toString(), existingConfig);
           p.setClientConfig(apiConfig.getSso(), clientConfig);
         });
-
-    apiConfig.setDmsAppCredential(processDmsAppCreds(apiConfig));
-    return apiConfig;
   }
 
-  private <T>  T getDefaultValue(Supplier<T> supplier, T defaultVal, boolean newConfig) {
-    return newConfig ? defaultVal : supplier.get();
-  }
 
-  private EgoDbConfig processEgoDbConfig() {
+
+  private EgoDbConfig processEgoDbConfig(EgoConfig existingConfig, Terminal t) {
+    if (existingConfig != null) {
+      t.println("A password is already configured for EGO db.");
+      return existingConfig.getDb();
+    }
     val dbBuilder = EgoDbConfig.builder();
     val dbPassword = questionFactory.newPasswordQuestion(PASSWORD).getAnswer();
     dbBuilder.databasePassword(dbPassword);
-
     return dbBuilder.build();
   }
 
-  private SSOClientConfig processSSOClientConfig(URL serverUrl, String providerType) {
+  private SSOClientConfig processSSOClientConfig(URL serverUrl, String providerType, EgoConfig existingConfig) {
+
     val clientConfigBuilder = SSOClientConfig.builder();
 
     val clientId =

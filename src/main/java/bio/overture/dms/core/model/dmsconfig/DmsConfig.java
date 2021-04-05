@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static lombok.AccessLevel.PRIVATE;
 
 import bio.overture.dms.core.model.enums.ClusterRunModes;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import lombok.Value;
 @AllArgsConstructor
 @NoArgsConstructor(force = true, access = PRIVATE)
 @JsonInclude(NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DmsConfig {
   @NonNull private final String version;
   @NonNull private final String network;

@@ -1,9 +1,11 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.model.Constants.ScoreQuestions.*;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.getDefaultValue;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
+import static java.util.Objects.isNull;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
@@ -40,9 +42,9 @@ public class ScoreQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ScoreConfig buildScoreConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
-    val s3Config = processScoreS3Config(clusterRunMode, gatewayConfig);
-    val apiConfig = processScoreApiConfig(clusterRunMode, gatewayConfig);
+  public ScoreConfig buildScoreConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig, ScoreConfig existingConfig) {
+    val s3Config = processScoreS3Config(gatewayConfig, existingConfig);
+    val apiConfig = processScoreApiConfig(gatewayConfig, existingConfig);
     return ScoreConfig.builder().api(apiConfig).s3(s3Config).build();
   }
 
@@ -55,35 +57,49 @@ public class ScoreQuestionnaire {
   }
 
   @SneakyThrows
-  private ScoreApiConfig processScoreApiConfig(
-      ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+  private ScoreApiConfig processScoreApiConfig(GatewayConfig gatewayConfig, ScoreConfig existingConfig) {
     val apiBuilder = ScoreApiConfig.builder();
 
     val info =
         resolveServiceConnectionInfo(
-            clusterRunMode, gatewayConfig, questionFactory, SCORE_API.toString(), 9020);
+            gatewayConfig, SCORE_API.toString(), 9020);
 
     apiBuilder.hostPort(info.port);
     apiBuilder.url(info.serverUrl);
 
     val objectBucket =
         questionFactory
-            .newDefaultSingleQuestion(String.class, OBJECT_BUCKET_NAME, true, "dms.object")
+            .newDefaultSingleQuestion(String.class, OBJECT_BUCKET_NAME, true, getDefaultValue(() -> existingConfig.getApi().getObjectBucket() , "dms.object", isNull(existingConfig)))
             .getAnswer();
     apiBuilder.objectBucket(objectBucket);
 
     val stateBucket =
         questionFactory
-            .newDefaultSingleQuestion(String.class, STATE_BUCKET_NAME, true, "dms.state")
+            .newDefaultSingleQuestion(String.class, STATE_BUCKET_NAME, true, getDefaultValue(() -> existingConfig.getApi().getStateBucket() , "dms.state", isNull(existingConfig)))
             .getAnswer();
+
     apiBuilder.stateBucket(stateBucket);
-    apiBuilder.appCredential(processScoreAppCreds());
+    if (isNull(existingConfig) || isNull(existingConfig.getApi().getAppCredential())) {
+      apiBuilder.appCredential(processScoreAppCreds());
+    } else {
+      apiBuilder.appCredential(existingConfig.getApi().getAppCredential());
+    }
+
     return apiBuilder.build();
   }
 
   @SneakyThrows
-  private ScoreS3Config processScoreS3Config(
-      ClusterRunModes runModes, GatewayConfig gatewayConfig) {
+  private ScoreS3Config processScoreS3Config(GatewayConfig gatewayConfig, ScoreConfig existingConfig) {
+    if (!isNull(existingConfig) && !isNull(existingConfig.getS3())) {
+      val reuseConfig =
+          questionFactory
+              .newDefaultSingleQuestion(Boolean.class, "You have already configured an S3 object storage service, do you want to keep the same configurations ?", false, null)
+              .getAnswer();
+      if (reuseConfig) {
+        return existingConfig.getS3();
+      }
+    }
+
     val s3Builder = ScoreS3Config.builder();
     val useExternalS3 =
         questionFactory
@@ -159,7 +175,7 @@ public class ScoreQuestionnaire {
 
       val info =
           resolveServiceConnectionInfo(
-              runModes, gatewayConfig, questionFactory, MINIO_API.toString(), 9021);
+              gatewayConfig, MINIO_API.toString(), 9021);
       s3Builder.hostPort(info.port);
       s3Builder.url(info.serverUrl);
     }

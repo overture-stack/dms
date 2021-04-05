@@ -6,6 +6,7 @@ import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
 
 import bio.overture.dms.cli.model.Constants;
 import bio.overture.dms.cli.question.QuestionFactory;
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.core.model.dmsconfig.AppCredential;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.SongConfig;
@@ -38,10 +39,9 @@ public class SongQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public SongConfig buildSongConfig(
-      ClusterRunModes clusterRunModes, @NonNull GatewayConfig gatewayConfig) {
-    val apiConfig = processSongApiConfig(clusterRunModes, gatewayConfig);
-    val dbConfig = processSongDbConfig();
+  public SongConfig buildSongConfig(@NonNull GatewayConfig gatewayConfig, @NonNull SongConfig existingConfig, Terminal t) {
+    val apiConfig = processSongApiConfig(gatewayConfig, existingConfig);
+    val dbConfig = processSongDbConfig(existingConfig, t);
     return SongConfig.builder().api(apiConfig).db(dbConfig).build();
   }
 
@@ -54,20 +54,26 @@ public class SongQuestionnaire {
   }
 
   @SneakyThrows
-  private SongApiConfig processSongApiConfig(
-      ClusterRunModes clusterRunModes, GatewayConfig gatewayConfig) {
+  private SongApiConfig processSongApiConfig(GatewayConfig gatewayConfig, SongConfig existingConfig) {
     val apiBuilder = SongApiConfig.builder();
     val info =
-        resolveServiceConnectionInfo(
-            clusterRunModes, gatewayConfig, questionFactory, SONG_API.toString(), 9010);
+        resolveServiceConnectionInfo(gatewayConfig, SONG_API.toString(), 9010);
     apiBuilder.url(info.serverUrl);
     apiBuilder.hostPort(info.port);
 
-    apiBuilder.appCredential(processSongAppCreds());
+    if (existingConfig == null || existingConfig.getApi().getAppCredential() == null) {
+      apiBuilder.appCredential(processSongAppCreds());
+    } else {
+      apiBuilder.appCredential(existingConfig.getApi().getAppCredential());
+    }
     return apiBuilder.build();
   }
 
-  private SongDbConfig processSongDbConfig() {
+  private SongDbConfig processSongDbConfig(SongConfig existingConfig, Terminal t) {
+    if (existingConfig != null) {
+      t.println("A password is already configured for SONG db.");
+      return existingConfig.getDb();
+    }
     val dbBuilder = SongDbConfig.builder();
     val dbPassword =
         questionFactory.newPasswordQuestion(Constants.SongQuestions.PASSWORD).getAnswer();

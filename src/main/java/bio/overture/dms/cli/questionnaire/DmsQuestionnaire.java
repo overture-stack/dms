@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.function.Supplier;
 
 import bio.overture.dms.core.util.Tuple;
 import lombok.NonNull;
@@ -36,7 +37,6 @@ public class DmsQuestionnaire {
   private final MaestroQuestionnaire maestroQuestionnaire;
   private final ArrangerQuestionnaire arrangerQuestionnaire;
   private final DmsUIQuestionnaire dmsUIQuestionnaire;
-
   private final Terminal terminal;
 
   @Autowired
@@ -63,7 +63,7 @@ public class DmsQuestionnaire {
     this.terminal = terminal;
   }
 
-
+  @SneakyThrows
   public DmsConfig buildDmsConfig(@NonNull DmsConfig existingConfig) {
     GatewayConfig gatewayConfig;
     ClusterRunModes clusterRunMode;
@@ -80,26 +80,26 @@ public class DmsQuestionnaire {
     printHeader("EGO");
     terminal.println(GUIDE_EGO);
     val existingEgoConfig = existingConfig.getEgo();
-    val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode, gatewayConfig, existingEgoConfig);
+    val egoConfig = egoQuestionnaire.buildEgoConfig(gatewayConfig, existingEgoConfig, terminal);
     printHeader("SONG");
     terminal.println(GUIDE_SONG);
-    val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode, gatewayConfig);
+    val songConfig = songQuestionnaire.buildSongConfig(gatewayConfig, existingConfig.getSong(), terminal);
     printHeader("SCORE");
     terminal.println(GUIDE_SCORE);
-    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode, gatewayConfig);
+    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode, gatewayConfig, existingConfig.getScore());
     printHeader("ELASTICSEARCH");
     terminal.println(GUIDE_ES);
-    val elasticConfig = elasticsearchQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
+    val elasticConfig = elasticsearchQuestionnaire.buildConfig(gatewayConfig, existingConfig.getElasticsearch(), terminal);
     printHeader("MAESTRO");
     terminal.println(GUIDE_MAESTRO);
-    val maestroConfig = maestroQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
+    val maestroConfig = maestroQuestionnaire.buildConfig(gatewayConfig, existingConfig.getMaestro());
+    val arrangerConfig = arrangerQuestionnaire.buildConfig(gatewayConfig);
     printHeader("DMS UI");
     // we pass maestro's config to read the alias name to be used
     // in case the user changed the default.
     terminal.println(GUIDE_DMSUI);
     val dmsUIConfig =
-        dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig, egoConfig);
+        dmsUIQuestionnaire.buildConfig(maestroConfig, gatewayConfig, egoConfig, existingConfig.getDmsUI());
 
     return DmsConfig.builder()
         .gateway(gatewayConfig)
@@ -194,5 +194,9 @@ public class DmsQuestionnaire {
     r.port = defaultApiPort;
     r.serverUrl = serverUrl;
     return r;
+  }
+
+  public static <T>  T getDefaultValue(Supplier<T> supplier, T defaultVal, boolean newConfig) {
+    return newConfig ? defaultVal : supplier.get();
   }
 }
