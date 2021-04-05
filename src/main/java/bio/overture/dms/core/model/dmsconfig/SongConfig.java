@@ -45,8 +45,7 @@ public class SongConfig {
       return isDefined(databasePassword);
     }
 
-    @JsonIgnore
-    private String image =  POSTGRES + ":" + POSTGRES_TAG;
+    @JsonIgnore private String image = POSTGRES + ":" + POSTGRES_TAG;
   }
 
   @Data
@@ -64,7 +63,6 @@ public class SongConfig {
 
     private AppCredential appCredential;
 
-    @JsonIgnore
-    private String image =  OVERTURE_SONG_SERVER + ":" + SONG_SERVER_TAG;
+    @JsonIgnore private String image = OVERTURE_SONG_SERVER + ":" + SONG_SERVER_TAG;
   }
 }

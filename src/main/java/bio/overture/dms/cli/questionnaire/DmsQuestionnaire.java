@@ -22,14 +22,12 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DmsQuestionnaire {
 
   private final QuestionFactory questionFactory;
-  private final BuildProperties buildProperties;
   private final EgoQuestionnaire egoQuestionnaire;
   private final ComposeProperties composeProperties;
   private final SongQuestionnaire songQuestionnaire;
@@ -44,7 +42,6 @@ public class DmsQuestionnaire {
   @Autowired
   public DmsQuestionnaire(
       @NonNull QuestionFactory questionFactory,
-      @NonNull BuildProperties buildProperties,
       @NonNull EgoQuestionnaire egoQuestionnaire,
       @NonNull ComposeProperties composeProperties,
       @NonNull SongQuestionnaire songQuestionnaire,
@@ -55,7 +52,6 @@ public class DmsQuestionnaire {
       @NonNull DmsUIQuestionnaire dmsUIQuestionnaire,
       @NonNull Terminal terminal) {
     this.questionFactory = questionFactory;
-    this.buildProperties = buildProperties;
     this.egoQuestionnaire = egoQuestionnaire;
     this.composeProperties = composeProperties;
     this.songQuestionnaire = songQuestionnaire;
@@ -67,7 +63,7 @@ public class DmsQuestionnaire {
     this.terminal = terminal;
   }
 
-  @SneakyThrows
+
   public DmsConfig buildDmsConfig(@NonNull DmsConfig existingConfig) {
     GatewayConfig gatewayConfig;
     ClusterRunModes clusterRunMode;

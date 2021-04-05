@@ -33,9 +33,7 @@ public class ArrangerConfig {
 
     private URL url;
 
-    @JsonIgnore
-    private String image =  OVERTURE_ARRANGER_UI + ":" + ARRANGER_UI_TAG;
-
+    @JsonIgnore private String image = OVERTURE_ARRANGER_UI + ":" + ARRANGER_UI_TAG;
   }
 
   @Data
@@ -52,7 +50,6 @@ public class ArrangerConfig {
 
     @NonNull private URL url;
 
-    @JsonIgnore
-    private String image =  OVERTURE_ARRANGER_SERVER + ":" + ARRANGER_SERVER_TAG;
+    @JsonIgnore private String image = OVERTURE_ARRANGER_SERVER + ":" + ARRANGER_SERVER_TAG;
   }
 }

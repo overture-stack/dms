@@ -6,9 +6,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
-import lombok.*;
-
 import javax.validation.constraints.NotNull;
+import lombok.*;
 
 @Data
 @Builder
@@ -23,8 +22,7 @@ public class ElasticsearchConfig {
 
   @NotNull URL url;
 
-  @JsonIgnore
-  private String image =  DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH + ":" + ES_TAG;
+  @JsonIgnore private String image = DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH + ":" + ES_TAG;
 
   @Data
   @Builder

@@ -43,6 +43,11 @@ public class ObjectSerializer {
   }
 
   @SneakyThrows
+  public <T> T deserializeToObject(@NonNull String s, Class<T> tClass) {
+    return objectMapper.readValue(s, tClass);
+  }
+
+  @SneakyThrows
   public <T> T deserializeToObject(@NonNull File f, Class<T> tClass) {
     checkFileExists(f.toPath());
     return objectMapper.readValue(f, tClass);

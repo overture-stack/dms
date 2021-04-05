@@ -59,7 +59,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull ScoreApiDeployer scoreApiDeployer,
       @NonNull ElasticsearchDeployer elasticsearchDeployer,
       @NonNull DockerProperties dockerProperties,
-      @NonNull Messenger messenger, Terminal terminal) {
+      @NonNull Messenger messenger,
+      Terminal terminal) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
@@ -158,25 +159,43 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
 
   private void pullImagesIfNeeded() {
     terminal.printStatusLn(CHECK_DOCKER_IMAGES_MSG);
-
     swarmService.pullImage(POSTGRES, POSTGRES_TAG, terminal);
-
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Postgres");
     swarmService.pullImage(OVERTURE_EGO_UI, EGO_UI_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Ego UI");
     swarmService.pullImage(OVERTURE_EGO, EGO_TAG, terminal);
-
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Ego");
     swarmService.pullImage(OVERTURE_ARRANGER_SERVER, ARRANGER_SERVER_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Arranger Server");
     swarmService.pullImage(OVERTURE_ARRANGER_UI, ARRANGER_UI_TAG, terminal);
-
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Arranger UI");
     swarmService.pullImage(OVERTURE_DMS_UI, DMS_UI_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Dms UI");
     swarmService.pullImage(OVERTURE_SONG_SERVER, SONG_SERVER_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Song");
     swarmService.pullImage(OVERTURE_SCORE_SERVER, SCORE_SERVER_TAG, terminal);
-
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Score");
     swarmService.pullImage(MINIO_MINIO, MINIO_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Minio");
     swarmService.pullImage(DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH, ES_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Elasticsearch");
     swarmService.pullImage(GHCR_IO_OVERTURE_STACK_DMS_GATEWAY, DMS_GATEWAY_TAG, terminal);
     swarmService.pullImage(GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE, DMS_GATEWAY_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Gateway");
     swarmService.pullImage(GHCR_IO_OVERTURE_STACK_MAESTRO, MAESTRO_TAG, terminal);
     terminal.resetLine();
+    terminal.printStatusLn("✔️ Maestro");
     terminal.printStatusLn(CHECK_COMPLETED);
   }
 

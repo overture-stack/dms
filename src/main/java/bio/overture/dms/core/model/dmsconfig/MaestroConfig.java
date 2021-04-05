@@ -6,9 +6,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
-import lombok.*;
-
 import javax.validation.constraints.NotNull;
+import lombok.*;
 
 @Data
 @Builder
@@ -24,6 +23,5 @@ public class MaestroConfig {
   @Builder.Default private String fileCentricAlias = FILE_CENTRIC_ALIAS_NAME;
   @NotNull URL url;
 
-  @JsonIgnore
-  private String image =  GHCR_IO_OVERTURE_STACK_MAESTRO + ":" + MAESTRO_TAG;
+  @JsonIgnore private String image = GHCR_IO_OVERTURE_STACK_MAESTRO + ":" + MAESTRO_TAG;
 }

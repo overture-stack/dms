@@ -37,3 +37,7 @@ docker:
   # it somehow, this is provided in dms-docker script as an env var.
   # when running without docker, we get the home path from the system properties.
   dmsHomeHostPath: /home/ubuntu/.dms
+
+  # This is used to print and store the version correctly, it will be provided as an env var
+  # in local development mode (i.e. non docker) it will be read from here (or from env if provided)
+  tag: 1.1.0-abc12

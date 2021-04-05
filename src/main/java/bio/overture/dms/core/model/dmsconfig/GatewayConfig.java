@@ -3,7 +3,6 @@ package bio.overture.dms.core.model.dmsconfig;
 import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
-import bio.overture.dms.cli.model.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
@@ -29,9 +28,8 @@ public class GatewayConfig {
   @NotNull private URL url;
   private String sslDir = "/etc/ssl/dms";
 
-  @JsonIgnore
-  private String image =  GHCR_IO_OVERTURE_STACK_DMS_GATEWAY + ":" + DMS_GATEWAY_TAG;
+  @JsonIgnore private String image = GHCR_IO_OVERTURE_STACK_DMS_GATEWAY + ":" + DMS_GATEWAY_TAG;
 
   @JsonIgnore
-  private String imageSecure =  GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE + ":" + DMS_GATEWAY_TAG;
+  private String imageSecure = GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE + ":" + DMS_GATEWAY_TAG;
 }

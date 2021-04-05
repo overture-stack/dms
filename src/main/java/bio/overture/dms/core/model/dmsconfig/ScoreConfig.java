@@ -46,8 +46,7 @@ public class ScoreConfig {
       return isDefined(s3Region);
     }
 
-    @JsonIgnore
-    private String minioImage =  MINIO_MINIO + ":" + MINIO_TAG;
+    @JsonIgnore private String minioImage = MINIO_MINIO + ":" + MINIO_TAG;
   }
 
   @Data
@@ -68,7 +67,6 @@ public class ScoreConfig {
 
     private AppCredential appCredential;
 
-    @JsonIgnore
-    private String image =  OVERTURE_SCORE_SERVER + ":" + SCORE_SERVER_TAG;
+    @JsonIgnore private String image = OVERTURE_SCORE_SERVER + ":" + SCORE_SERVER_TAG;
   }
 }
