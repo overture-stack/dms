@@ -47,4 +47,5 @@ Sometimes, if the reserved/limit memory is too low, a container will get killed 
 
 ## Acknowledgements
 
-DMS development supported by: [![Canarie logo](canarie-logo.png)](https://canarie.ca)
+DMS development supported by:
+[![Canarie logo](canarie-logo.png)](https://canarie.ca)
