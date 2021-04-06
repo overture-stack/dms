@@ -2,7 +2,7 @@
 Overture Data Management System
 
 
-## Developmenet
+## Development
 ### Configure remote docker daemon control
 It is possible to run the dms locally while controlling a remote docker engine.
 1. Port forward the docker.sock [Forwarding the Docker Socket over SSH](https://medium.com/@dperny/forwarding-the-docker-socket-over-ssh-e6567cfab160)
@@ -44,3 +44,7 @@ Sometimes, if the reserved/limit memory is too low, a container will get killed 
 ## useful commands:
 - `docker service ps --no-trunc {serviceName}`
 - `journalctl -u docker.service | tail -n 50 `
+
+## Acknowledgements
+
+DMS development supported by: [![Canarie logo](canarie-logo.png)](https://canarie.ca)
