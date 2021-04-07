@@ -26,7 +26,7 @@ public class ElasticsearchQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public ElasticsearchConfig buildConfig(GatewayConfig gatewayConfig, @NonNull ElasticsearchConfig existingConfig, Terminal t) {
+  public ElasticsearchConfig buildConfig(GatewayConfig gatewayConfig, ElasticsearchConfig existingConfig, Terminal t) {
     String password;
     val info =
         resolveServiceConnectionInfo(

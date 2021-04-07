@@ -64,7 +64,7 @@ public class DmsQuestionnaire {
   }
 
   @SneakyThrows
-  public DmsConfig buildDmsConfig(@NonNull DmsConfig existingConfig) {
+  public DmsConfig buildDmsConfig(DmsConfig existingConfig) {
     GatewayConfig gatewayConfig;
     ClusterRunModes clusterRunMode;
 

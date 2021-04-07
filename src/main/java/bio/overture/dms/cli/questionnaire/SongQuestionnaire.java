@@ -41,7 +41,7 @@ public class SongQuestionnaire {
     this.questionFactory = questionFactory;
   }
 
-  public SongConfig buildSongConfig(@NonNull GatewayConfig gatewayConfig, @NonNull SongConfig existingConfig, Terminal t) {
+  public SongConfig buildSongConfig(@NonNull GatewayConfig gatewayConfig, SongConfig existingConfig, Terminal t) {
     val apiConfig = processSongApiConfig(gatewayConfig, existingConfig);
     val dbConfig = processSongDbConfig(existingConfig, t);
     return SongConfig.builder().api(apiConfig).db(dbConfig).build();
