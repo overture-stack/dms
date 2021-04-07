@@ -141,7 +141,7 @@ public class EgoQuestionnaire {
     if (!isNull(existingConfig) && !isNull(existingConfig.getApi().getSso())) {
       val reuseConfigurations =
           questionFactory
-              .newDefaultSingleQuestion(Boolean.class, "You have already configured the SSO providers, do you want to keep the same configurations ?", false, null)
+              .newDefaultSingleQuestion(Boolean.class, YOU_HAVE_ALREADY_CONFIGURED_THE_SSO_PROVIDERS, false, null)
               .getAnswer();
 
       if (reuseConfigurations) {
@@ -174,7 +174,7 @@ public class EgoQuestionnaire {
 
   private EgoDbConfig processEgoDbConfig(EgoConfig existingConfig, Terminal t) {
     if (existingConfig != null) {
-      t.println("A password is already configured for EGO db.");
+      t.println(PASSWORD_CONFIGURED_EGO_DB);
       return existingConfig.getDb();
     }
     val dbBuilder = EgoDbConfig.builder();

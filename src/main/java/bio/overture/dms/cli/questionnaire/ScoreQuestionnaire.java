@@ -34,6 +34,7 @@ public class ScoreQuestionnaire {
       createRandomGenerator(ScoreQuestionnaire.class.getSimpleName());
   private static final String DEFAULT_SCORE_APP_CLIENT_ID = SCORE_API.toString();
 
+
   /** Dependencies */
   private final QuestionFactory questionFactory;
 
@@ -93,7 +94,7 @@ public class ScoreQuestionnaire {
     if (!isNull(existingConfig) && !isNull(existingConfig.getS3())) {
       val reuseConfig =
           questionFactory
-              .newDefaultSingleQuestion(Boolean.class, "You have already configured an S3 object storage service, do you want to keep the same configurations ?", false, null)
+              .newDefaultSingleQuestion(Boolean.class, YOU_HAVE_ALREADY_CONFIGURED_AN_S3, false, null)
               .getAnswer();
       if (reuseConfig) {
         return existingConfig.getS3();

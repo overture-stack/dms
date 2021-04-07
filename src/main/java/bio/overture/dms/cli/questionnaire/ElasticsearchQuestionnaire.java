@@ -1,6 +1,7 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.model.Constants.MaestroQuestions.ES_PASSWORD;
+import static bio.overture.dms.cli.model.Constants.MaestroQuestions.PASSWORD_CONFIGURED_ELASTICSEARCH;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.ELASTICSEARCH;
 import static java.util.Objects.isNull;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ElasticsearchQuestionnaire {
+
 
   private final QuestionFactory questionFactory;
 
@@ -35,7 +37,7 @@ public class ElasticsearchQuestionnaire {
     if (isNull(existingConfig) || isNull(existingConfig.getSecurity().getRootPassword())) {
       password = questionFactory.newPasswordQuestion(ES_PASSWORD).getAnswer();
     } else {
-      t.println("A password is already configured for Elasticsearch");
+      t.println(PASSWORD_CONFIGURED_ELASTICSEARCH);
       password = existingConfig.getSecurity().getRootPassword();
     }
 

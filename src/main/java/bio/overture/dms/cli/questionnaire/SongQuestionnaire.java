@@ -1,5 +1,6 @@
 package bio.overture.dms.cli.questionnaire;
 
+import static bio.overture.dms.cli.model.Constants.SongQuestions.PASSWORD_CONFIGURED_SONG_DB;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.SONG_API;
 import static bio.overture.dms.core.util.RandomGenerator.createRandomGenerator;
@@ -30,6 +31,7 @@ public class SongQuestionnaire {
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
   private static final RandomGenerator RANDOM_GENERATOR =
       createRandomGenerator(SongQuestionnaire.class.getSimpleName());
+
 
   /** Dependencies */
   private final QuestionFactory questionFactory;
@@ -71,7 +73,7 @@ public class SongQuestionnaire {
 
   private SongDbConfig processSongDbConfig(SongConfig existingConfig, Terminal t) {
     if (existingConfig != null) {
-      t.println("A password is already configured for SONG db.");
+      t.println(PASSWORD_CONFIGURED_SONG_DB);
       return existingConfig.getDb();
     }
     val dbBuilder = SongDbConfig.builder();
