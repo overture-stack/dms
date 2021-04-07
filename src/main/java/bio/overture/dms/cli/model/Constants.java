@@ -16,6 +16,7 @@ public final class Constants {
 
   public static final class SongQuestions {
     public static String PASSWORD = "What should the SONG database password be?";
+    public static final String PASSWORD_CONFIGURED_SONG_DB = "A password is already configured for SONG db.";
   }
 
   public static final class DockerImagesConstants {
@@ -51,6 +52,7 @@ public final class Constants {
   }
 
   public static final class MESSAGES {
+
     public static final String CHECK_DOCKER_IMAGES_MSG =
         "Checking if docker images exists & downloading missing ones, this can take few minutes depending on the connection speed.. ";
     public static final String CHECK_COMPLETED = "Check completed.";
@@ -133,6 +135,7 @@ public final class Constants {
             + "If no, you must enter them in the subsequent questions.";
     public static final String MINIO_ACCESS_KEY = "What should the MinIO access key be?";
     public static final String MINIO_SECRET_KEY = "What should the MinIO secret key be?";
+    public static final String YOU_HAVE_ALREADY_CONFIGURED_AN_S3 = "You have already configured an S3 object storage service, do you want to keep the same configurations ?";
   }
 
   public static final class EgoQuestions {
@@ -148,6 +151,8 @@ public final class Constants {
     public static final String PASSWORD = "What should the EGO database password be?";
     public static final String WHAT_IS_THE_S_CLIENT_ID = "What is the %s client ID?";
     public static final String WHAT_IS_THE_S_CLIENT_SECRET = "What is the %s client secret?";
+    public static final String YOU_HAVE_ALREADY_CONFIGURED_THE_SSO_PROVIDERS = "You have already configured the SSO providers, do you want to keep the same configurations ?";
+    public static final String PASSWORD_CONFIGURED_EGO_DB = "A password is already configured for EGO db.";
   }
 
   @UtilityClass
@@ -176,6 +181,8 @@ public final class Constants {
   }
 
   public static final class MaestroQuestions {
+    public static final String PASSWORD_CONFIGURED_ELASTICSEARCH = "A password is already configured for Elasticsearch";
+
     public static final String ES_PASSWORD =
         "Elasticsearch provides a superuser with default username 'elastic'. What should the superuser's password be?";
     public static String ALIAS =

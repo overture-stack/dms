@@ -1,8 +1,10 @@
 package bio.overture.dms.cli.questionnaire;
 
 import static bio.overture.dms.cli.model.Constants.DmsUiQuestions.*;
+import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.getDefaultValue;
 import static bio.overture.dms.cli.questionnaire.DmsQuestionnaire.resolveServiceConnectionInfo;
 import static bio.overture.dms.compose.model.ComposeServiceResources.DMS_UI;
+import static java.util.Objects.isNull;
 
 import bio.overture.dms.cli.question.QuestionFactory;
 import bio.overture.dms.cli.terminal.Terminal;
@@ -42,15 +44,20 @@ public class DmsUIQuestionnaire {
 
   public DmsUIConfig buildConfig(
       MaestroConfig maestroConfig,
-      ClusterRunModes runModes,
       GatewayConfig gatewayConfig,
-      EgoConfig egoConfig) {
+      EgoConfig egoConfig,
+      DmsUIConfig existingConfig) {
 
-    String email = questionFactory.newEmailQuestion(EMAIL, false, null).getAnswer();
+    String email;
+    if (isNull(existingConfig) || isNull(existingConfig.getAdminEmail())) {
+      email = questionFactory.newEmailQuestion(EMAIL, false, null).getAnswer();
+    } else {
+      email = questionFactory.newEmailQuestion(EMAIL, true, existingConfig.getAdminEmail()).getAnswer();
+    }
 
     String labName =
         questionFactory
-            .newDefaultSingleQuestion(String.class, TITLE, true, "Data Management System")
+            .newDefaultSingleQuestion(String.class, TITLE, true, getDefaultValue(() -> existingConfig.getLabName(), "Data Management System", isNull(existingConfig)))
             .getAnswer();
 
     String logoFileName = null;
@@ -88,13 +95,13 @@ public class DmsUIQuestionnaire {
 
     val info =
         resolveServiceConnectionInfo(
-            runModes, gatewayConfig, questionFactory, DMS_UI.toString(), DmsUIConfig.DEFAULT_PORT);
+             gatewayConfig, DMS_UI.toString(), DmsUIConfig.DEFAULT_PORT);
 
     terminal.println(ARRANGER_QUESTIONS_NOTE);
     String projectId =
         questionFactory
             .newDefaultSingleQuestion(
-                String.class, PROJ_ID, true, DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_ID)
+                String.class, PROJ_ID, true, getDefaultValue(() -> existingConfig.getProjectConfig().getId() , DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_ID, isNull(existingConfig)))
             .getAnswer();
 
     String projectName =
@@ -103,7 +110,8 @@ public class DmsUIQuestionnaire {
                 String.class,
                 PROJ_NAME,
                 true,
-                DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME)
+                getDefaultValue(() -> existingConfig.getProjectConfig().getName() , DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
+                )
             .getAnswer();
 
     String elasticSearchIndexOrAlias =

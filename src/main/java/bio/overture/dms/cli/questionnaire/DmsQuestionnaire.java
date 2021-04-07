@@ -11,8 +11,14 @@ import bio.overture.dms.core.model.dmsconfig.DmsConfig;
 import bio.overture.dms.core.model.dmsconfig.GatewayConfig;
 import bio.overture.dms.core.model.dmsconfig.HealthCheckConfig;
 import bio.overture.dms.core.model.enums.ClusterRunModes;
+
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.function.Supplier;
+
+import bio.overture.dms.core.util.Tuple;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -31,7 +37,6 @@ public class DmsQuestionnaire {
   private final MaestroQuestionnaire maestroQuestionnaire;
   private final ArrangerQuestionnaire arrangerQuestionnaire;
   private final DmsUIQuestionnaire dmsUIQuestionnaire;
-
   private final Terminal terminal;
 
   @Autowired
@@ -59,7 +64,60 @@ public class DmsQuestionnaire {
   }
 
   @SneakyThrows
-  public DmsConfig buildDmsConfig(DmsConfig existingConfig) {
+  public DmsConfig buildDmsConfig(@NonNull DmsConfig existingConfig) {
+    GatewayConfig gatewayConfig;
+    ClusterRunModes clusterRunMode;
+
+    if (existingConfig.getClusterRunMode() == null) {
+      val clusterModeResult = configureClusterMode();
+      gatewayConfig = clusterModeResult.x;
+      clusterRunMode = clusterModeResult.y;
+    } else {
+      gatewayConfig = existingConfig.getGateway();
+      clusterRunMode = existingConfig.getClusterRunMode();
+    }
+
+    printHeader("EGO");
+    terminal.println(GUIDE_EGO);
+    val existingEgoConfig = existingConfig.getEgo();
+    val egoConfig = egoQuestionnaire.buildEgoConfig(gatewayConfig, existingEgoConfig, terminal);
+    printHeader("SONG");
+    terminal.println(GUIDE_SONG);
+    val songConfig = songQuestionnaire.buildSongConfig(gatewayConfig, existingConfig.getSong(), terminal);
+    printHeader("SCORE");
+    terminal.println(GUIDE_SCORE);
+    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode, gatewayConfig, existingConfig.getScore());
+    printHeader("ELASTICSEARCH");
+    terminal.println(GUIDE_ES);
+    val elasticConfig = elasticsearchQuestionnaire.buildConfig(gatewayConfig, existingConfig.getElasticsearch(), terminal);
+    printHeader("MAESTRO");
+    terminal.println(GUIDE_MAESTRO);
+    val maestroConfig = maestroQuestionnaire.buildConfig(gatewayConfig, existingConfig.getMaestro());
+    val arrangerConfig = arrangerQuestionnaire.buildConfig(gatewayConfig);
+    printHeader("DMS UI");
+    // we pass maestro's config to read the alias name to be used
+    // in case the user changed the default.
+    terminal.println(GUIDE_DMSUI);
+    val dmsUIConfig =
+        dmsUIQuestionnaire.buildConfig(maestroConfig, gatewayConfig, egoConfig, existingConfig.getDmsUI());
+
+    return DmsConfig.builder()
+        .gateway(gatewayConfig)
+        .clusterRunMode(clusterRunMode)
+        .healthCheck(HealthCheckConfig.builder().build())
+        .version(existingConfig.getVersion())
+        .network(composeProperties.getNetwork())
+        .ego(egoConfig)
+        .song(songConfig)
+        .score(scoreConfig)
+        .elasticsearch(elasticConfig)
+        .maestro(maestroConfig)
+        .dmsUI(dmsUIConfig)
+        .arranger(arrangerConfig)
+        .build();
+  }
+
+  private Tuple<GatewayConfig, ClusterRunModes> configureClusterMode() throws MalformedURLException, URISyntaxException {
     printHeader("CLUSTER MODE & GATEWAY");
     terminal.println(DEPLOYMENT_MODE);
     val clusterRunMode =
@@ -99,43 +157,7 @@ public class DmsQuestionnaire {
     gatewayConfig =
         GatewayConfig.builder().hostPort(gatewayPort).url(dmsGatewayUrl).sslDir(sslPath).build();
 
-    printHeader("EGO");
-    terminal.println(GUIDE_EGO);
-    val egoConfig = egoQuestionnaire.buildEgoConfig(clusterRunMode, gatewayConfig);
-    printHeader("SONG");
-    terminal.println(GUIDE_SONG);
-    val songConfig = songQuestionnaire.buildSongConfig(clusterRunMode, gatewayConfig);
-    printHeader("SCORE");
-    terminal.println(GUIDE_SCORE);
-    val scoreConfig = scoreQuestionnaire.buildScoreConfig(clusterRunMode, gatewayConfig);
-    printHeader("ELASTICSEARCH");
-    terminal.println(GUIDE_ES);
-    val elasticConfig = elasticsearchQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    printHeader("MAESTRO");
-    terminal.println(GUIDE_MAESTRO);
-    val maestroConfig = maestroQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    val arrangerConfig = arrangerQuestionnaire.buildConfig(clusterRunMode, gatewayConfig);
-    printHeader("DMS UI");
-    // we pass maestro's config to read the alias name to be used
-    // in case the user changed the default.
-    terminal.println(GUIDE_DMSUI);
-    val dmsUIConfig =
-        dmsUIQuestionnaire.buildConfig(maestroConfig, clusterRunMode, gatewayConfig, egoConfig);
-
-    return DmsConfig.builder()
-        .gateway(gatewayConfig)
-        .clusterRunMode(clusterRunMode)
-        .healthCheck(HealthCheckConfig.builder().build())
-        .version(existingConfig.getVersion())
-        .network(composeProperties.getNetwork())
-        .ego(egoConfig)
-        .song(songConfig)
-        .score(scoreConfig)
-        .elasticsearch(elasticConfig)
-        .maestro(maestroConfig)
-        .dmsUI(dmsUIConfig)
-        .arranger(arrangerConfig)
-        .build();
+    return new Tuple<>(gatewayConfig, clusterRunMode);
   }
 
   @SneakyThrows
@@ -163,33 +185,18 @@ public class DmsQuestionnaire {
 
   @SneakyThrows
   static ServiceUrlInfo resolveServiceConnectionInfo(
-      ClusterRunModes clusterRunMode,
       GatewayConfig gatewayConfig,
-      QuestionFactory questionFactory,
       String serviceName,
       int defaultApiPort) {
     URL serverUrl;
-    int apiPort = defaultApiPort;
-    if (gatewayConfig.isPathBased()) {
-      serverUrl = gatewayConfig.getUrl().toURI().resolve("/" + serviceName).toURL();
-    } else {
-      if (clusterRunMode == SERVER) {
-        serverUrl = new URL("http://" + serviceName + "." + gatewayConfig.getUrl().getHost());
-      } else {
-        apiPort =
-            questionFactory
-                .newDefaultSingleQuestion(
-                    Integer.class,
-                    "What port would you like to expose " + serviceName + " on?",
-                    true,
-                    defaultApiPort)
-                .getAnswer();
-        serverUrl = createLocalhostUrl(apiPort);
-      }
-    }
+    serverUrl = gatewayConfig.getUrl().toURI().resolve("/" + serviceName).toURL();
     val r = new ServiceUrlInfo();
-    r.port = apiPort;
+    r.port = defaultApiPort;
     r.serverUrl = serverUrl;
     return r;
+  }
+
+  public static <T>  T getDefaultValue(Supplier<T> supplier, T defaultVal, boolean newConfig) {
+    return newConfig ? defaultVal : supplier.get();
   }
 }
