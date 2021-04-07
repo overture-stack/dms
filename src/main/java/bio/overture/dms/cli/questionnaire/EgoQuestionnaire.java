@@ -106,7 +106,7 @@ public class EgoQuestionnaire {
 
     apiBuilder.jwt(
         JwtConfig.builder()
-            .app(new JwtDuration(HOURS.toMillis(jwtUserDurationHours)))
+            .user(new JwtDuration(HOURS.toMillis(jwtUserDurationHours)))
             .app(new JwtDuration(HOURS.toMillis(jwtAppDurationHours)))
             .build());
 

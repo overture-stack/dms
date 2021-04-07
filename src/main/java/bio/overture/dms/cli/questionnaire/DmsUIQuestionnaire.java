@@ -57,7 +57,8 @@ public class DmsUIQuestionnaire {
 
     String labName =
         questionFactory
-            .newDefaultSingleQuestion(String.class, TITLE, true, getDefaultValue(() -> existingConfig.getLabName(), "Data Management System", isNull(existingConfig)))
+            .newDefaultSingleQuestion(String.class, TITLE, true,
+                getDefaultValue(() -> existingConfig.getLabName(), "Data Management System", isNull(existingConfig)))
             .getAnswer();
 
     String logoFileName = null;
@@ -101,7 +102,8 @@ public class DmsUIQuestionnaire {
     String projectId =
         questionFactory
             .newDefaultSingleQuestion(
-                String.class, PROJ_ID, true, getDefaultValue(() -> existingConfig.getProjectConfig().getId() , DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_ID, isNull(existingConfig)))
+                String.class, PROJ_ID, true, getDefaultValue(() -> existingConfig.getProjectConfig().getId() ,
+                    DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_ID, isNull(existingConfig)))
             .getAnswer();
 
     String projectName =
@@ -110,7 +112,8 @@ public class DmsUIQuestionnaire {
                 String.class,
                 PROJ_NAME,
                 true,
-                getDefaultValue(() -> existingConfig.getProjectConfig().getName() , DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
+                getDefaultValue(() -> existingConfig.getProjectConfig().getName() ,
+                    DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
                 )
             .getAnswer();
 
