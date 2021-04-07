@@ -235,18 +235,19 @@ public class SwarmService {
               @Override
               public synchronized void onNext(PullResponseItem item) {
                 super.onNext(item);
-                if (item.getProgress() == null) {
-                  t.resetLine();
-                  t.print(
-                      item.getId() != null
-                          ? "[" + item.getId() + "] " + item.getStatus()
-                          : item.getStatus());
-                }
+                t.resetLine();
                 if (item.getProgress() != null) {
-                  t.resetLine();
                   t.print("[" + item.getId() + "] " + item.getProgress());
                   return;
                 }
+                if (item.getStatus() == null) {
+                  return;
+                }
+                t.print(
+                    item.getId() != null
+                        ? "[" + item.getId() + "] " + item.getStatus()
+                        : item.getStatus()
+                );
               }
             })
         .awaitCompletion();
