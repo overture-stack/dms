@@ -5,7 +5,7 @@
 Name: song-db
 TaskTemplate:
   ContainerSpec:
-    Image: "postgres:11.1"
+    Image: $dmsConfig.song.db.image
     Env:
       - POSTGRES_DB=song
       - POSTGRES_PASSWORD=$dmsConfig.song.db.databasePassword

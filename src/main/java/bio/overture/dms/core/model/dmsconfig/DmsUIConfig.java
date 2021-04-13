@@ -1,7 +1,9 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
 import javax.validation.constraints.Email;
@@ -34,6 +36,8 @@ public class DmsUIConfig {
   private ArrangerProjectConfig projectConfig;
 
   public static final int DEFAULT_PORT = 8000;
+
+  @JsonIgnore private String image = OVERTURE_DMS_UI + ":" + DMS_UI_TAG;
 
   @Data
   @Builder

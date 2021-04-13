@@ -1,10 +1,14 @@
 package bio.overture.dms.compose.deployment;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
+import static bio.overture.dms.cli.model.Constants.MESSAGES.CHECK_COMPLETED;
+import static bio.overture.dms.cli.model.Constants.MESSAGES.CHECK_DOCKER_IMAGES_MSG;
 import static bio.overture.dms.compose.model.ComposeServiceResources.*;
 import static bio.overture.dms.core.util.Concurrency.waitForCompletableFutures;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import bio.overture.dms.cli.terminal.Terminal;
 import bio.overture.dms.compose.deployment.ego.EgoApiDbDeployer;
 import bio.overture.dms.compose.deployment.elasticsearch.ElasticsearchDeployer;
 import bio.overture.dms.compose.deployment.score.ScoreApiDeployer;
@@ -34,7 +38,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DmsComposeManager implements ComposeManager<DmsConfig> {
-
   private final ExecutorService executorService;
   private final SwarmService swarmService;
   private final EgoApiDbDeployer egoApiDbDeployer;
@@ -43,6 +46,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   private final ScoreApiDeployer scoreApiDeployer;
   private final ElasticsearchDeployer elasticsearchDeployer;
   private final Messenger messenger;
+  private final Terminal terminal;
   private final boolean dmsRunningInDocker;
 
   @Autowired
@@ -55,7 +59,8 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
       @NonNull ScoreApiDeployer scoreApiDeployer,
       @NonNull ElasticsearchDeployer elasticsearchDeployer,
       @NonNull DockerProperties dockerProperties,
-      @NonNull Messenger messenger) {
+      @NonNull Messenger messenger,
+      Terminal terminal) {
     this.executorService = executorService;
     this.swarmService = swarmService;
     this.egoApiDbDeployer = egoApiDbDeployer;
@@ -65,6 +70,7 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     this.elasticsearchDeployer = elasticsearchDeployer;
     this.dmsRunningInDocker = dockerProperties.getRunAs();
     this.messenger = messenger;
+    this.terminal = terminal;
   }
 
   @Override
@@ -72,6 +78,9 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
   public void deploy(@NonNull DmsConfig dmsConfig) {
     swarmService.initializeSwarm();
     swarmService.getOrCreateNetwork(dmsConfig.getNetwork());
+
+    pullImagesIfNeeded();
+
     val completableFutures = new ArrayList<CompletableFuture<?>>();
     CompletableFuture<Void> gateway;
     gateway = runAsync(getDeployRunnable(dmsConfig, GATEWAY, messenger), executorService);
@@ -146,6 +155,48 @@ public class DmsComposeManager implements ComposeManager<DmsConfig> {
     } finally {
       if (latch.getCount() == 1) latch.countDown();
     }
+  }
+
+  private void pullImagesIfNeeded() {
+    terminal.printStatusLn(CHECK_DOCKER_IMAGES_MSG);
+    swarmService.pullImage(POSTGRES, POSTGRES_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Postgres");
+    swarmService.pullImage(OVERTURE_EGO_UI, EGO_UI_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Ego UI");
+    swarmService.pullImage(OVERTURE_EGO, EGO_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Ego");
+    swarmService.pullImage(OVERTURE_ARRANGER_SERVER, ARRANGER_SERVER_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Arranger Server");
+    swarmService.pullImage(OVERTURE_ARRANGER_UI, ARRANGER_UI_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Arranger UI");
+    swarmService.pullImage(OVERTURE_DMS_UI, DMS_UI_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Dms UI");
+    swarmService.pullImage(OVERTURE_SONG_SERVER, SONG_SERVER_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Song");
+    swarmService.pullImage(OVERTURE_SCORE_SERVER, SCORE_SERVER_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Score");
+    swarmService.pullImage(MINIO_MINIO, MINIO_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Minio");
+    swarmService.pullImage(DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH, ES_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Elasticsearch");
+    swarmService.pullImage(GHCR_IO_OVERTURE_STACK_DMS_GATEWAY, DMS_GATEWAY_TAG, terminal);
+    swarmService.pullImage(GHCR_IO_OVERTURE_STACK_DMS_GATEWAY_SECURE, DMS_GATEWAY_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Gateway");
+    swarmService.pullImage(GHCR_IO_OVERTURE_STACK_MAESTRO, MAESTRO_TAG, terminal);
+    terminal.resetLine();
+    terminal.printStatusLn("✔️ Maestro");
+    terminal.printStatusLn(CHECK_COMPLETED);
   }
 
   private Runnable getMaestroDeployRunnable(

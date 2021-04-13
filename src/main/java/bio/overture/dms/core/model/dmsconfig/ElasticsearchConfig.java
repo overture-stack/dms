@@ -1,9 +1,12 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URL;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -17,7 +20,9 @@ public class ElasticsearchConfig {
   @Builder.Default private int hostPort = DEFAULT_PORT;
   @NonNull private Security security;
 
-  URL url;
+  @NotNull URL url;
+
+  @JsonIgnore private String image = DOCKER_ELASTIC_CO_ELASTICSEARCH_ELASTICSEARCH + ":" + ES_TAG;
 
   @Data
   @Builder

@@ -1,5 +1,6 @@
 package bio.overture.dms.core.model.dmsconfig;
 
+import static bio.overture.dms.cli.model.Constants.DockerImagesConstants.*;
 import static bio.overture.dms.core.util.Strings.isDefined;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
@@ -43,6 +44,8 @@ public class SongConfig {
     public boolean isDatabasePasswordDefined() {
       return isDefined(databasePassword);
     }
+
+    @JsonIgnore private String image = POSTGRES + ":" + POSTGRES_TAG;
   }
 
   @Data
@@ -59,5 +62,7 @@ public class SongConfig {
     private int hostPort = 9010;
 
     private AppCredential appCredential;
+
+    @JsonIgnore private String image = OVERTURE_SONG_SERVER + ":" + SONG_SERVER_TAG;
   }
 }

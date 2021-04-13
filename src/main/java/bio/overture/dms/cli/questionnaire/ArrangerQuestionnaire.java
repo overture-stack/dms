@@ -15,24 +15,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ArrangerQuestionnaire {
 
-  private final QuestionFactory questionFactory;
-
   @Autowired
-  public ArrangerQuestionnaire(@NonNull QuestionFactory questionFactory) {
-    this.questionFactory = questionFactory;
-  }
+  public ArrangerQuestionnaire() { }
 
-  public ArrangerConfig buildConfig(ClusterRunModes clusterRunMode, GatewayConfig gatewayConfig) {
+  public ArrangerConfig buildConfig(GatewayConfig gatewayConfig) {
 
     val info =
-        resolveServiceConnectionInfo(
-            clusterRunMode, gatewayConfig, questionFactory, ARRANGER_SERVER.toString(), 5050);
+        resolveServiceConnectionInfo(gatewayConfig,
+            ARRANGER_SERVER.toString(),
+            5050);
 
     val uiHostInfo =
         resolveServiceConnectionInfo(
-            clusterRunMode,
             gatewayConfig,
-            questionFactory,
             ARRANGER_UI.toString(),
             ArrangerConfig.ArrangerUIConfig.DEFAULT_PORT);
     return ArrangerConfig.builder()
