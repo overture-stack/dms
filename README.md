@@ -1,52 +1,48 @@
-# dms
-Overture Data Management System
+# DMS - Overture Data Management System
 
+[<img hspace="5" src="https://img.shields.io/badge/chat-on--slack-blue?style=for-the-badge">](http://slack.overture.bio)
+[<img hspace="5" src="https://img.shields.io/badge/License-gpl--v3.0-blue?style=for-the-badge">](https://github.com/overture-stack/dms/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/Code%20of%20Conduct-2.1-blue?style=for-the-badge">](code_of_conduct.md)
 
-## Development
-### Configure remote docker daemon control
-It is possible to run the dms locally while controlling a remote docker engine.
-1. Port forward the docker.sock [Forwarding the Docker Socket over SSH](https://medium.com/@dperny/forwarding-the-docker-socket-over-ssh-e6567cfab160)
-   ```
-   ssh -nNT -L /some/local/path/to/docker.sock:/var/run/docker.sock user@someremote
-   ```
-2. Run the dms with the following env variable set:
-   ```
-   DOCKER_HOST=unix:///some/local/path/to/docker.sock
-   ```
+<div>
+  <img align="right" alt="Overture overview" src="https://www.overture.bio/static/124ca0fede460933c64fe4e50465b235/a6d66/system-diagram.png" width="45%" hspace="5">
+</div>
 
-### Test Score uploads and downloads
-To test the score uploads and downloads, ego, song and score services must be running and healthy. Since the score service responds with presigned s3 urls that use the minio-api as the service name, the urls would not be resolvable outside of the defined `docker-swarm-network`. To fix this, a convienece docker image state was created in the Dockerfile (target is called `genomic-transfer-helper`) which pulls the appropriate song-client and score-client distributions and configures them with the right JWT. The following instructions will allow you to download and upload using this tool:
-1. Log in to the EGO-UI service. The default local url is http://localhost:9002
-2. Log out
-3. By default, new users obtain the role `USER`. In order to proceed, the `ADMIN` role is needed. To do this, run the following command
-```
-docker exec -it $(docker service ps ego-db --no-trunc --format '{{ .Name }}.{{.ID}}' | head -1)  psql -U postgres ego -c "UPDATE egouser set type='ADMIN' where email='<the-email-you-logged-in-with-previously>' and providertype='<one of: GOOGLE,LINKEDIN,FACEBOOK,GITHUB,ORCID>';"
-```
-5. Log in again into EGO-UI (http://localhost:9002) and now you should be able to use the UI
-6. Select `Users` in the side bar, and then select your user record. On the right most pane, click the `Edit` button at the top and then click the `+ Add` button for the `Groups` section, and add your self to the `dcc-admin` group. Then click the `Save` button at the top. This will give you the neccessary permissions to use song and score.
-7. Log out
-8. Start the browsers inspector tool (this will be different for each browser) and filter for XHR requests.
-9. Log in to the EGO-UI. Once logged in, refer to response for the `ego-token?client_id=ego-ui` request. This is the JWT
-10. Copy and paste the JWT from the previous step into the file `./jwt.txt`. 
-11. Run `make start-transfer-shell`. This will automatically run the `genomic-transfer-helper` and load the contents of `jwt.txt` as the JWT to allow authorized access to song and score.
-12. Once logged into the container, you can use the score and song clients. Run `./song-client/bin/sing ping` and `curl $(curl -sL http://score-api:8080/download/ping)` to do a health check.
+The Overture Data Management System (DMS) is a collection of microservices designed to support the entire lifecycle of genomics data. The DMS provides a comprehensive data portal allowing users to query data, build cohorts and export queried data for further analyze and interpretation.
 
-## Gateway
-The gateway is based on nginx.
-the config template file is under ./nginx/path-based, there is also a docker file
-tagging the gateway is done in Jenkinsfile, it will always have a new tag with the same version as the dms version.
+</br>
 
-## Tips
-### Checking for OOM messages when a container/service is killed
-Sometimes, if the reserved/limit memory is too low, a container will get killed by the kernel. To find out if this is the case, run
-`journalctl -k | grep -i -e memory -e oom`. For java apps, the status `"task: non-zero exit (137)"` is usually the case.
+<div>
+<img align="left" src="ov-logo.png" height="80" hspace="0"/>
+</div>
 
-## useful commands:
-- `docker service ps --no-trunc {serviceName}`
-- `journalctl -u docker.service | tail -n 50 `
+*[Overture](https://www.overture.bio/) is an ecosystem of research software tools, each with narrow responsibilities, designed to address the changing needs of genome informatics.</br></br>*
+
+The DMS is packaged with the following components:
+
+- [Ego](https://www.overture.bio/products/ego/) and [Ego UI](https://www.overture.bio/products/ego-ui/) for application and user management
+
+- [Score](https://www.overture.bio/products/score/) to handle file transfer and object storage 
+
+- [Song](https://www.overture.bio/products/song/) to track and validate metadata 
+
+- [Maestro](https://www.overture.bio/products/maestro/) to organize distributed song metadata into a single centralized Elasticsearch index
+
+- [Arranger](https://www.overture.bio/products/arranger/), which is the search API that interfaces between the Elasticsearch index and built-in UI components.
+
+## Documentation
+
+- See our Developer [wiki](https://github.com/overture-stack/dms/wiki)
+- For our user installation guide see our website [here](https://www.overture.bio/documentation/dms/installation/)
+- For administrative guidance see our website [here](https://www.overture.bio/documentation/dms/admin-guide/tasks/)
+
+## Support & Contributions
+
+- Filing an [issue](https://github.com/overture-stack/ego/issues)
+- Making a [contribution](CONTRIBUTING.md)
+- Connect with us on [Slack](http://slack.overture.bio)
+- Add or Upvote a [feature request](https://github.com/overture-stack/ego/issues?q=is%3Aopen+is%3Aissue+label%3Anew-feature+sort%3Areactions-%2B1-desc)
 
 ## Acknowledgements
 
-DMS development supported by:
-
-[![Canarie logo](canarie-logo.png)](https://canarie.ca)
+DMS development was supported by [Canarie](https://canarie.ca)
