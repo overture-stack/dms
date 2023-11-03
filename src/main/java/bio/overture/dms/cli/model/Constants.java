@@ -165,6 +165,8 @@ public final class Constants {
         "What is the Project ID you will configure in Arranger (to be referenced by DMS UI)?";
     public static final String PROJ_NAME =
         "What is the Project Name you will configure in Arranger (to be referenced by DMS UI)?";
+    public static final String DMS_VIZ_TOOL =
+            "Which optional visualization tools would you like to install?";
     public static final String ALIAS =
         "What is the Elasticsearch alias name you will configure in Arranger (to be referenced by DMS UI and ALSO must match the alias name previously supplied for Maestro) be? ";
     public static final String ARRANGER_QUESTIONS_NOTE =

@@ -33,6 +33,8 @@ public class DmsUIConfig {
 
   private String assetsDir;
 
+  private String dmsVizTool;
+
   private ArrangerProjectConfig projectConfig;
 
   public static final int DEFAULT_PORT = 8000;

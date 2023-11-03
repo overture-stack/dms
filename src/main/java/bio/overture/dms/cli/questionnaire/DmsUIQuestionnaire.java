@@ -116,6 +116,16 @@ public class DmsUIQuestionnaire {
                     DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
                 )
             .getAnswer();
+    String visualizationTool =
+            questionFactory
+                    .newDefaultSingleQuestion(
+                            String.class,
+                            DMS_VIZ_TOOL,
+                            true,
+                            getDefaultValue(() -> existingConfig.getDmsVizTool() ,
+                                    DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
+                    )
+                    .getAnswer();
 
     String elasticSearchIndexOrAlias =
         questionFactory
