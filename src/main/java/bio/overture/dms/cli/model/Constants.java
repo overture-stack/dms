@@ -48,7 +48,7 @@ public final class Constants {
     public static final String ES_TAG = "7.6.0";
     public static final String DMS_GATEWAY_TAG = "1.0.0";
     public static final String MAESTRO_TAG = "3.8.0";
-    public static final String DMS_UI_TAG = "1.0.3";
+    public static final String DMS_UI_TAG = "fa1420b";
   }
 
   public static final class MESSAGES {
