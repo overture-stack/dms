@@ -33,6 +33,6 @@ build/
 ### VS Code ###
 .vscode/
 
-
 ## others
 run.sh
+.DS_Store
