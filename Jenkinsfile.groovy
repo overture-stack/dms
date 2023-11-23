@@ -84,6 +84,7 @@ spec:
                 }
             }
         }
+
         stage('Test') {
             steps {
                 container('jdk') {
@@ -91,36 +92,60 @@ spec:
                 }
             }
         }
-        stage('Build & Publish Develop') {
+
+        stage('Build images') {
             when {
-                branch 'jbrowseintegeration'
+                anyOf {
+                    branch 'develop'
+                    branch 'main'
+                    branch 'feature/jbrowseIntegeration'
+                }
             }
             steps {
                 container('docker') {
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh 'docker build \
+                        --target client \
+                        --network=host \
+                        -f Dockerfile \
+                        -t dms .'
+
+                    sh 'docker build \
+                        --target latest-version-helper \
+                        --network=host \
+                        -f Dockerfile \
+                        -t dms-version-helper .'
+                }
+            }
+        }
+
+        stage('Publish Images') {
+            when {
+                branch 'feature/jbrowseIntegeration'
+            }
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureBioDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker build --network=host --target client -f  Dockerfile . -t overture/dms:jbrowse-${commit}"
+                    // still necessary because the helper script relies on the dockerhub api to get versions
+                    sh "docker tag dms overture/dms:jbrowse-${commit}"
                     sh "docker push overture/dms:jbrowse-${commit}"
-
-                    sh "docker build --network=host --target latest-version-helper -f Dockerfile . -t overture/dms-version-helper:jbrowse-${commit}"
-                    sh "docker push overture/dms-version-helper:jbrowse-${commit}"
                 }
                 container('docker') {
                     withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker tag jbrowse-${commit} ${dockerOrg}/${dmsRepo}:jbrowse-${commit}"
+                    sh "docker tag dms ${dockerOrg}/${dmsRepo}:jbrowse-${commit}"
                     sh "docker push ${dockerOrg}/${dmsRepo}:jbrowse-${commit}"
 
-                    sh "docker tag overture/dms-version-helper:jbrowse-${commit} ${dockerOrg}/${dmsVersionHelperRepo}:jbrowse-${commit}"
-                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}:jbrowse-${commit}"
+                    sh "docker tag dms-version-helper ${dockerOrg}/${dmsVersionHelperRepo}:jbrowse-${commit}"
+                    sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:jbrowse-${commit}"
 
                     sh "docker build --target insecure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}:jbrowse-${commit}"
-                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}-secure:jbrowse-${commit}"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}:jbrowse-${commit}"
 
-                    sh "docker build --target secure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}-secure:edge"
-                    sh "docker push ${dockerOrg}/${dmsVersionHelperRepo}:jbrowse-${commit}"
+                    sh "docker build --target secure --network=host -f ./nginx/path-based/Dockerfile ./nginx/path-based -t ${dockerOrg}/${dmsGatewayRepo}-secure:jbrowse-${commit}"
+                    sh "docker push ${dockerOrg}/${dmsGatewayRepo}-secure:jbrowse-${commit}"
                 }
             }
         }
