@@ -6,6 +6,7 @@ export DOCKER_EXE=$DEFAULT_DOCKER_EXE
 export CONFIG_FILENAME=config.yaml
 export TEMP_CONFIG_FILE=/tmp/$CONFIG_FILENAME
 
+export HELPER_VERSION=${HELPER_VERSION:-latest}
 export DMS_HOME=$HOME/.dms
 export DMS_CONFIG_FILE=$DMS_HOME/$CONFIG_FILENAME
 
@@ -25,6 +26,7 @@ function isVersionGTE {
 	min_patch_version=$(parsePatchVersion $min_version)
 
 	result=true
+
 	if [ $input_major_version -lt $min_major_version ];then
 		result=false
 	elif [ $input_major_version -eq $min_major_version ];then
@@ -36,6 +38,7 @@ function isVersionGTE {
 			fi
 		fi
 	fi
+
 	echo $result
 }
 
@@ -52,14 +55,16 @@ function parsePatchVersion {
 }
 
 function checkDocker {
-	# check docker exists: show instructions 
+	# check docker exists: show instructions
 	result_output=$($DOCKER_EXE version -f '{{ .Server.Version }}' 2>&1)
 	result_code=$?
-	if [ $result_code -ne 0  ]; then
+
+	if [ $result_code -ne 0 ]; then
 		echo "Could not execute the docker command. Message: $result_output"
 		exit 1
 	else
 		version_result=$(isVersionGTE $result_output $MIN_VERSION 2>&1)
+
 		if [ "$version_result" == "false" ]; then
 			echo "[ERROR]: The installed docker version $result_output is not >= $MIN_VERSION"
 			exit 1
@@ -71,9 +76,9 @@ function checkDocker {
 function setupDockerExecutable {
 	if [ ! -f $DEFAULT_DOCKER_EXE ]; then
 		result=$(which docker)
+
 		if [ $? -ne 0 ]; then
-			#TODO: rtisma -- add instructions
-			echo "Docker is not installed. Please refer to ...."
+			echo "Docker is not installed. Please refer to https://www.docker.com/get-started/"
 			exit 1
 		else
 			export DOCKER_EXE=$result
@@ -83,48 +88,68 @@ function setupDockerExecutable {
 	fi
 }
 
+function checkImageExists {
+	echo [ ! -z $($DOCKER_EXE image ls --format '{{json .Tag}}' ghcr.io/overture-stack/$1 | grep $HELPER_VERSION) ]
+}
+
 function getLatestVersion {
 	docker_engine_arch=$($DOCKER_EXE version -f '{{ .Server.Arch }}' 2>&1)
+
 	if [ $? -ne 0 ]; then
 		echo "[ERROR]: Could not find the docker engine server architecture. Message: $docker_engine_arch"
 		exit 1
 	fi
-	$DOCKER_EXE run --rm -i overture/dms-version-helper:latest /tmp/run.sh $docker_engine_arch
+
+	# silicon architecture is filtered out otherwise
+	[ $docker_engine_arch == 'arm64' ] && docker_engine_arch=amd64 && export DOCKER_DEFAULT_PLATFORM=linux/amd64;
+
+	result=$($DOCKER_EXE run --rm -iq -e ARCH=$docker_engine_arch -e DMS_TAG=$HELPER_VERSION ghcr.io/overture-stack/dms-version-helper:$HELPER_VERSION /tmp/run.sh 2>&1)
+
+	if [ $? -ne 0 ]; then
+		echo "[ERROR]: Could not find the $HELPER_VERSION dms version. Try again later."
+		echo "$result"
+		exit 1
+	fi
+
+	echo $result
 }
 
 function genLatestConfig {
 	output_path=$1
 
-	$DOCKER_EXE pull overture/dms-version-helper:latest > /dev/null
-	result=$(getLatestVersion 2>&1)
-	if [ $? -ne 0 ]; then
-		echo "[ERROR]: Could not find the latest dms version. Try again later."
-		echo "$result"
+	version=''
+
+	[ -f $output_path ] && version=$(cat $output_path |
+		grep "^version" |
+		sed 's/.*://g' |
+		tr -d '[:space:]' |
+		sed 's/"//g')
+
+	if [ ! -z $version ] || [ "$version" != "$HELPER_VERSION" ]; then
+		version=$(getLatestVersion)
+	fi
+
+	# update config file
+	echo -n "version: $version" > $output_path
+
+	if [ ! -f $output_path ]; then
+		echo "[ERROR]: The config file \"$output_path\" was not created"
 		exit 1
 	fi
-	echo -n "version: $result" > $output_path
+
+	echo $version
 }
 
 function provisionConfig {
-	config_filename=$1
-
-	if [ ! -d $DMS_HOME ];then
+	if [ ! -d $DMS_HOME ]; then
 		mkdir -p $DMS_HOME
 	fi
 
-	if [ ! -d $DMS_HOME/assets ];then
+	if [ ! -d $DMS_HOME/assets ]; then
 		mkdir -p $DMS_HOME/assets
 	fi
 
-	if [ ! -f $DMS_CONFIG_FILE ];then
-		genLatestConfig $DMS_CONFIG_FILE
-	fi
-
-	if [ ! -f $DMS_CONFIG_FILE ];then
-		echo "[ERROR]:  The config file \"$DMS_CONFIG_FILE\" was not created"
-		exit 1
-	fi
-	dms_version=$(cat $DMS_CONFIG_FILE | grep "^version" | sed 's/.*://g' |  tr -d '[:space:]' | sed  's/"//g' 2>&1)
+	dms_version=$(genLatestConfig $DMS_CONFIG_FILE)
 
 	# Return the version
 	echo $dms_version
@@ -137,17 +162,19 @@ function main {
 	all_dms_params=$@
 
 	# Constants
-	repo_name="overture/dms"
+	repo_name="ghcr.io/overture-stack/dms"
 	volume_name="dms-config"
-	config_filename=$CONFIG_FILENAME
 
 	setupDockerExecutable
 	checkDocker
 
+	$(checkImageExists dms-version-helper) || echo "Looking for the $HELPER_VERSION version of DMS..."
+
 	# Get dms version from config
-	dms_version=$(provisionConfig $config_filename 2>&1)
+	dms_version=$(provisionConfig)
+
 	if [ $? -ne 0 ]; then
-		echo "[ERROR]: There was an error obtaining the dms version"
+		echo "[ERROR]: There was an error obtaining the DMS version"
 		echo "$dms_version"
 		exit 1
 	fi
@@ -155,17 +182,21 @@ function main {
 	#################################
 	# Define the docker options
 	#################################
-	# This is done so that unix line endings are output. Otherwise, with the -t option, 
+	# This is done so that unix line endings are output. Otherwise, with the -t option,
 	# dos line endings are present and the script cannot be sourced
 	docker_opts=""
+
 	if [ "${DMS_DEBUG:-}" != "true" ]; then
 		docker_opts='--rm'
 	fi
-	docker_opts="$docker_opts -i --network=$NETWORK_NAME -e \"DOCKER_MODE=true\""
+
+	docker_opts="$docker_opts -iq --network=$NETWORK_NAME -e \"DOCKER_MODE=true\""
+
 	if [ "$command_name" != "bash-completion" ];then
 		# Output colour to the terminal
 		docker_opts="$docker_opts -t"
 	fi
+
 	docker_opts="$docker_opts -v /var/run/docker.sock:/var/run/docker.sock:ro"
 	docker_opts="$docker_opts -v /usr/bin/docker:/usr/bin/docker:ro"
 	docker_opts="$docker_opts -v $DMS_HOME:/root/.dms"
@@ -175,15 +206,22 @@ function main {
 		docker_opts="$docker_opts -p 5005:5005"
 		set -x
 	fi
+
 	docker_opts="$docker_opts -e DOCKER_RUNAS=true -e DOCKER_DMSHOMEHOSTPATH=$DMS_HOME -e DOCKER_TAG=$dms_version"
+
 	# create dms-swarm-network if it doesn't exist, this is important for first run
 	# since the dms uses that in its run options
 	found_network=$(docker network ls --filter name=${NETWORK_NAME} --format="{{ .Name }}")
+
 	if [ -z $found_network ] ; then
-		echo "creating the dms network"
-		$DOCKER_EXE network create -d overlay --attachable ${NETWORK_NAME} ;
+		echo "Creating the dms network..."
+		$DOCKER_EXE network create -d overlay --attachable ${NETWORK_NAME} 2>&1;
 	fi
+
+	$(checkImageExists dms) || echo "Getting the $HELPER_VERSION version of DMS..."
+
 	$DOCKER_EXE run $docker_opts $repo_name:$dms_version dms $all_dms_params
+
 	set +x
 }
 
