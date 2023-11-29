@@ -48,7 +48,7 @@ public final class Constants {
     public static final String ES_TAG = "7.6.0";
     public static final String DMS_GATEWAY_TAG = "1.0.0";
     public static final String MAESTRO_TAG = "3.8.0";
-    public static final String DMS_UI_TAG = "fa1420b";
+    public static final String DMS_UI_TAG = "1.0.3";
   }
 
   public static final class MESSAGES {
@@ -165,8 +165,6 @@ public final class Constants {
         "What is the Project ID you will configure in Arranger (to be referenced by DMS UI)?";
     public static final String PROJ_NAME =
         "What is the Project Name you will configure in Arranger (to be referenced by DMS UI)?";
-    public static final String DMS_VIZ_TOOL =
-            "Which optional visualization tools would you like to install?";
     public static final String ALIAS =
         "What is the Elasticsearch alias name you will configure in Arranger (to be referenced by DMS UI and ALSO must match the alias name previously supplied for Maestro) be? ";
     public static final String ARRANGER_QUESTIONS_NOTE =
