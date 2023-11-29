@@ -112,18 +112,10 @@ public class DmsUIQuestionnaire {
                 String.class,
                 PROJ_NAME,
                 true,
-                    getDefaultValue(() -> existingConfig.getDmsVizTool() ,
+                getDefaultValue(() -> existingConfig.getProjectConfig().getName() ,
                     DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
                 )
             .getAnswer();
-//    String visualizationTool =
-//            questionFactory
-//                    .newDefaultSingleQuestion(
-//                            String.class,
-//                            DMS_VIZ_TOOL,
-//                            false,
-//                            existingConfig.getDmsVizTool())
-//                    .getAnswer();
 
     String elasticSearchIndexOrAlias =
         questionFactory
@@ -142,7 +134,6 @@ public class DmsUIQuestionnaire {
         .labName(labName)
         .logoFileName(logoFileName)
         .assetsDir(assetsDirPath)
-//            .dmsVizTool(visualizationTool)
         .ssoProviders(
             egoConfig.getApi().getSso().getConfiguredProviders().stream()
                 .map(p -> p.name().toUpperCase())
