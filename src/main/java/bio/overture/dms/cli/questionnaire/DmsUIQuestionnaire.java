@@ -106,16 +106,16 @@ public class DmsUIQuestionnaire {
                     DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_ID, isNull(existingConfig)))
             .getAnswer();
 
-    String projectName =
-        questionFactory
-            .newDefaultSingleQuestion(
-                String.class,
-                PROJ_NAME,
-                true,
-                    getDefaultValue(() -> existingConfig.getDmsVizTool() ,
-                    DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
-                )
-            .getAnswer();
+//    String projectName =
+//        questionFactory
+//            .newDefaultSingleQuestion(
+//                String.class,
+//                PROJ_NAME,
+//                true,
+//                    getDefaultValue(() -> existingConfig.getDmsVizTool() ,
+//                    DmsUIConfig.ArrangerProjectConfig.DEFAULT_PROJECT_NAME, isNull(existingConfig))
+//                )
+//            .getAnswer();
     String visualizationTool =
             questionFactory
                     .newDefaultSingleQuestion(
@@ -135,7 +135,7 @@ public class DmsUIQuestionnaire {
         .projectConfig(
             DmsUIConfig.ArrangerProjectConfig.builder()
                 .id(projectId)
-                .name(projectName)
+                //.name(projectName)
                 .indexAlias(elasticSearchIndexOrAlias)
                 .build())
         .url(info.serverUrl)
