@@ -1,0 +1,21 @@
+{
+  "type": "QuantitativeTrack",
+  "trackId": "gse174533%5f11%2dp53%2d15%2dd23.pc1.bw-1702320228955-sessionTrack",
+  "name": "GSE174533%5F11%2DP53%2D15%2Dd23.PC1.bw",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigWigAdapter",
+    "bigWigLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE174nnn/GSE174533/suppl/GSE174533%5F11%2DP53%2D15%2Dd23.PC1.bw"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearWiggleDisplay",
+      "displayId": "gse174533%5f11%2dp53%2d15%2dd23.pc1.bw-1702320228955-sessionTrack-LinearWiggleDisplay"
+    }
+  ]
+}

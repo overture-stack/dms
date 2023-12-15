@@ -1,0 +1,21 @@
+{
+  "type": "QuantitativeTrack",
+  "trackId": "encff561sgx.bigwig-1702321270752-sessionTrack",
+  "name": "ENCFF561SGX.bigWig",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigWigAdapter",
+    "bigWigLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF561SGX/@@download/ENCFF561SGX.bigWig"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearWiggleDisplay",
+      "displayId": "encff561sgx.bigwig-1702321270752-sessionTrack-LinearWiggleDisplay"
+    }
+  ]
+}

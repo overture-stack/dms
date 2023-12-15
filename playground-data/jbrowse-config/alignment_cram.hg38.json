@@ -1,0 +1,62 @@
+{
+  "type": "AlignmentsTrack",
+  "trackId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack",
+  "name": "TEST-QA.DO263273.SA624744.wgs.20230728.aln.cram",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "CramAdapter",
+    "cramLocation": {
+      "locationType": "BlobLocation",
+      "name": "TEST-QA.DO263273.SA624744.wgs.20230728.aln.cram",
+      "blobId": "b1702318762933-2"
+    },
+    "craiLocation": {
+      "locationType": "BlobLocation",
+      "name": "TEST-QA.DO263273.SA624744.wgs.20230728.aln.cram.crai",
+      "blobId": "b1702318767264-3"
+    },
+    "sequenceAdapter": {
+      "type": "BgzipFastaAdapter",
+      "fastaLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz"
+      },
+      "faiLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.fai"
+      },
+      "metadataLocation": {
+        "locationType": "UriLocation",
+        "uri": "/path/to/fa.metadata.yaml"
+      },
+      "gziLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.gzi"
+      }
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearAlignmentsDisplay",
+      "displayId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack-LinearAlignmentsDisplay"
+    },
+    {
+      "type": "LinearPileupDisplay",
+      "displayId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack-LinearPileupDisplay"
+    },
+    {
+      "type": "LinearSNPCoverageDisplay",
+      "displayId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack-LinearSNPCoverageDisplay"
+    },
+    {
+      "type": "LinearReadArcsDisplay",
+      "displayId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack-LinearReadArcsDisplay"
+    },
+    {
+      "type": "LinearReadCloudDisplay",
+      "displayId": "test-qa.do263273.sa624744.wgs.20230728.aln.cram-1702318770555-sessionTrack-LinearReadCloudDisplay"
+    }
+  ]
+}

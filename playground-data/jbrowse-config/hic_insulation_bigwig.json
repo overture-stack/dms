@@ -1,0 +1,21 @@
+{
+  "type": "QuantitativeTrack",
+  "trackId": "gse174533%5f1%2dc11%2dcb1.2%2dc11%2dcb2.insulationscore.bw-1702320154801-sessionTrack",
+  "name": "GSE174533%5F1%2DC11%2DCB1.2%2DC11%2DCB2.insulationScore.bw",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigWigAdapter",
+    "bigWigLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE174nnn/GSE174533/suppl/GSE174533%5F1%2DC11%2DCB1.2%2DC11%2DCB2.insulationScore.bw"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearWiggleDisplay",
+      "displayId": "gse174533%5f1%2dc11%2dcb1.2%2dc11%2dcb2.insulationscore.bw-1702320154801-sessionTrack-LinearWiggleDisplay"
+    }
+  ]
+}

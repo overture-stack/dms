@@ -1,0 +1,21 @@
+{
+  "type": "QuantitativeTrack",
+  "trackId": "encff750ori.bigwig-1702321769798-sessionTrack",
+  "name": "ENCFF750ORI.bigWig",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigWigAdapter",
+    "bigWigLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF750ORI/@@download/ENCFF750ORI.bigWig"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearWiggleDisplay",
+      "displayId": "encff750ori.bigwig-1702321769798-sessionTrack-LinearWiggleDisplay"
+    }
+  ]
+}

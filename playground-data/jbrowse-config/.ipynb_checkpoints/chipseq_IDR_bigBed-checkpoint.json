@@ -1,0 +1,25 @@
+{
+  "type": "FeatureTrack",
+  "trackId": "encff772oad.bigbed-1702320934124-sessionTrack",
+  "name": "ENCFF772OAD.bigBed",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigBedAdapter",
+    "bigBedLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF772OAD/@@download/ENCFF772OAD.bigBed"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearBasicDisplay",
+      "displayId": "encff772oad.bigbed-1702320934124-sessionTrack-LinearBasicDisplay"
+    },
+    {
+      "type": "LinearArcDisplay",
+      "displayId": "encff772oad.bigbed-1702320934124-sessionTrack-LinearArcDisplay"
+    }
+  ]
+}

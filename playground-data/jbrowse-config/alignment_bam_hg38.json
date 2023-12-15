@@ -1,0 +1,64 @@
+{
+  "type": "AlignmentsTrack",
+  "trackId": "anon_chr1_complete.bam-1702318669309-sessionTrack",
+  "name": "anon_chr1_complete.bam",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BamAdapter",
+    "bamLocation": {
+      "locationType": "BlobLocation",
+      "name": "anon_chr1_complete.bam",
+      "blobId": "b1702318658137-0"
+    },
+    "index": {
+      "location": {
+        "locationType": "BlobLocation",
+        "name": "anon_chr1_complete.bam.bai",
+        "blobId": "b1702318664524-1"
+      }
+    },
+    "sequenceAdapter": {
+      "type": "BgzipFastaAdapter",
+      "fastaLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz"
+      },
+      "faiLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.fai"
+      },
+      "metadataLocation": {
+        "locationType": "UriLocation",
+        "uri": "/path/to/fa.metadata.yaml"
+      },
+      "gziLocation": {
+        "locationType": "UriLocation",
+        "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.gzi"
+      }
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearAlignmentsDisplay",
+      "displayId": "anon_chr1_complete.bam-1702318669309-sessionTrack-LinearAlignmentsDisplay"
+    },
+    {
+      "type": "LinearPileupDisplay",
+      "displayId": "anon_chr1_complete.bam-1702318669309-sessionTrack-LinearPileupDisplay"
+    },
+    {
+      "type": "LinearSNPCoverageDisplay",
+      "displayId": "anon_chr1_complete.bam-1702318669309-sessionTrack-LinearSNPCoverageDisplay"
+    },
+    {
+      "type": "LinearReadArcsDisplay",
+      "displayId": "anon_chr1_complete.bam-1702318669309-sessionTrack-LinearReadArcsDisplay"
+    },
+    {
+      "type": "LinearReadCloudDisplay",
+      "displayId": "anon_chr1_complete.bam-1702318669309-sessionTrack-LinearReadCloudDisplay"
+    }
+  ]
+}

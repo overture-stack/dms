@@ -1,0 +1,29 @@
+{
+  "type": "VariantTrack",
+  "trackId": "encff327gbz.bedpe.gz-1702322266543-sessionTrack",
+  "name": "ENCFF327GBZ.bedpe.gz",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BedpeAdapter",
+    "bedpeLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF327GBZ/@@download/ENCFF327GBZ.bedpe.gz"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearVariantDisplay",
+      "displayId": "encff327gbz.bedpe.gz-1702322266543-sessionTrack-LinearVariantDisplay"
+    },
+    {
+      "type": "ChordVariantDisplay",
+      "displayId": "encff327gbz.bedpe.gz-1702322266543-sessionTrack-ChordVariantDisplay"
+    },
+    {
+      "type": "LinearPairedArcDisplay",
+      "displayId": "encff327gbz.bedpe.gz-1702322266543-sessionTrack-LinearPairedArcDisplay"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "FeatureTrack",
+  "trackId": "encff256off.bigbed-1702321430813-sessionTrack",
+  "name": "ENCFF256OFF.bigBed",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigBedAdapter",
+    "bigBedLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF256OFF/@@download/ENCFF256OFF.bigBed"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearBasicDisplay",
+      "displayId": "encff256off.bigbed-1702321430813-sessionTrack-LinearBasicDisplay"
+    },
+    {
+      "type": "LinearArcDisplay",
+      "displayId": "encff256off.bigbed-1702321430813-sessionTrack-LinearArcDisplay"
+    }
+  ]
+}

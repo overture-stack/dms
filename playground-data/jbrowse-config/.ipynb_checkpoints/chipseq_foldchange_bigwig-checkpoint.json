@@ -1,0 +1,21 @@
+{
+  "type": "QuantitativeTrack",
+  "trackId": "encff140qly.bigwig-1702320857138-sessionTrack",
+  "name": "ENCFF140QLY.bigWig",
+  "assemblyNames": [
+    "hg38"
+  ],
+  "adapter": {
+    "type": "BigWigAdapter",
+    "bigWigLocation": {
+      "locationType": "UriLocation",
+      "uri": "https://www.encodeproject.org/files/ENCFF140QLY/@@download/ENCFF140QLY.bigWig"
+    }
+  },
+  "displays": [
+    {
+      "type": "LinearWiggleDisplay",
+      "displayId": "encff140qly.bigwig-1702320857138-sessionTrack-LinearWiggleDisplay"
+    }
+  ]
+}
