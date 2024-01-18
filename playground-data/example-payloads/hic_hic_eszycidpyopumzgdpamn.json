@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_eszycidpyopumzgdpamn",
-    "primary_site": "Nasal cavity and middle ear",
+    "primary_site": ["Nasal cavity and middle ear"],
     "vital_status": "Alive",
     "survival_time": null,
     "cause_of_death": null,

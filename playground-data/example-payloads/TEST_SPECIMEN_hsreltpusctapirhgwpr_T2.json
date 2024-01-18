@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_hsreltpusctapirhgwpr",
-    "primary_site": "Brain",
+    "primary_site": ["Brain"],
     "vital_status": "Deceased",
     "survival_time": 884,
     "cause_of_death": "Died of cancer",

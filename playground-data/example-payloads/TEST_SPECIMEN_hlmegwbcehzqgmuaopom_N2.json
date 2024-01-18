@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_hlmegwbcehzqgmuaopom",
-    "primary_site": "Esophagus",
+    "primary_site": ["Esophagus"],
     "vital_status": "Deceased",
     "survival_time": 373,
     "cause_of_death": "Died of other reasons",

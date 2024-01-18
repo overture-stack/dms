@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_zscpyibaevspyxlkyaip",
-    "primary_site": "Hematopoietic and reticuloendothelial systems",
+    "primary_site": ["Hematopoietic and reticuloendothelial systems"],
     "vital_status": "Deceased",
     "survival_time": 1520,
     "cause_of_death": "Died of cancer",

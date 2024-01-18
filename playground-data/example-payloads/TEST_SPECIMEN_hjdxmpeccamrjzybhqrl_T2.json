@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_hjdxmpeccamrjzybhqrl",
-    "primary_site": "Anus and anal canal",
+    "primary_site": ["Anus and anal canal"],
     "vital_status": "Alive",
     "survival_time": null,
     "cause_of_death": null,
@@ -117,7 +117,7 @@
     "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hjdxmpeccamrjzybhqrl_0",
     "submitter_specimen_id": "TEST_SPECIMEN_hjdxmpeccamrjzybhqrl_N2",
     "specimen_acquisition_interval": 72,
-    "specimen_anatomic_location": "C1u",
+    "specimen_anatomic_location": "C18",
     "specimen_laterality": "Unknown",
     "tumour_histological_type": "8643/34",
     "pathological_tumour_staging_system": "Durie-Salmon staging system",

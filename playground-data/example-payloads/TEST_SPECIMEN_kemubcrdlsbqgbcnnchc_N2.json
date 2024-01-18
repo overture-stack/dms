@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_kemubcrdlsbqgbcnnchc",
-    "primary_site": "Bladder",
+    "primary_site": ["Bladder"],
     "vital_status": "Alive",
     "survival_time": null,
     "cause_of_death": null,

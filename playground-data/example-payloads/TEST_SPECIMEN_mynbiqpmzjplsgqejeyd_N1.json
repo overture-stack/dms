@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_mynbiqpmzjplsgqejeyd",
-    "primary_site": "Pyriform sinus",
+    "primary_site": ["Pyriform sinus"],
     "vital_status": "Deceased",
     "survival_time": 180,
     "cause_of_death": "Unknown",
@@ -63,7 +63,7 @@
       {
         "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
         "age_at_diagnosis": 51,
-        "cancer_type_code": "C79.89s",
+        "cancer_type_code": "C79.89",
         "laterality": "Unilateral, side not specified",
         "clinical_tumour_staging_system": "FIGO staging system",
         "clinical_stage_group": "Stage IVA",

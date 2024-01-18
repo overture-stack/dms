@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_tixlzwxuqaoyhubfdlph",
-    "primary_site": "Bones, joints and articular cartilage of other and unspecified",
+    "primary_site": ["Bones, joints and articular cartilage of other and unspecified sites"],
     "vital_status": "Deceased",
     "survival_time": 1711,
     "cause_of_death": "Unknown",

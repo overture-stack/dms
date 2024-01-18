@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_bcclfxzvjitgtbsvfnum",
-    "primary_site": "Bones, joints and articular cartilage of limbs",
+    "primary_site": ["Bones, joints and articular cartilage of limbs"],
     "vital_status": "Deceased",
     "survival_time": 1550,
     "cause_of_death": "Unknown",
@@ -173,7 +173,7 @@
     "genome_build": "GRCh38_hla_decoy_ebv",
     "inputs": [
       {
-        "analysis_type": "Sequence Experiment",
+        "analysis_type": "sequencing_alignment",
         "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
         "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
       }
