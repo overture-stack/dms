@@ -1,1 +1,160 @@
-{"path": "/Users/esu/Desktop/GitHub/dms/playground-data/example-payloads/TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1.json", "json": {"samples": [{"submitterSampleId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1", "sampleType": "Total DNA", "matchedNormalSubmitterSampleId": null, "specimen": {"submitterSpecimenId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1", "specimenType": "Cell line - derived from normal", "specimenTissueSource": "Cerebrospinal fluid", "tumourNormalDesignation": "Normal"}, "donor": {"submitterDonorId": "TEST_DONOR_kemubcrdlsbqgbcnnchc", "gender": "Male"}}], "donor": {"submitter_donor_id": "TEST_DONOR_kemubcrdlsbqgbcnnchc", "primary_site": "Peripheral nerves and autonomic nervous system", "vital_status": "Alive", "survival_time": null, "cause_of_death": null, "primary_diagnosis": [{"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0", "age_at_diagnosis": 25, "cancer_type_code": "C67.2", "laterality": "Midline", "clinical_tumour_staging_system": "Ann Arbor staging system", "clinical_stage_group": "Stage IIA", "lymph_nodes_examined_status": "Not applicable", "performance_status": "Grade 0", "treatment": [{"submitter_treatment_id": "TEST_TREATMENT_kemubcrdlsbqgbcnnchc_0", "treatment_type": ["Radiation therapy", "Immunotherapy", "Chemotherapy", "Hormonal therapy"], "treatment_intent": "Curative", "treatment_start_interval": 5, "treatment_duration": 8, "response_to_treatment": "NED", "radiation": [{"radiation_therapy_modality": "Electron", "radiation_therapy_type": "Internal", "anatomical_site_irradiated": "Head", "radiation_therapy_dosage": 67, "radiation_therapy_fractions": 53}], "immunotherapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "immunotherapy_type": "Monoclonal antibodies other than immune checkpoint inhibitors"}], "chemotherapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "cumulative_drug_dosage": 29, "chemotherapy_dosage_units": "mg/kg"}], "hormone_therapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "cumulative_drug_dosage": 83, "hormone_drug_dosage_units": "IU/m2"}]}], "follow_up": [{"submitter_follow_up_id": "TEST_FOLLOW_UP_kemubcrdlsbqgbcnnchc_0", "interval_of_followup": 35, "disease_status_at_followup": "Stable"}]}], "comorbidity": [{"age_at_comorbidity_diagnosis": 15, "comorbidity_type_code": "A28.15"}, {"age_at_comorbidity_diagnosis": 48, "comorbidity_type_code": "F03.21"}, {"age_at_comorbidity_diagnosis": 26, "comorbidity_type_code": "F31.70"}]}, "specimen": {"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0", "submitter_specimen_id": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1", "specimen_acquisition_interval": 78, "specimen_anatomic_location": "C75", "specimen_laterality": "Left", "tumour_histological_type": "9903/26", "pathological_tumour_staging_system": "St Jude staging system", "pathological_stage_group": "Stage III", "tumour_grading_system": "Four-tier grading system", "tumour_grade": "G2", "percent_tumour_cells": 44, "reference_pathology_confirmed": "Yes"}, "files": [{"dataType": "VCF Index", "fileName": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1.snv.vcf.gz.tbi", "fileSize": 371, "fileMd5sum": "273408f6fa05d6fbb2202997c0ce3483", "fileAccess": "controlled", "fileType": "TBI", "info": {"dataCategory": "Simple Nucelotide Variation"}}, {"dataType": "Raw SV Calls", "fileName": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1.snv.vcf.gz", "fileSize": 17253, "fileMd5sum": "131026047ba0cba14e4a0c81997d5aa6", "fileAccess": "controlled", "fileType": "VCF", "info": {"dataCategory": "Simple Nucelotide Variation"}}], "collaborator": [{"contact_email": "batman@batman_inc.org", "name": "batman", "affiliation": "batman inc"}], "experiment": {"platform": "ILLUMINA", "experimental_strategy": "WGS", "submitter_sequencing_experiment_id": "EXPERIMENT"}, "workflow": {"workflow_name": "batman_stuff", "genome_build": "GRCh38_hla_decoy_ebv", "inputs": [{"analysis_type": "sequencing_alignment", "tumour_analysis_id": "00000000-0000-0000-0000-000000000000", "normal_analysis_id": "00000000-0000-0000-0000-000000000000"}]}}}
+{
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": null,
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
+        "specimenType": "Cell line - derived from normal",
+        "specimenTissueSource": "Solid tissue",
+        "tumourNormalDesignation": "Normal"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_kemubcrdlsbqgbcnnchc",
+        "gender": "Male"
+      }
+    }
+  ],
+  "donor": {
+    "submitter_donor_id": "TEST_DONOR_kemubcrdlsbqgbcnnchc",
+    "primary_site": "Bladder",
+    "vital_status": "Alive",
+    "survival_time": null,
+    "cause_of_death": null,
+    "primary_diagnosis": [
+      {
+        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
+        "age_at_diagnosis": 25,
+        "cancer_type_code": "C67.2",
+        "laterality": "Midline",
+        "clinical_tumour_staging_system": "Ann Arbor staging system",
+        "clinical_stage_group": "Stage IIA",
+        "lymph_nodes_examined_status": "Not applicable",
+        "performance_status": "Grade 0",
+        "treatment": [
+          {
+            "submitter_treatment_id": "TEST_TREATMENT_kemubcrdlsbqgbcnnchc_0",
+            "treatment_type": [
+              "Radiation therapy",
+              "Immunotherapy",
+              "Chemotherapy",
+              "Hormonal therapy"
+            ],
+            "treatment_intent": "Curative",
+            "treatment_start_interval": 5,
+            "treatment_duration": 8,
+            "response_to_treatment": "NED",
+            "radiation": [
+              {
+                "radiation_therapy_modality": "Electron",
+                "radiation_therapy_type": "Internal",
+                "anatomical_site_irradiated": "Head",
+                "radiation_therapy_dosage": 67,
+                "radiation_therapy_fractions": 53
+              }
+            ],
+            "immunotherapy": [
+              {
+                "drug_name": "leucovorin",
+                "drug_rxnormcui": "6313",
+                "immunotherapy_type": "Monoclonal antibodies other than immune checkpoint inhibitors"
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drug_name": "leucovorin",
+                "drug_rxnormcui": "6313",
+                "cumulative_drug_dosage": 29,
+                "chemotherapy_dosage_units": "mg/kg"
+              }
+            ],
+            "hormone_therapy": [
+              {
+                "drug_name": "leucovorin",
+                "drug_rxnormcui": "6313",
+                "cumulative_drug_dosage": 83,
+                "hormone_drug_dosage_units": "IU/m2"
+              }
+            ]
+          }
+        ],
+        "follow_up": [
+          {
+            "submitter_follow_up_id": "TEST_FOLLOW_UP_kemubcrdlsbqgbcnnchc_0",
+            "interval_of_followup": 35,
+            "disease_status_at_followup": "No evidence of disease"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "age_at_comorbidity_diagnosis": 15,
+        "comorbidity_type_code": "A28.15"
+      },
+      {
+        "age_at_comorbidity_diagnosis": 48,
+        "comorbidity_type_code": "F03.21"
+      },
+      {
+        "age_at_comorbidity_diagnosis": 26,
+        "comorbidity_type_code": "F31.70"
+      }
+    ]
+  },
+  "specimen": {
+    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
+    "submitter_specimen_id": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
+    "specimen_acquisition_interval": 3,
+    "specimen_anatomic_location": "C67.3",
+    "specimen_laterality": "Left"
+  },
+  "files": [
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1.snv.vcf.gz.tbi",
+      "fileSize": 371,
+      "fileMd5sum": "273408f6fa05d6fbb2202997c0ce3483",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "Raw SV Calls",
+      "fileName": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1.snv.vcf.gz",
+      "fileSize": 17253,
+      "fileMd5sum": "131026047ba0cba14e4a0c81997d5aa6",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contact_email": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimental_strategy": "WGS",
+    "submitter_sequencing_experiment_id": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflow_name": "batman_stuff",
+    "genome_build": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysis_type": "sequencing_alignment",
+        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
+        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

@@ -1,1 +1,168 @@
-{"path": "/Users/esu/Desktop/GitHub/dms/playground-data/example-payloads/TEST_SPECIMEN_otliefvakqotckrtwbxm_N1.json", "json": {"samples": [{"submitterSampleId": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1", "sampleType": "Total DNA", "matchedNormalSubmitterSampleId": null, "specimen": {"submitterSpecimenId": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1", "specimenType": "Normal - tissue adjacent to primary tumour", "specimenTissueSource": "Solid tissue", "tumourNormalDesignation": "Normal"}, "donor": {"submitterDonorId": "TEST_DONOR_otliefvakqotckrtwbxm", "gender": "Other"}}], "donor": {"submitter_donor_id": "TEST_DONOR_otliefvakqotckrtwbxm", "primary_site": "Heart, mediastinum, and pleura", "vital_status": "Alive", "survival_time": null, "cause_of_death": null, "primary_diagnosis": [{"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_0", "age_at_diagnosis": 20, "cancer_type_code": "C13.6", "laterality": "Unilateral, side not specified", "clinical_tumour_staging_system": "AJCC 7th edition", "clinical_stage_group": "Stage IIIB", "lymph_nodes_examined_status": "Not applicable", "performance_status": "Grade 1", "treatment": [{"submitter_treatment_id": "TEST_TREATMENT_otliefvakqotckrtwbxm_0", "treatment_type": ["Radiation therapy", "Chemotherapy"], "treatment_intent": "Palliative", "treatment_start_interval": 67, "treatment_duration": 85, "response_to_treatment": "Disease progression", "radiation": [{"radiation_therapy_modality": "Photon", "radiation_therapy_type": "External", "anatomical_site_irradiated": "Head", "radiation_therapy_dosage": 71, "radiation_therapy_fractions": 69}], "chemotherapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "cumulative_drug_dosage": 79, "chemotherapy_dosage_units": "mg/m2"}]}], "follow_up": [{"submitter_follow_up_id": "TEST_FOLLOW_UP_otliefvakqotckrtwbxm_0", "interval_of_followup": 65, "disease_status_at_followup": "Relapse or recurrence"}]}, {"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_1", "age_at_diagnosis": 63, "cancer_type_code": "D01.0", "laterality": "Not a paired site", "clinical_tumour_staging_system": "Ann Arbor staging system", "clinical_stage_group": "Stage IIIBE", "lymph_nodes_examined_status": "Yes", "performance_status": "Grade 1", "treatment": [{"submitter_treatment_id": "TEST_TREATMENT_otliefvakqotckrtwbxm_1", "treatment_type": ["No treatment"]}], "follow_up": [{"submitter_follow_up_id": "TEST_FOLLOW_UP_otliefvakqotckrtwbxm_1", "interval_of_followup": 69, "disease_status_at_followup": "Relapse or recurrence"}]}], "comorbidity": [{"age_at_comorbidity_diagnosis": 47, "comorbidity_type_code": "E13.87"}, {"age_at_comorbidity_diagnosis": 53, "comorbidity_type_code": "A22.74"}, {"age_at_comorbidity_diagnosis": 68, "comorbidity_type_code": "E67.38"}]}, "specimen": {"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_0", "submitter_specimen_id": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1", "specimen_acquisition_interval": 42, "specimen_anatomic_location": "C34", "specimen_laterality": "Right", "tumour_histological_type": "8023/67", "pathological_tumour_staging_system": "Durie-Salmon staging system", "pathological_stage_group": "Stage 1A", "tumour_grading_system": "Scarff-Bloom-Richardson grading system", "tumour_grade": "GX", "percent_tumour_cells": 23, "reference_pathology_confirmed": "No"}, "files": [{"dataType": "VCF Index", "fileName": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1.snv.vcf.gz.tbi", "fileSize": 375, "fileMd5sum": "cfe09cb4645ce76011df2c66de75d9e4", "fileAccess": "controlled", "fileType": "TBI", "info": {"dataCategory": "Simple Nucelotide Variation"}}, {"dataType": "Raw SV Calls", "fileName": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1.snv.vcf.gz", "fileSize": 17258, "fileMd5sum": "d3ea4ca7ed6f86c251c16f1fce098997", "fileAccess": "controlled", "fileType": "VCF", "info": {"dataCategory": "Simple Nucelotide Variation"}}], "collaborator": [{"contact_email": "batman@batman_inc.org", "name": "batman", "affiliation": "batman inc"}], "experiment": {"platform": "ILLUMINA", "experimental_strategy": "WGS", "submitter_sequencing_experiment_id": "EXPERIMENT"}, "workflow": {"workflow_name": "batman_stuff", "genome_build": "GRCh38_hla_decoy_ebv", "inputs": [{"analysis_type": "sequencing_alignment", "tumour_analysis_id": "00000000-0000-0000-0000-000000000000", "normal_analysis_id": "00000000-0000-0000-0000-000000000000"}]}}}
+{
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": null,
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1",
+        "specimenType": "Normal - tissue adjacent to primary tumour",
+        "specimenTissueSource": "Solid tissue",
+        "tumourNormalDesignation": "Normal"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_otliefvakqotckrtwbxm",
+        "gender": "Other"
+      }
+    }
+  ],
+  "donor": {
+    "submitter_donor_id": "TEST_DONOR_otliefvakqotckrtwbxm",
+    "primary_site": "Trachea|Colon",
+    "vital_status": "Alive",
+    "survival_time": null,
+    "cause_of_death": null,
+    "primary_diagnosis": [
+      {
+        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_0",
+        "age_at_diagnosis": 20,
+        "cancer_type_code": "C13.6",
+        "laterality": "Unilateral, side not specified",
+        "clinical_tumour_staging_system": "AJCC 7th edition",
+        "clinical_stage_group": "Stage IIIB",
+        "lymph_nodes_examined_status": "Not applicable",
+        "performance_status": "Grade 1",
+        "treatment": [
+          {
+            "submitter_treatment_id": "TEST_TREATMENT_otliefvakqotckrtwbxm_0",
+            "treatment_type": [
+              "Radiation therapy",
+              "Chemotherapy"
+            ],
+            "treatment_intent": "Curative",
+            "treatment_start_interval": 67,
+            "treatment_duration": 85,
+            "response_to_treatment": "Disease progression",
+            "radiation": [
+              {
+                "radiation_therapy_modality": "Photon",
+                "radiation_therapy_type": "External",
+                "anatomical_site_irradiated": "Head",
+                "radiation_therapy_dosage": 71,
+                "radiation_therapy_fractions": 69
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drug_name": "leucovorin",
+                "drug_rxnormcui": "6313",
+                "cumulative_drug_dosage": 79,
+                "chemotherapy_dosage_units": "mg/m2"
+              }
+            ]
+          }
+        ],
+        "follow_up": [
+          {
+            "submitter_follow_up_id": "TEST_FOLLOW_UP_otliefvakqotckrtwbxm_0",
+            "interval_of_followup": 65,
+            "disease_status_at_followup": "Complete remission"
+          }
+        ]
+      },
+      {
+        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_1",
+        "age_at_diagnosis": 25,
+        "cancer_type_code": "D01.0",
+        "laterality": "Not a paired site",
+        "clinical_tumour_staging_system": "Ann Arbor staging system",
+        "clinical_stage_group": "Stage IIIBE",
+        "lymph_nodes_examined_status": "Yes",
+        "performance_status": "Grade 1",
+        "treatment": [
+          {
+            "submitter_treatment_id": "TEST_TREATMENT_otliefvakqotckrtwbxm_1",
+            "treatment_type": [
+              "No treatment"
+            ]
+          }
+        ],
+        "follow_up": [
+          {
+            "submitter_follow_up_id": "TEST_FOLLOW_UP_otliefvakqotckrtwbxm_1",
+            "interval_of_followup": 69,
+            "disease_status_at_followup": "Stable"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "age_at_comorbidity_diagnosis": 18,
+        "comorbidity_type_code": "E13.87"
+      },
+      {
+        "age_at_comorbidity_diagnosis": 19,
+        "comorbidity_type_code": "A22.74"
+      },
+      {
+        "age_at_comorbidity_diagnosis": 20,
+        "comorbidity_type_code": "E67.38"
+      }
+    ]
+  },
+  "specimen": {
+    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_otliefvakqotckrtwbxm_0",
+    "submitter_specimen_id": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1",
+    "specimen_acquisition_interval": 42,
+    "specimen_anatomic_location": "C09.1",
+    "specimen_laterality": "Right"
+  },
+  "files": [
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1.snv.vcf.gz.tbi",
+      "fileSize": 375,
+      "fileMd5sum": "cfe09cb4645ce76011df2c66de75d9e4",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "Raw SV Calls",
+      "fileName": "TEST_SPECIMEN_otliefvakqotckrtwbxm_N1.snv.vcf.gz",
+      "fileSize": 17258,
+      "fileMd5sum": "d3ea4ca7ed6f86c251c16f1fce098997",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contact_email": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimental_strategy": "WGS",
+    "submitter_sequencing_experiment_id": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflow_name": "batman_stuff",
+    "genome_build": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysis_type": "sequencing_alignment",
+        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
+        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

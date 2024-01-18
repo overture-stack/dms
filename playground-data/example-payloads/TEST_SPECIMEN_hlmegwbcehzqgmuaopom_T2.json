@@ -1,1 +1,136 @@
-{"path": "/Users/esu/Desktop/GitHub/dms/playground-data/example-payloads/TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.json", "json": {"samples": [{"submitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2", "sampleType": "Total DNA", "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2", "specimen": {"submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2", "specimenType": "Tumour - unknown if derived from primary or metastatic", "specimenTissueSource": "Cerebrospinal fluid", "tumourNormalDesignation": "Tumour"}, "donor": {"submitterDonorId": "TEST_DONOR_hlmegwbcehzqgmuaopom", "gender": "Female"}}], "donor": {"submitter_donor_id": "TEST_DONOR_hlmegwbcehzqgmuaopom", "primary_site": "Other and unspecified parts of mouth", "vital_status": "Deceased", "survival_time": 880, "cause_of_death": "Died of cancer", "primary_diagnosis": [{"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0", "age_at_diagnosis": 89, "cancer_type_code": "C21.4", "laterality": "Not a paired site", "clinical_tumour_staging_system": "Lugano staging system", "clinical_stage_group": "Stage IA", "lymph_nodes_examined_status": "Cannot be determined", "performance_status": "Grade 4", "treatment": [{"submitter_treatment_id": "TEST_TREATMENT_hlmegwbcehzqgmuaopom_0", "treatment_type": ["Immunotherapy", "Surgery", "Chemotherapy"], "treatment_intent": "Curative", "treatment_start_interval": 88, "treatment_duration": 66, "response_to_treatment": "Disease progression", "immunotherapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "immunotherapy_type": "Immune checkpoint inhibitors"}], "surgery": [{"surgery_type": "Cholecystectomy", "surgery_site": "C76.3", "surgery_location": "Primary", "residual_tumour_classification": "Not applicable"}], "chemotherapy": [{"drug_name": "leucovorin", "drug_rxnormcui": "6313", "cumulative_drug_dosage": 94, "chemotherapy_dosage_units": "IU/m2"}]}], "follow_up": [{"submitter_follow_up_id": "TEST_FOLLOW_UP_hlmegwbcehzqgmuaopom_0", "interval_of_followup": 72, "disease_status_at_followup": "Partial remission"}]}], "comorbidity": []}, "specimen": {"submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0", "submitter_specimen_id": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2", "specimen_acquisition_interval": 81, "specimen_anatomic_location": "C54", "specimen_laterality": "Left", "tumour_histological_type": "8575/02", "pathological_tumour_staging_system": "AJCC 8th edition", "pathological_stage_group": "Stage IA2", "tumour_grading_system": "Scarff-Bloom-Richardson grading system", "tumour_grade": "G2", "percent_tumour_cells": 43, "reference_pathology_confirmed": "No"}, "files": [{"dataType": "VCF Index", "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz.tbi", "fileSize": 256, "fileMd5sum": "42c8e5e4acf2592ed2dca82213c1b7ee", "fileAccess": "controlled", "fileType": "TBI", "info": {"dataCategory": "Simple Nucelotide Variation"}}, {"dataType": "Raw InDel Calls", "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz", "fileSize": 17345, "fileMd5sum": "f388e1f88cfdc2a1ffe43fec7a4b5d24", "fileAccess": "controlled", "fileType": "VCF", "info": {"dataCategory": "Simple Nucelotide Variation"}}], "collaborator": [{"contact_email": "batman@batman_inc.org", "name": "batman", "affiliation": "batman inc"}], "experiment": {"platform": "ILLUMINA", "experimental_strategy": "WGS", "submitter_sequencing_experiment_id": "EXPERIMENT"}, "workflow": {"workflow_name": "batman_stuff", "genome_build": "GRCh38_hla_decoy_ebv", "inputs": [{"analysis_type": "sequencing_alignment", "tumour_analysis_id": "00000000-0000-0000-0000-000000000000", "normal_analysis_id": "00000000-0000-0000-0000-000000000000"}]}}}
+{
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2",
+        "specimenType": "Primary tumour",
+        "specimenTissueSource": "Intestine",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_hlmegwbcehzqgmuaopom",
+        "gender": "Female"
+      }
+    }
+  ],
+  "donor": {
+    "submitter_donor_id": "TEST_DONOR_hlmegwbcehzqgmuaopom",
+    "primary_site": "Esophagus",
+    "vital_status": "Deceased",
+    "survival_time": 373,
+    "cause_of_death": "Died of other reasons",
+    "primary_diagnosis": [
+      {
+        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+        "age_at_diagnosis": 85,
+        "cancer_type_code": "C76",
+        "laterality": "Right",
+        "clinical_tumour_staging_system": "FIGO staging system",
+        "clinical_stage_group": "Stage IVB",
+        "lymph_nodes_examined_status": "Cannot be determined",
+        "performance_status": "Grade 0",
+        "treatment": [
+          {
+            "submitter_treatment_id": "TEST_TREATMENT_hlmegwbcehzqgmuaopom_0",
+            "treatment_type": [
+              "Radiation therapy",
+              "Immunotherapy"
+            ],
+            "treatment_intent": "Curative",
+            "treatment_start_interval": 81,
+            "treatment_duration": 46,
+            "response_to_treatment": "Complete response",
+            "radiation": [
+              {
+                "radiation_therapy_modality": "Heavy Ions",
+                "radiation_therapy_type": "Internal",
+                "anatomical_site_irradiated": "Abdomen",
+                "radiation_therapy_dosage": 82,
+                "radiation_therapy_fractions": 89
+              }
+            ],
+            "immunotherapy": [
+              {
+                "drug_name": "leucovorin",
+                "drug_rxnormcui": "6313",
+                "immunotherapy_type": "Monoclonal antibodies other than immune checkpoint inhibitors"
+              }
+            ]
+          }
+        ],
+        "follow_up": [
+          {
+            "submitter_follow_up_id": "TEST_FOLLOW_UP_hlmegwbcehzqgmuaopom_0",
+            "interval_of_followup": 59,
+            "disease_status_at_followup": "No evidence of disease"
+          }
+        ]
+      }
+    ],
+    "comorbidity": []
+  },
+  "specimen": {
+    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+    "submitter_specimen_id": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2",
+    "specimen_acquisition_interval": 81,
+    "specimen_anatomic_location": "C54",
+    "specimen_laterality": "Left",
+    "tumour_histological_type": "8575/02",
+    "pathological_tumour_staging_system": "AJCC 8th edition",
+    "pathological_stage_group": "Stage IA2",
+    "tumour_grading_system": "Scarff-Bloom-Richardson grading system",
+    "tumour_grade": "G2",
+    "percent_tumour_cells": 43,
+    "reference_pathology_confirmed": "No"
+  },
+  "files": [
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz.tbi",
+      "fileSize": 256,
+      "fileMd5sum": "42c8e5e4acf2592ed2dca82213c1b7ee",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "Raw InDel Calls",
+      "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz",
+      "fileSize": 17345,
+      "fileMd5sum": "f388e1f88cfdc2a1ffe43fec7a4b5d24",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contact_email": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimental_strategy": "WGS",
+    "submitter_sequencing_experiment_id": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflow_name": "batman_stuff",
+    "genome_build": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysis_type": "sequencing_alignment",
+        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
+        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}
