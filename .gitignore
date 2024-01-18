@@ -36,3 +36,5 @@ build/
 
 ## others
 run.sh
+.ipynb_checkpoints/data_generate-checkpoint.ipynb
+data_generate.ipynb
