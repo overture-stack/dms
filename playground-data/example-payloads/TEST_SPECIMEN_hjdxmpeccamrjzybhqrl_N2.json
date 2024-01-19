@@ -7,7 +7,7 @@
       "specimen": {
         "submitterSpecimenId": "TEST_SPECIMEN_hjdxmpeccamrjzybhqrl_N2",
         "specimenType": "Normal",
-        "specimenTissueSource": "Anus and anal canal",
+        "specimenTissueSource": "Pancreas",
         "tumourNormalDesignation": "Normal"
       },
       "donor": {
@@ -18,7 +18,7 @@
   ],
   "donor": {
     "submitter_donor_id": "TEST_DONOR_hjdxmpeccamrjzybhqrl",
-    "primary_site": ["Anus and anal canal"],
+    "primary_site": ["Pancreas"],
     "vital_status": "Alive",
     "survival_time": null,
     "cause_of_death": null,
