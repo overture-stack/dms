@@ -1,12 +1,16 @@
 {
+  "analysisType": {
+    "name": "playgroundSchema"
+  },
+  "studyId": "OVPLG-01",
   "samples": [
     {
       "submitterSampleId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_T1",
       "sampleType": "Total DNA",
       "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
       "specimen": {
-        "submitterSpecimenId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
-        "specimenType": "Primary Tumour",
+        "submitterSpecimenId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_T1",
+        "specimenType": "Primary tumour",
         "specimenTissueSource": "Solid tissue",
         "tumourNormalDesignation": "Tumour"
       },
@@ -17,105 +21,107 @@
     }
   ],
   "donor": {
-    "submitter_donor_id": "TEST_DONOR_kemubcrdlsbqgbcnnchc",
-    "primary_site": ["Bladder"],
-    "vital_status": "Alive",
-    "survival_time": null,
-    "cause_of_death": null,
-    "primary_diagnosis": [
+    "submitterDonorId": "TEST_DONOR_kemubcrdlsbqgbcnnchc",
+    "primarySite": [
+      "Bladder"
+    ],
+    "vitalStatus": "Alive",
+    "survivalTime": null,
+    "causeOfDeath": null,
+    "primaryDiagnosis": [
       {
-        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
-        "age_at_diagnosis": 25,
-        "cancer_type_code": "C67.2",
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
+        "ageAtDiagnosis": 25,
+        "cancerTypeCode": "C67.2",
         "laterality": "Midline",
-        "clinical_tumour_staging_system": "Ann Arbor staging system",
-        "clinical_stage_group": "Stage IIA",
-        "lymph_nodes_examined_status": "Not applicable",
-        "performance_status": "Grade 0",
+        "clinicalTumourStagingSystem": "Ann Arbor staging system",
+        "clinicalStageGroup": "Stage IIA",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Grade 0",
         "treatment": [
           {
-            "submitter_treatment_id": "TEST_TREATMENT_kemubcrdlsbqgbcnnchc_0",
-            "treatment_type": [
+            "submitterTreatmentId": "TEST_TREATMENT_kemubcrdlsbqgbcnnchc_0",
+            "treatmentType": [
               "Radiation therapy",
               "Immunotherapy",
               "Chemotherapy",
               "Hormonal therapy"
             ],
-            "treatment_intent": "Curative",
-            "treatment_start_interval": 5,
-            "treatment_duration": 8,
-            "response_to_treatment": "NED",
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 5,
+            "treatmentDuration": 8,
+            "responseToTreatment": "NED",
             "radiation": [
               {
-                "radiation_therapy_modality": "Electron",
-                "radiation_therapy_type": "Internal",
-                "anatomical_site_irradiated": "Head",
-                "radiation_therapy_dosage": 67,
-                "radiation_therapy_fractions": 53
+                "radiationTherapyModality": "Electron",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Head",
+                "radiationTherapyDosage": 67,
+                "radiationTherapyFractions": 53
               }
             ],
             "immunotherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "immunotherapy_type": "Monoclonal antibodies other than immune checkpoint inhibitors"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "immunotherapyType": "Monoclonal antibodies other than immune checkpoint inhibitors"
               }
             ],
             "chemotherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 29,
-                "chemotherapy_dosage_units": "mg/kg"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 29,
+                "chemotherapyDosageUnits": "mg/kg"
               }
             ],
-            "hormone_therapy": [
+            "hormoneTherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 83,
-                "hormone_drug_dosage_units": "IU/m2"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 83,
+                "hormoneDrugDosageUnits": "IU/m2"
               }
             ]
           }
         ],
-        "follow_up": [
+        "followUp": [
           {
-            "submitter_follow_up_id": "TEST_FOLLOW_UP_kemubcrdlsbqgbcnnchc_0",
-            "interval_of_followup": 35,
-            "disease_status_at_followup": "No evidence of disease"
+            "submitterFollowUpId": "TEST_FOLLOW_UP_kemubcrdlsbqgbcnnchc_0",
+            "intervalOfFollowup": 35,
+            "diseaseStatusAtFollowup": "No evidence of disease"
           }
         ]
       }
     ],
     "comorbidity": [
       {
-        "age_at_comorbidity_diagnosis": 15,
-        "comorbidity_type_code": "A28.15"
+        "ageAtComorbidityDiagnosis": 15,
+        "comorbidityTypeCode": "A28.15"
       },
       {
-        "age_at_comorbidity_diagnosis": 48,
-        "comorbidity_type_code": "F03.21"
+        "ageAtComorbidityDiagnosis": 48,
+        "comorbidityTypeCode": "F03.21"
       },
       {
-        "age_at_comorbidity_diagnosis": 26,
-        "comorbidity_type_code": "F31.70"
+        "ageAtComorbidityDiagnosis": 26,
+        "comorbidityTypeCode": "F31.70"
       }
     ]
   },
   "specimen": {
-    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
-    "submitter_specimen_id": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
-    "specimen_acquisition_interval": 26,
-    "specimen_anatomic_location": "C67.3",
-    "specimen_laterality": "Not applicable",
-    "tumour_histological_type": "8276/08",
-    "pathological_tumour_staging_system": "Binet staging system",
-    "pathological_stage_group": "Stage C",
-    "tumour_grading_system": "Grading system for GNETs",
-    "tumour_grade": "G2",
-    "percent_tumour_cells": 71,
-    "reference_pathology_confirmed": "No"
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_kemubcrdlsbqgbcnnchc_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_kemubcrdlsbqgbcnnchc_N1",
+    "specimenAcquisitionInterval": 26,
+    "specimenAnatomicLocation": "C67.3",
+    "specimenLaterality": "Not applicable",
+    "tumourHistologicalType": "8276/08",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage C",
+    "tumourGradingSystem": "Grading system for GNETs",
+    "tumourGrade": "G2",
+    "percentTumourCells": 71,
+    "referencePathologyConfirmed": "No"
   },
   "files": [
     {
@@ -143,24 +149,24 @@
   ],
   "collaborator": [
     {
-      "contact_email": "batman@batman_inc.org",
+      "contactEmail": "batman@batman_inc.org",
       "name": "batman",
       "affiliation": "batman inc"
     }
   ],
   "experiment": {
     "platform": "ILLUMINA",
-    "experimental_strategy": "WGS",
-    "submitter_sequencing_experiment_id": "EXPERIMENT"
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
   },
   "workflow": {
-    "workflow_name": "batman_stuff",
-    "genome_build": "GRCh38_hla_decoy_ebv",
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
     "inputs": [
       {
-        "analysis_type": "sequencing_alignment",
-        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
-        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
       }
     ]
   }

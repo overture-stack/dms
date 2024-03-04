@@ -1,11 +1,15 @@
 {
+  "analysisType": {
+    "name": "playgroundSchema"
+  },
+  "studyId": "OVPLG-01",
   "samples": [
     {
       "submitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T1",
       "sampleType": "Total DNA",
       "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N1",
       "specimen": {
-        "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N1",
+        "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T1",
         "specimenType": "Primary tumour - additional new primary",
         "specimenTissueSource": "Intestine",
         "tumourNormalDesignation": "Tumour"
@@ -17,55 +21,57 @@
     }
   ],
   "donor": {
-    "submitter_donor_id": "TEST_DONOR_hlmegwbcehzqgmuaopom",
-    "primary_site": ["Esophagus"],
-    "vital_status": "Deceased",
-    "survival_time": 373,
-    "cause_of_death": "Died of other reasons",
-    "primary_diagnosis": [
+    "submitterDonorId": "TEST_DONOR_hlmegwbcehzqgmuaopom",
+    "primarySite": [
+      "Esophagus"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 373,
+    "causeOfDeath": "Died of other reasons",
+    "primaryDiagnosis": [
       {
-        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
-        "age_at_diagnosis": 85,
-        "cancer_type_code": "D74.7",
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+        "ageAtDiagnosis": 85,
+        "cancerTypeCode": "D74.7",
         "laterality": "Right",
-        "clinical_tumour_staging_system": "FIGO staging system",
-        "clinical_stage_group": "Stage IVB",
-        "lymph_nodes_examined_status": "Cannot be determined",
-        "performance_status": "Grade 0",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IVB",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Grade 0",
         "treatment": [
           {
-            "submitter_treatment_id": "TEST_TREATMENT_hlmegwbcehzqgmuaopom_0",
-            "treatment_type": [
+            "submitterTreatmentId": "TEST_TREATMENT_hlmegwbcehzqgmuaopom_0",
+            "treatmentType": [
               "Radiation therapy",
               "Immunotherapy"
             ],
-            "treatment_intent": "Curative",
-            "treatment_start_interval": 81,
-            "treatment_duration": 46,
-            "response_to_treatment": "Complete response",
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 81,
+            "treatmentDuration": 46,
+            "responseToTreatment": "Complete response",
             "radiation": [
               {
-                "radiation_therapy_modality": "Heavy Ions",
-                "radiation_therapy_type": "Internal",
-                "anatomical_site_irradiated": "Abdomen",
-                "radiation_therapy_dosage": 82,
-                "radiation_therapy_fractions": 89
+                "radiationTherapyModality": "Heavy Ions",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Abdomen",
+                "radiationTherapyDosage": 82,
+                "radiationTherapyFractions": 89
               }
             ],
             "immunotherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "immunotherapy_type": "Monoclonal antibodies other than immune checkpoint inhibitors"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "immunotherapyType": "Monoclonal antibodies other than immune checkpoint inhibitors"
               }
             ]
           }
         ],
-        "follow_up": [
+        "followUp": [
           {
-            "submitter_follow_up_id": "TEST_FOLLOW_UP_hlmegwbcehzqgmuaopom_0",
-            "interval_of_followup": 59,
-            "disease_status_at_followup": "No evidence of disease"
+            "submitterFollowUpId": "TEST_FOLLOW_UP_hlmegwbcehzqgmuaopom_0",
+            "intervalOfFollowup": 59,
+            "diseaseStatusAtFollowup": "No evidence of disease"
           }
         ]
       }
@@ -73,18 +79,18 @@
     "comorbidity": []
   },
   "specimen": {
-    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
-    "submitter_specimen_id": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N1",
-    "specimen_acquisition_interval": 95,
-    "specimen_anatomic_location": "C76",
-    "specimen_laterality": "Left",
-    "tumour_histological_type": "9627/03",
-    "pathological_tumour_staging_system": "Binet staging system",
-    "pathological_stage_group": "Stage C",
-    "tumour_grading_system": "Scarff-Bloom-Richardson grading system",
-    "tumour_grade": "GX",
-    "percent_tumour_cells": 39,
-    "reference_pathology_confirmed": "Yes"
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N1",
+    "specimenAcquisitionInterval": 95,
+    "specimenAnatomicLocation": "C76",
+    "specimenLaterality": "Left",
+    "tumourHistologicalType": "9627/03",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage C",
+    "tumourGradingSystem": "Scarff-Bloom-Richardson grading system",
+    "tumourGrade": "GX",
+    "percentTumourCells": 39,
+    "referencePathologyConfirmed": "Yes"
   },
   "files": [
     {
@@ -112,24 +118,24 @@
   ],
   "collaborator": [
     {
-      "contact_email": "batman@batman_inc.org",
+      "contactEmail": "batman@batman_inc.org",
       "name": "batman",
       "affiliation": "batman inc"
     }
   ],
   "experiment": {
     "platform": "ILLUMINA",
-    "experimental_strategy": "WGS",
-    "submitter_sequencing_experiment_id": "EXPERIMENT"
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
   },
   "workflow": {
-    "workflow_name": "batman_stuff",
-    "genome_build": "GRCh38_hla_decoy_ebv",
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
     "inputs": [
       {
-        "analysis_type": "sequencing_alignment",
-        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
-        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
       }
     ]
   }

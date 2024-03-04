@@ -99,7 +99,7 @@
   "files": [
     {
       "dataType": "coverageCpgSites",
-      "fileName": "ENCFF750ORI.bigWig",
+      "fileName": "encfF750ORI.bigWig",
       "fileSize": 52,
       "fileMd5sum": "9a793e90d0d1e11301ea8da996446e59",
       "fileAccess": "controlled",
@@ -136,11 +136,11 @@
     ]
   },
   "archive":{
-    "SRA": [
-      {"GSE":"GSE215679"}
+    "sra": [
+      {"gse":"gse215679"}
     ],
-    "ENCODE": [
-      {"ENCF":"ENCFF750ORI"}
+    "encode": [
+      {"encf":"encfF750ORI"}
     ]
   },
   "publication":{

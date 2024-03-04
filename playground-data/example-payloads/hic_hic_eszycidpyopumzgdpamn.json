@@ -1,4 +1,8 @@
 {
+  "analysisType": {
+    "name": "playgroundSchema"
+  },
+  "studyId": "OVPLG-01",
   "samples": [
     {
       "submitterSampleId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
@@ -17,95 +21,97 @@
     }
   ],
   "donor": {
-    "submitter_donor_id": "TEST_DONOR_eszycidpyopumzgdpamn",
-    "primary_site": ["Nasal cavity and middle ear"],
-    "vital_status": "Alive",
-    "survival_time": null,
-    "cause_of_death": null,
-    "primary_diagnosis": [
+    "submitterDonorId": "TEST_DONOR_eszycidpyopumzgdpamn",
+    "primarySite": [
+      "Nasal cavity and middle ear"
+    ],
+    "vitalStatus": "Alive",
+    "survivalTime": null,
+    "causeOfDeath": null,
+    "primaryDiagnosis": [
       {
-        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
-        "age_at_diagnosis": 75,
-        "cancer_type_code": "D35.1",
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+        "ageAtDiagnosis": 75,
+        "cancerTypeCode": "D35.1",
         "laterality": "Right",
-        "clinical_tumour_staging_system": "FIGO staging system",
-        "clinical_stage_group": "Stage IA2",
-        "lymph_nodes_examined_status": "Cannot be determined",
-        "performance_status": "Grade 2",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IA2",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Grade 2",
         "treatment": [
           {
-            "submitter_treatment_id": "TEST_TREATMENT_eszycidpyopumzgdpamn_0",
-            "treatment_type": [
+            "submitterTreatmentId": "TEST_TREATMENT_eszycidpyopumzgdpamn_0",
+            "treatmentType": [
               "Radiation therapy",
               "Hormonal therapy"
             ],
-            "treatment_intent": "Curative",
-            "treatment_start_interval": 37,
-            "treatment_duration": 3,
-            "response_to_treatment": "NED",
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 37,
+            "treatmentDuration": 3,
+            "responseToTreatment": "NED",
             "radiation": [
               {
-                "radiation_therapy_modality": "Electron",
-                "radiation_therapy_type": "External",
-                "anatomical_site_irradiated": "Pelvis",
-                "radiation_therapy_dosage": 40,
-                "radiation_therapy_fractions": 24
+                "radiationTherapyModality": "Electron",
+                "radiationTherapyType": "External",
+                "anatomicalSiteIrradiated": "Pelvis",
+                "radiationTherapyDosage": 40,
+                "radiationTherapyFractions": 24
               }
             ],
-            "hormone_therapy": [
+            "hormoneTherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 44,
-                "hormone_drug_dosage_units": "mg/m2"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 44,
+                "hormoneDrugDosageUnits": "mg/m2"
               }
             ]
           }
         ],
-        "follow_up": [
+        "followUp": [
           {
-            "submitter_follow_up_id": "TEST_FOLLOW_UP_eszycidpyopumzgdpamn_0",
-            "interval_of_followup": 84,
-            "disease_status_at_followup": "Complete remission"
+            "submitterFollowUpId": "TEST_FOLLOW_UP_eszycidpyopumzgdpamn_0",
+            "intervalOfFollowup": 84,
+            "diseaseStatusAtFollowup": "Complete remission"
           }
         ]
       }
     ],
     "comorbidity": [
       {
-        "age_at_comorbidity_diagnosis": 97,
-        "comorbidity_type_code": "E02.58"
+        "ageAtComorbidityDiagnosis": 97,
+        "comorbidityTypeCode": "E02.58"
       },
       {
-        "age_at_comorbidity_diagnosis": 26,
-        "comorbidity_type_code": "B07.38"
+        "ageAtComorbidityDiagnosis": 26,
+        "comorbidityTypeCode": "B07.38"
       }
     ]
   },
   "specimen": {
-    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
-    "submitter_specimen_id": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
-    "specimen_acquisition_interval": 0,
-    "specimen_anatomic_location": "C42",
-    "specimen_laterality": "Unknown",
-    "tumour_histological_type": "8578/23",
-    "pathological_tumour_staging_system": "Binet staging system",
-    "pathological_stage_group": "Stage C",
-    "tumour_grading_system": "Scarff-Bloom-Richardson grading system",
-    "tumour_grade": "G3",
-    "percent_tumour_cells": 40,
-    "reference_pathology_confirmed": "Yes"
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+    "specimenAcquisitionInterval": 0,
+    "specimenAnatomicLocation": "C42",
+    "specimenLaterality": "Unknown",
+    "tumourHistologicalType": "8578/23",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage C",
+    "tumourGradingSystem": "Scarff-Bloom-Richardson grading system",
+    "tumourGrade": "G3",
+    "percentTumourCells": 40,
+    "referencePathologyConfirmed": "Yes"
   },
   "files": [
     {
       "dataType": "HicAnalysisPostAlignment",
-      "fileName": "GSE174533_1-C11-CB1.2-C11-CB2.merge.hic",
+      "fileName": "gse174533_1-C11-CB1.2-C11-CB2.merge.hic",
       "fileSize": 1251245702,
       "fileMd5sum": "933faf4efa8f0c267e2187fa2205c4dc",
       "fileAccess": "controlled",
       "fileType": "HIC",
       "info": {
-        "hic_resolution": [
+        "hicResolution": [
           "5kb",
           "10kb",
           "25kb",
@@ -113,39 +119,39 @@
           "100kb",
           "250kb"
         ],
-        "hic_normalization_method": "KR",
-        "notes_for_mitchell": "hg38:20:22840771-31212931",
+        "hicNormalizationMethod": "KR",
+        "notesForMitchell": "hg38:20:22840771-31212931",
         "dataCategory": "Hi-C profiling"
       }
     }
   ],
   "collaborator": [
     {
-      "contact_email": "batman@batman_inc.org",
+      "contactEmail": "batman@batman_inc.org",
       "name": "Sergei Doulatov",
       "affiliation": "Washington University"
     }
   ],
   "experiment": {
     "platform": "ILLUMINA",
-    "experimental_strategy": "Hi-C",
-    "submitter_sequencing_experiment_id": "EXPERIMENT"
+    "experimentalStrategy": "Hi-C",
+    "submitterSequencingExperimentId": "EXPERIMENT"
   },
   "workflow": {
-    "workflow_name": "batman_stuff",
-    "genome_build": "GRCh38_hla_decoy_ebv",
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
     "inputs": [
       {
-        "analysis_type": "sequencing_alignment",
-        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
-        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
       }
     ]
   },
   "archive": {
-    "SRA": [
+    "sra": [
       {
-        "GSE": "GSE174533"
+        "gse": "gse174533"
       }
     ]
   },

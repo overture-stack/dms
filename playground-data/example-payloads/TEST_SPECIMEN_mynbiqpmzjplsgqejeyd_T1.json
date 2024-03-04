@@ -1,11 +1,15 @@
 {
+  "analysisType": {
+    "name": "playgroundSchema"
+  },
+  "studyId": "OVPLG-01",
   "samples": [
     {
       "submitterSampleId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T1",
       "sampleType": "Total DNA",
       "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N1",
       "specimen": {
-        "submitterSpecimenId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N1",
+        "submitterSpecimenId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T1",
         "specimenType": "Metastatic tumour - additional metastatic",
         "specimenTissueSource": "Cerebrospinal fluid",
         "tumourNormalDesignation": "Tumour"
@@ -17,124 +21,126 @@
     }
   ],
   "donor": {
-    "submitter_donor_id": "TEST_DONOR_mynbiqpmzjplsgqejeyd",
-    "primary_site": ["Pyriform sinus"],
-    "vital_status": "Deceased",
-    "survival_time": 180,
-    "cause_of_death": "Unknown",
-    "primary_diagnosis": [
+    "submitterDonorId": "TEST_DONOR_mynbiqpmzjplsgqejeyd",
+    "primarySite": [
+      "Pyriform sinus"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 180,
+    "causeOfDeath": "Unknown",
+    "primaryDiagnosis": [
       {
-        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_0",
-        "age_at_diagnosis": 16,
-        "cancer_type_code": "C50.11",
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_0",
+        "ageAtDiagnosis": 16,
+        "cancerTypeCode": "C50.11",
         "laterality": "Unknown",
-        "clinical_tumour_staging_system": "AJCC 6th edition",
-        "clinical_stage_group": "Stage IVB",
-        "lymph_nodes_examined_status": "Cannot be determined",
-        "performance_status": "Unknown",
+        "clinicalTumourStagingSystem": "AJCC 6th edition",
+        "clinicalStageGroup": "Stage IVB",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Unknown",
         "treatment": [
           {
-            "submitter_treatment_id": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_0",
-            "treatment_type": [
+            "submitterTreatmentId": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_0",
+            "treatmentType": [
               "Hormonal therapy"
             ],
-            "treatment_intent": "Curative",
-            "treatment_start_interval": 95,
-            "treatment_duration": 2,
-            "response_to_treatment": "Stable disease",
-            "hormone_therapy": [
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 95,
+            "treatmentDuration": 2,
+            "responseToTreatment": "Stable disease",
+            "hormoneTherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 35,
-                "hormone_drug_dosage_units": "ug/m2"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 35,
+                "hormoneDrugDosageUnits": "ug/m2"
               }
             ]
           }
         ],
-        "follow_up": [
+        "followUp": [
           {
-            "submitter_follow_up_id": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_0",
-            "interval_of_followup": 53,
-            "disease_status_at_followup": "Stable"
+            "submitterFollowUpId": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_0",
+            "intervalOfFollowup": 53,
+            "diseaseStatusAtFollowup": "Stable"
           }
         ]
       },
       {
-        "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
-        "age_at_diagnosis": 51,
-        "cancer_type_code": "C79.89",
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
+        "ageAtDiagnosis": 51,
+        "cancerTypeCode": "C79.89",
         "laterality": "Unilateral, side not specified",
-        "clinical_tumour_staging_system": "FIGO staging system",
-        "clinical_stage_group": "Stage IVA",
-        "lymph_nodes_examined_status": "Not applicable",
-        "performance_status": "Grade 1",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IVA",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Grade 1",
         "treatment": [
           {
-            "submitter_treatment_id": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_1",
-            "treatment_type": [
+            "submitterTreatmentId": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_1",
+            "treatmentType": [
               "Hormonal therapy",
               "Chemotherapy"
             ],
-            "treatment_intent": "Palliative",
-            "treatment_start_interval": 65,
-            "treatment_duration": 27,
-            "response_to_treatment": "Disease progression",
-            "hormone_therapy": [
+            "treatmentIntent": "Palliative",
+            "treatmentStartInterval": 65,
+            "treatmentDuration": 27,
+            "responseToTreatment": "Disease progression",
+            "hormoneTherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 84,
-                "hormone_drug_dosage_units": "mg/kg"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 84,
+                "hormoneDrugDosageUnits": "mg/kg"
               }
             ],
             "chemotherapy": [
               {
-                "drug_name": "leucovorin",
-                "drug_rxnormcui": "6313",
-                "cumulative_drug_dosage": 45,
-                "chemotherapy_dosage_units": "mg/kg"
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 45,
+                "chemotherapyDosageUnits": "mg/kg"
               }
             ]
           }
         ],
-        "follow_up": [
+        "followUp": [
           {
-            "submitter_follow_up_id": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_1",
-            "interval_of_followup": 90,
-            "disease_status_at_followup": "Relapse or recurrence"
+            "submitterFollowUpId": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_1",
+            "intervalOfFollowup": 90,
+            "diseaseStatusAtFollowup": "Relapse or recurrence"
           }
         ]
       }
     ],
     "comorbidity": [
       {
-        "age_at_comorbidity_diagnosis": 5,
-        "comorbidity_type_code": "B02.68"
+        "ageAtComorbidityDiagnosis": 5,
+        "comorbidityTypeCode": "B02.68"
       },
       {
-        "age_at_comorbidity_diagnosis": 91,
-        "comorbidity_type_code": "B88.93"
+        "ageAtComorbidityDiagnosis": 91,
+        "comorbidityTypeCode": "B88.93"
       },
       {
-        "age_at_comorbidity_diagnosis": 61,
-        "comorbidity_type_code": "E17.42"
+        "ageAtComorbidityDiagnosis": 61,
+        "comorbidityTypeCode": "E17.42"
       }
     ]
   },
   "specimen": {
-    "submitter_primary_diagnosis_id": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
-    "submitter_specimen_id": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N1",
-    "specimen_acquisition_interval": 54,
-    "specimen_anatomic_location": "C50",
-    "specimen_laterality": "Right",
-    "tumour_histological_type": "9697/68",
-    "pathological_tumour_staging_system": "Binet staging system",
-    "pathological_stage_group": "Stage B",
-    "tumour_grading_system": "Three-tier grading system",
-    "tumour_grade": "G3",
-    "percent_tumour_cells": 55,
-    "reference_pathology_confirmed": "Yes"
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
+    "submitterSpecimenId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N1",
+    "specimenAcquisitionInterval": 54,
+    "specimenAnatomicLocation": "C50",
+    "specimenLaterality": "Right",
+    "tumourHistologicalType": "9697/68",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage B",
+    "tumourGradingSystem": "Three-tier grading system",
+    "tumourGrade": "G3",
+    "percentTumourCells": 55,
+    "referencePathologyConfirmed": "Yes"
   },
   "files": [
     {
@@ -162,24 +168,24 @@
   ],
   "collaborator": [
     {
-      "contact_email": "batman@batman_inc.org",
+      "contactEmail": "batman@batman_inc.org",
       "name": "batman",
       "affiliation": "batman inc"
     }
   ],
   "experiment": {
     "platform": "ILLUMINA",
-    "experimental_strategy": "WGS",
-    "submitter_sequencing_experiment_id": "EXPERIMENT"
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
   },
   "workflow": {
-    "workflow_name": "batman_stuff",
-    "genome_build": "GRCh38_hla_decoy_ebv",
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
     "inputs": [
       {
-        "analysis_type": "sequencing_alignment",
-        "tumour_analysis_id": "00000000-0000-0000-0000-000000000000",
-        "normal_analysis_id": "00000000-0000-0000-0000-000000000000"
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
       }
     ]
   }
