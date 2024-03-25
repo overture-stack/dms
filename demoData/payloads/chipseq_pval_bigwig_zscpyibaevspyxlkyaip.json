@@ -1,0 +1,202 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_zscpyibaevspyxlkyaip_N1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": null,
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_zscpyibaevspyxlkyaip_N1",
+        "specimenType": "Normal - tissue adjacent to primary tumour",
+        "specimenTissueSource": "Solid tissue",
+        "tumourNormalDesignation": "Normal"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_zscpyibaevspyxlkyaip",
+        "gender": "Male"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_zscpyibaevspyxlkyaip",
+    "primarySite": [
+      "Hematopoietic and reticuloendothelial systems"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 1520,
+    "causeOfDeath": "Died of cancer",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_zscpyibaevspyxlkyaip_0",
+        "ageAtDiagnosis": 9,
+        "cancerTypeCode": "D72.3",
+        "laterality": "Midline",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IVB",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Unknown",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_zscpyibaevspyxlkyaip_0",
+            "treatmentType": [
+              "Surgery"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 26,
+            "treatmentDuration": 36,
+            "responseToTreatment": "Complete response",
+            "surgery": [
+              {
+                "surgeryType": "Bypass Gastrojejunostomy",
+                "surgerySite": "C27.8",
+                "surgeryLocation": "Metastatic",
+                "residualTumourClassification": "R0"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_zscpyibaevspyxlkyaip_0",
+            "intervalOfFollowup": 82,
+            "diseaseStatusAtFollowup": "Partial remission"
+          }
+        ]
+      },
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_zscpyibaevspyxlkyaip_1",
+        "ageAtDiagnosis": 10,
+        "cancerTypeCode": "D30.8",
+        "laterality": "Unilateral, side not specified",
+        "clinicalTumourStagingSystem": "Revised International staging system (RISS)",
+        "clinicalStageGroup": "Stage III",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Grade 4",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_zscpyibaevspyxlkyaip_1",
+            "treatmentType": [
+              "Hormonal therapy",
+              "Surgery",
+              "Chemotherapy"
+            ],
+            "treatmentIntent": "Palliative",
+            "treatmentStartInterval": 7,
+            "treatmentDuration": 16,
+            "responseToTreatment": "Stable disease",
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 98,
+                "hormoneDrugDosageUnits": "mg/kg"
+              }
+            ],
+            "surgery": [
+              {
+                "surgeryType": "Cholecystectomy",
+                "surgerySite": "C46.7",
+                "surgeryLocation": "Metastatic",
+                "residualTumourClassification": "R2"
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 29,
+                "chemotherapyDosageUnits": "IU/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_zscpyibaevspyxlkyaip_1",
+            "intervalOfFollowup": 59,
+            "diseaseStatusAtFollowup": "Loco-regional progression"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 42,
+        "comorbidityTypeCode": "B07.48"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 83,
+        "comorbidityTypeCode": "A66.7"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 70,
+        "comorbidityTypeCode": "E15.40"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_zscpyibaevspyxlkyaip_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_zscpyibaevspyxlkyaip_N1",
+    "specimenAcquisitionInterval": 88,
+    "specimenAnatomicLocation": "C42.1",
+    "specimenLaterality": "Right"
+  },
+  "files": [
+    {
+      "dataType": "peakCalling",
+      "fileName": "encfF561SGX.bigWig",
+      "fileSize": 1188429149,
+      "fileMd5sum": "cce20c1b3232cba83560b9c2e4d504f8",
+      "fileAccess": "controlled",
+      "fileType": "BIGWIG",
+      "info": {
+        "bigwigMeasurement": "P-value",
+        "notesForMitchell": "hg38:1:25623191-58795484",
+        "dataCategory": "ChIP-Seq Peak Calling"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "Richard Myers",
+      "affiliation": "HudsonAlpha Institute for Biotechnology"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "ChIP-Seq",
+    "chipTarget": "ATF3",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  },
+  "archive": {
+    "sra": [
+      {
+        "gse": "gse230918"
+      }
+    ],
+    "encode": [
+      {
+        "encf": "encfF140QLY"
+      }
+    ]
+  },
+  "publication": {
+    "title": "An integrated encyclopedia of DNA elements in the human genome",
+    "doi": "10.1038/nature11247"
+  }
+}

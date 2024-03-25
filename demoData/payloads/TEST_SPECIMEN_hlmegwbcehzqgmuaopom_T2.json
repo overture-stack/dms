@@ -1,0 +1,142 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2",
+        "specimenType": "Primary tumour",
+        "specimenTissueSource": "Intestine",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_hlmegwbcehzqgmuaopom",
+        "gender": "Female"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_hlmegwbcehzqgmuaopom",
+    "primarySite": [
+      "Esophagus"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 373,
+    "causeOfDeath": "Died of other reasons",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+        "ageAtDiagnosis": 85,
+        "cancerTypeCode": "C76",
+        "laterality": "Right",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IVB",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Grade 0",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_hlmegwbcehzqgmuaopom_0",
+            "treatmentType": [
+              "Radiation therapy",
+              "Immunotherapy"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 81,
+            "treatmentDuration": 46,
+            "responseToTreatment": "Complete response",
+            "radiation": [
+              {
+                "radiationTherapyModality": "Heavy Ions",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Abdomen",
+                "radiationTherapyDosage": 82,
+                "radiationTherapyFractions": 89
+              }
+            ],
+            "immunotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "immunotherapyType": "Monoclonal antibodies other than immune checkpoint inhibitors"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_hlmegwbcehzqgmuaopom_0",
+            "intervalOfFollowup": 59,
+            "diseaseStatusAtFollowup": "No evidence of disease"
+          }
+        ]
+      }
+    ],
+    "comorbidity": []
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hlmegwbcehzqgmuaopom_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_N2",
+    "specimenAcquisitionInterval": 81,
+    "specimenAnatomicLocation": "C54",
+    "specimenLaterality": "Left",
+    "tumourHistologicalType": "8575/02",
+    "pathologicalTumourStagingSystem": "AJCC 8th edition",
+    "pathologicalStageGroup": "Stage IA2",
+    "tumourGradingSystem": "Scarff-Bloom-Richardson grading system",
+    "tumourGrade": "G2",
+    "percentTumourCells": 43,
+    "referencePathologyConfirmed": "No"
+  },
+  "files": [
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz.tbi",
+      "fileSize": 256,
+      "fileMd5sum": "42c8e5e4acf2592ed2dca82213c1b7ee",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "Raw InDel Calls",
+      "fileName": "TEST_SPECIMEN_hlmegwbcehzqgmuaopom_T2.indel.vcf.gz",
+      "fileSize": 17345,
+      "fileMd5sum": "f388e1f88cfdc2a1ffe43fec7a4b5d24",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

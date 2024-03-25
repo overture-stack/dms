@@ -1,0 +1,188 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_bcclfxzvjitgtbsvfnum_T1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_bcclfxzvjitgtbsvfnum_N1",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_bcclfxzvjitgtbsvfnum_T1",
+        "specimenType": "Metastatic tumour - metastasis to distant location",
+        "specimenTissueSource": "Bone",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_bcclfxzvjitgtbsvfnum",
+        "gender": "Female"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_bcclfxzvjitgtbsvfnum",
+    "primarySite": [
+      "Bones, joints and articular cartilage of limbs"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 1550,
+    "causeOfDeath": "Unknown",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_bcclfxzvjitgtbsvfnum_0",
+        "ageAtDiagnosis": 59,
+        "cancerTypeCode": "D72.5",
+        "laterality": "Unknown",
+        "clinicalTumourStagingSystem": "AJCC 8th edition",
+        "clinicalStageGroup": "Stage IIE",
+        "lymphNodesExaminedStatus": "No",
+        "performanceStatus": "Unknown",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_bcclfxzvjitgtbsvfnum_0",
+            "treatmentType": [
+              "Radiation therapy",
+              "Surgery"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 65,
+            "treatmentDuration": 48,
+            "responseToTreatment": "NED",
+            "radiation": [
+              {
+                "radiationTherapyModality": "Electron",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Upper Limb",
+                "radiationTherapyDosage": 24,
+                "radiationTherapyFractions": 60
+              }
+            ],
+            "surgery": [
+              {
+                "surgeryType": "Axillary lymph nodes sampling",
+                "surgerySite": "C80.3",
+                "surgeryLocation": "Metastatic",
+                "residualTumourClassification": "R1"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_bcclfxzvjitgtbsvfnum_0",
+            "intervalOfFollowup": 77,
+            "diseaseStatusAtFollowup": "Complete remission"
+          }
+        ]
+      },
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_bcclfxzvjitgtbsvfnum_1",
+        "ageAtDiagnosis": 57,
+        "cancerTypeCode": "D43.2",
+        "laterality": "Left",
+        "clinicalTumourStagingSystem": "AJCC 7th edition",
+        "clinicalStageGroup": "Stage IV",
+        "lymphNodesExaminedStatus": "No lymph nodes found in resected specimen",
+        "performanceStatus": "Unknown",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_bcclfxzvjitgtbsvfnum_1",
+            "treatmentType": [
+              "Chemotherapy"
+            ],
+            "treatmentIntent": "Unknown",
+            "treatmentStartInterval": 24,
+            "treatmentDuration": 32,
+            "responseToTreatment": "Stable disease",
+            "chemotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 24,
+                "chemotherapyDosageUnits": "mg/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_bcclfxzvjitgtbsvfnum_1",
+            "intervalOfFollowup": 95,
+            "diseaseStatusAtFollowup": "Complete remission"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 35,
+        "comorbidityTypeCode": "E34.13"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 30,
+        "comorbidityTypeCode": "B75.65"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 99,
+        "comorbidityTypeCode": "A03.43"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_bcclfxzvjitgtbsvfnum_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_bcclfxzvjitgtbsvfnum_N1",
+    "specimenAcquisitionInterval": 21,
+    "specimenAnatomicLocation": "C87",
+    "specimenLaterality": "Unknown"
+  },
+  "files": [
+    {
+      "dataType": "Sequence Alignment",
+      "fileName": "TEST-QA.DO263273.SA624744.wgs.20230728.aln.cram",
+      "fileSize": 19423,
+      "fileMd5sum": "03dba6ebed01c26401b190e6d591aafc",
+      "fileAccess": "controlled",
+      "fileType": "CRAM",
+      "info": {
+        "notesForMitchell": "hg19:20:61512874-61513499",
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "Sequence Alignment",
+      "fileName": "TEST-QA.DO263273.SA624744.wgs.20230728.aln.cram.crai",
+      "fileSize": 79,
+      "fileMd5sum": "d9070baed15f3331adda5528a8a9cda1",
+      "fileAccess": "controlled",
+      "fileType": "CRAI",
+      "info": {
+        "notesForMitchell": "hg19:20:61512874-61513499",
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

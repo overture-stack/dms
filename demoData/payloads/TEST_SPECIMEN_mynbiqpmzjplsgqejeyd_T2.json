@@ -1,0 +1,192 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T2",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N2",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T2",
+        "specimenType": "Cell line - derived from tumour",
+        "specimenTissueSource": "Lymph node",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_mynbiqpmzjplsgqejeyd",
+        "gender": "Female"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_mynbiqpmzjplsgqejeyd",
+    "primarySite": [
+      "Pyriform sinus"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 180,
+    "causeOfDeath": "Unknown",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_0",
+        "ageAtDiagnosis": 16,
+        "cancerTypeCode": "C50.11",
+        "laterality": "Unknown",
+        "clinicalTumourStagingSystem": "AJCC 6th edition",
+        "clinicalStageGroup": "Stage IVB",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Unknown",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_0",
+            "treatmentType": [
+              "Hormonal therapy"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 95,
+            "treatmentDuration": 2,
+            "responseToTreatment": "Stable disease",
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 35,
+                "hormoneDrugDosageUnits": "ug/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_0",
+            "intervalOfFollowup": 53,
+            "diseaseStatusAtFollowup": "Stable"
+          }
+        ]
+      },
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_1",
+        "ageAtDiagnosis": 51,
+        "cancerTypeCode": "C79.89",
+        "laterality": "Unilateral, side not specified",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IVA",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Grade 1",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_mynbiqpmzjplsgqejeyd_1",
+            "treatmentType": [
+              "Hormonal therapy",
+              "Chemotherapy"
+            ],
+            "treatmentIntent": "Palliative",
+            "treatmentStartInterval": 65,
+            "treatmentDuration": 27,
+            "responseToTreatment": "Disease progression",
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 84,
+                "hormoneDrugDosageUnits": "mg/kg"
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 45,
+                "chemotherapyDosageUnits": "mg/kg"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_mynbiqpmzjplsgqejeyd_1",
+            "intervalOfFollowup": 90,
+            "diseaseStatusAtFollowup": "Relapse or recurrence"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 5,
+        "comorbidityTypeCode": "B02.68"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 91,
+        "comorbidityTypeCode": "B88.93"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 61,
+        "comorbidityTypeCode": "E17.42"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_mynbiqpmzjplsgqejeyd_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_N2",
+    "specimenAcquisitionInterval": 26,
+    "specimenAnatomicLocation": "C50",
+    "specimenLaterality": "Right",
+    "tumourHistologicalType": "9521/25",
+    "pathologicalTumourStagingSystem": "Lugano staging system",
+    "pathologicalStageGroup": "Stage IB",
+    "tumourGradingSystem": "Two-tier grading system",
+    "tumourGrade": "Low grade",
+    "percentTumourCells": 40,
+    "referencePathologyConfirmed": "Unknown"
+  },
+  "files": [
+    {
+      "dataType": "Raw SV Calls",
+      "fileName": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T2.snv.vcf.gz",
+      "fileSize": 17260,
+      "fileMd5sum": "cbd38e596be1dc078cf54aa5e38d263b",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_mynbiqpmzjplsgqejeyd_T2.snv.vcf.gz.tbi",
+      "fileSize": 415,
+      "fileMd5sum": "f9d0965682eefbe76f339b06ec91b300",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

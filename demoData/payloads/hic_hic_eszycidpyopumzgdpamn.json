@@ -1,0 +1,162 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": null,
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+        "specimenType": "Normal",
+        "specimenTissueSource": "Mononuclear cells from bone marrow",
+        "tumourNormalDesignation": "Normal"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_eszycidpyopumzgdpamn",
+        "gender": "Other"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_eszycidpyopumzgdpamn",
+    "primarySite": [
+      "Nasal cavity and middle ear"
+    ],
+    "vitalStatus": "Alive",
+    "survivalTime": null,
+    "causeOfDeath": null,
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+        "ageAtDiagnosis": 75,
+        "cancerTypeCode": "D35.1",
+        "laterality": "Right",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IA2",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Grade 2",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_eszycidpyopumzgdpamn_0",
+            "treatmentType": [
+              "Radiation therapy",
+              "Hormonal therapy"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 37,
+            "treatmentDuration": 3,
+            "responseToTreatment": "NED",
+            "radiation": [
+              {
+                "radiationTherapyModality": "Electron",
+                "radiationTherapyType": "External",
+                "anatomicalSiteIrradiated": "Pelvis",
+                "radiationTherapyDosage": 40,
+                "radiationTherapyFractions": 24
+              }
+            ],
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 44,
+                "hormoneDrugDosageUnits": "mg/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_eszycidpyopumzgdpamn_0",
+            "intervalOfFollowup": 84,
+            "diseaseStatusAtFollowup": "Complete remission"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 97,
+        "comorbidityTypeCode": "E02.58"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 26,
+        "comorbidityTypeCode": "B07.38"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+    "specimenAcquisitionInterval": 0,
+    "specimenAnatomicLocation": "C42",
+    "specimenLaterality": "Unknown",
+    "tumourHistologicalType": "8578/23",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage C",
+    "tumourGradingSystem": "Scarff-Bloom-Richardson grading system",
+    "tumourGrade": "G3",
+    "percentTumourCells": 40,
+    "referencePathologyConfirmed": "Yes"
+  },
+  "files": [
+    {
+      "dataType": "HicAnalysisPostAlignment",
+      "fileName": "gse174533_1-C11-CB1.2-C11-CB2.merge.hic",
+      "fileSize": 1251245702,
+      "fileMd5sum": "933faf4efa8f0c267e2187fa2205c4dc",
+      "fileAccess": "controlled",
+      "fileType": "HIC",
+      "info": {
+        "hicResolution": [
+          "5kb",
+          "10kb",
+          "25kb",
+          "50kb",
+          "100kb",
+          "250kb"
+        ],
+        "hicNormalizationMethod": "KR",
+        "notesForMitchell": "hg38:20:22840771-31212931",
+        "dataCategory": "Hi-C profiling"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "Sergei Doulatov",
+      "affiliation": "Washington University"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "Hi-C",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  },
+  "archive": {
+    "sra": [
+      {
+        "gse": "gse174533"
+      }
+    ]
+  },
+  "publication": {
+    "title": "Lamin B1 deletion in myeloid neoplasms causes nuclear anomaly and altered hematopoietic stem cell function",
+    "doi": "10.1016/j.stem.2022.02.010"
+  }
+}

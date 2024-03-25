@@ -1,0 +1,162 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_T1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_T1",
+        "specimenType": "Primary tumour",
+        "specimenTissueSource": "Mononuclear cells from bone marrow",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_eszycidpyopumzgdpamn",
+        "gender": "Other"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_eszycidpyopumzgdpamn",
+    "primarySite": [
+      "Hematopoietic and reticuloendothelial systems"
+    ],
+    "vitalStatus": "Alive",
+    "survivalTime": null,
+    "causeOfDeath": null,
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+        "ageAtDiagnosis": 75,
+        "cancerTypeCode": "D35.1",
+        "laterality": "Right",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IA2",
+        "lymphNodesExaminedStatus": "Cannot be determined",
+        "performanceStatus": "Grade 2",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_eszycidpyopumzgdpamn_0",
+            "treatmentType": [
+              "Radiation therapy",
+              "Hormonal therapy"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 37,
+            "treatmentDuration": 3,
+            "responseToTreatment": "NED",
+            "radiation": [
+              {
+                "radiationTherapyModality": "Electron",
+                "radiationTherapyType": "External",
+                "anatomicalSiteIrradiated": "Pelvis",
+                "radiationTherapyDosage": 40,
+                "radiationTherapyFractions": 24
+              }
+            ],
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 44,
+                "hormoneDrugDosageUnits": "mg/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_eszycidpyopumzgdpamn_0",
+            "intervalOfFollowup": 84,
+            "diseaseStatusAtFollowup": "Complete remission"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 97,
+        "comorbidityTypeCode": "E02.58"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 26,
+        "comorbidityTypeCode": "B07.38"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_eszycidpyopumzgdpamn_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_eszycidpyopumzgdpamn_N1",
+    "specimenAcquisitionInterval": 48,
+    "specimenAnatomicLocation": "C42.1",
+    "specimenLaterality": "Unknown",
+    "tumourHistologicalType": "9556/31",
+    "pathologicalTumourStagingSystem": "Binet staging system",
+    "pathologicalStageGroup": "Stage C",
+    "tumourGradingSystem": "ISUP grading system",
+    "tumourGrade": "G4",
+    "percentTumourCells": 25,
+    "referencePathologyConfirmed": "No"
+  },
+  "files": [
+    {
+      "dataType": "cpgMethylation",
+      "fileName": "encfF256OFF.bigBed",
+      "fileSize": 1032910837,
+      "fileMd5sum": "12340e1995c429170f09e13c9c7a7f70",
+      "fileAccess": "controlled",
+      "fileType": "BIGBED",
+      "info": {
+        "bigbedMeasurement": "methylation",
+        "bigbedFeatureHighlight": "CpG",
+        "minimumMappingQ": 30,
+        "deduplicated": true,
+        "notesForMitchell": "hg38:1:43940960-43947081",
+        "dataCategory": "WGBS profiling"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "Michael Snyder",
+      "affiliation": "Stanford"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGBS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "gemBS",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  },
+  "archive": {
+    "sra": [
+      {
+        "gse": "gse215679"
+      }
+    ],
+    "encode": [
+      {
+        "encf": "encfF256OFF"
+      }
+    ]
+  },
+  "publication": {
+    "title": "An integrated encyclopedia of DNA elements in the human genome",
+    "doi": "10.1038/nature11247"
+  }
+}
