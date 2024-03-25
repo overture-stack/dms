@@ -1,0 +1,182 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_T1",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_N1",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_T1",
+        "specimenType": "Primary tumour",
+        "specimenTissueSource": "Bone",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_tixlzwxuqaoyhubfdlph",
+        "gender": "Male"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_tixlzwxuqaoyhubfdlph",
+    "primarySite": [
+      "Bones, joints and articular cartilage of other and unspecified sites"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 1711,
+    "causeOfDeath": "Unknown",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_tixlzwxuqaoyhubfdlph_0",
+        "ageAtDiagnosis": 72,
+        "cancerTypeCode": "C79.51",
+        "laterality": "Not a paired site",
+        "clinicalTumourStagingSystem": "St Jude staging system",
+        "clinicalStageGroup": "Stage III",
+        "lymphNodesExaminedStatus": "Not applicable",
+        "performanceStatus": "Grade 4",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_tixlzwxuqaoyhubfdlph_0",
+            "treatmentType": [
+              "Hormonal therapy",
+              "Radiation therapy",
+              "Immunotherapy",
+              "Surgery",
+              "Chemotherapy"
+            ],
+            "treatmentIntent": "Curative",
+            "treatmentStartInterval": 39,
+            "treatmentDuration": 44,
+            "responseToTreatment": "Complete response",
+            "hormoneTherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 16,
+                "hormoneDrugDosageUnits": "mg/m2"
+              }
+            ],
+            "radiation": [
+              {
+                "radiationTherapyModality": "Heavy Ions",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Lung",
+                "radiationTherapyDosage": 86,
+                "radiationTherapyFractions": 67
+              }
+            ],
+            "immunotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "immunotherapyType": "Other immunomodulatory substances"
+              }
+            ],
+            "surgery": [
+              {
+                "surgeryType": "Axillary Clearance",
+                "surgerySite": "C27.7",
+                "surgeryLocation": "Local recurrence",
+                "residualTumourClassification": "R1"
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 53,
+                "chemotherapyDosageUnits": "IU/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_tixlzwxuqaoyhubfdlph_0",
+            "intervalOfFollowup": 65,
+            "diseaseStatusAtFollowup": "No evidence of disease"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 48,
+        "comorbidityTypeCode": "A23.79"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 66,
+        "comorbidityTypeCode": "A01.8"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 58,
+        "comorbidityTypeCode": "A25.43"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_tixlzwxuqaoyhubfdlph_0",
+    "submitterSpecimenId": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_N1",
+    "specimenAcquisitionInterval": 92,
+    "specimenAnatomicLocation": "C41.4",
+    "specimenLaterality": "Left",
+    "tumourHistologicalType": "8137/14",
+    "pathologicalTumourStagingSystem": "AJCC 8th edition",
+    "pathologicalStageGroup": "Stage IA2",
+    "tumourGradingSystem": "Nuclear grading system for DCIS",
+    "tumourGrade": "G1",
+    "percentTumourCells": 95,
+    "referencePathologyConfirmed": "No"
+  },
+  "files": [
+    {
+      "dataType": "Raw InDel Calls",
+      "fileName": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_T1.indel.vcf.gz",
+      "fileSize": 17354,
+      "fileMd5sum": "54a6a25a06ace06f099d39ed7cefbe07",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_tixlzwxuqaoyhubfdlph_T1.indel.vcf.gz.tbi",
+      "fileSize": 393,
+      "fileMd5sum": "5d5ba2b16bd2a9b39bd8daf9f40175e7",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}

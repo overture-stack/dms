@@ -1,0 +1,186 @@
+{
+  "analysisType": {
+    "name": "demoDataSchema"
+  },
+  "studyId": "demoData",
+  "samples": [
+    {
+      "submitterSampleId": "TEST_SPECIMEN_hsreltpusctapirhgwpr_T2",
+      "sampleType": "Total DNA",
+      "matchedNormalSubmitterSampleId": "TEST_SPECIMEN_hsreltpusctapirhgwpr_N2",
+      "specimen": {
+        "submitterSpecimenId": "TEST_SPECIMEN_hsreltpusctapirhgwpr_T2",
+        "specimenType": "Cell line - derived from xenograft tumour",
+        "specimenTissueSource": "Cerebellum",
+        "tumourNormalDesignation": "Tumour"
+      },
+      "donor": {
+        "submitterDonorId": "TEST_DONOR_hsreltpusctapirhgwpr",
+        "gender": "Other"
+      }
+    }
+  ],
+  "donor": {
+    "submitterDonorId": "TEST_DONOR_hsreltpusctapirhgwpr",
+    "primarySite": [
+      "Brain"
+    ],
+    "vitalStatus": "Deceased",
+    "survivalTime": 884,
+    "causeOfDeath": "Died of cancer",
+    "primaryDiagnosis": [
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hsreltpusctapirhgwpr_0",
+        "ageAtDiagnosis": 70,
+        "cancerTypeCode": "C71.9",
+        "laterality": "Unilateral, side not specified",
+        "clinicalTumourStagingSystem": "FIGO staging system",
+        "clinicalStageGroup": "Stage IB",
+        "lymphNodesExaminedStatus": "No lymph nodes found in resected specimen",
+        "performanceStatus": "Grade 1",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_hsreltpusctapirhgwpr_0",
+            "treatmentType": [
+              "No treatment"
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_hsreltpusctapirhgwpr_0",
+            "intervalOfFollowup": 95,
+            "diseaseStatusAtFollowup": "Loco-regional progression"
+          }
+        ]
+      },
+      {
+        "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hsreltpusctapirhgwpr_1",
+        "ageAtDiagnosis": 49,
+        "cancerTypeCode": "D76.5",
+        "laterality": "Right",
+        "clinicalTumourStagingSystem": "AJCC 7th edition",
+        "clinicalStageGroup": "Stage IVA2",
+        "lymphNodesExaminedStatus": "No",
+        "performanceStatus": "Grade 3",
+        "treatment": [
+          {
+            "submitterTreatmentId": "TEST_TREATMENT_hsreltpusctapirhgwpr_1",
+            "treatmentType": [
+              "Radiation therapy",
+              "Surgery",
+              "Chemotherapy"
+            ],
+            "treatmentIntent": "Unknown",
+            "treatmentStartInterval": 51,
+            "treatmentDuration": 32,
+            "responseToTreatment": "NED",
+            "radiation": [
+              {
+                "radiationTherapyModality": "Heavy Ions",
+                "radiationTherapyType": "Internal",
+                "anatomicalSiteIrradiated": "Body",
+                "radiationTherapyDosage": 48,
+                "radiationTherapyFractions": 45
+              }
+            ],
+            "surgery": [
+              {
+                "surgeryType": "Cholecystectomy",
+                "surgerySite": "C42.6",
+                "surgeryLocation": "Local recurrence",
+                "residualTumourClassification": "R1"
+              }
+            ],
+            "chemotherapy": [
+              {
+                "drugName": "leucovorin",
+                "drugRxnormcui": "6313",
+                "cumulativeDrugDosage": 54,
+                "chemotherapyDosageUnits": "ug/m2"
+              }
+            ]
+          }
+        ],
+        "followUp": [
+          {
+            "submitterFollowUpId": "TEST_FOLLOW_UP_hsreltpusctapirhgwpr_1",
+            "intervalOfFollowup": 56,
+            "diseaseStatusAtFollowup": "No evidence of disease"
+          }
+        ]
+      }
+    ],
+    "comorbidity": [
+      {
+        "ageAtComorbidityDiagnosis": 70,
+        "comorbidityTypeCode": "B78.90"
+      },
+      {
+        "ageAtComorbidityDiagnosis": 29,
+        "comorbidityTypeCode": "E45.94"
+      }
+    ]
+  },
+  "specimen": {
+    "submitterPrimaryDiagnosisId": "TEST_PRIMARY_DIAGNOSIS_hsreltpusctapirhgwpr_1",
+    "submitterSpecimenId": "TEST_SPECIMEN_hsreltpusctapirhgwpr_N2",
+    "specimenAcquisitionInterval": 71,
+    "specimenAnatomicLocation": "C71.0",
+    "specimenLaterality": "Not applicable",
+    "tumourHistologicalType": "8156/96",
+    "pathologicalTumourStagingSystem": "Durie-Salmon staging system",
+    "pathologicalStageGroup": "Stage 1A",
+    "tumourGradingSystem": "FNCLCC grading system",
+    "tumourGrade": "G2",
+    "percentTumourCells": 16,
+    "referencePathologyConfirmed": "Yes"
+  },
+  "files": [
+    {
+      "dataType": "Raw InDel Calls",
+      "fileName": "TEST_SPECIMEN_hsreltpusctapirhgwpr_T2.indel.vcf.gz",
+      "fileSize": 17336,
+      "fileMd5sum": "d7575e93a9015ab7c3d829d9d7206c8e",
+      "fileAccess": "controlled",
+      "fileType": "VCF",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    },
+    {
+      "dataType": "VCF Index",
+      "fileName": "TEST_SPECIMEN_hsreltpusctapirhgwpr_T2.indel.vcf.gz.tbi",
+      "fileSize": 404,
+      "fileMd5sum": "43e388d7aabd27818226e98e05d60cd7",
+      "fileAccess": "controlled",
+      "fileType": "TBI",
+      "info": {
+        "dataCategory": "Simple Nucelotide Variation"
+      }
+    }
+  ],
+  "collaborator": [
+    {
+      "contactEmail": "batman@batman_inc.org",
+      "name": "batman",
+      "affiliation": "batman inc"
+    }
+  ],
+  "experiment": {
+    "platform": "ILLUMINA",
+    "experimentalStrategy": "WGS",
+    "submitterSequencingExperimentId": "EXPERIMENT"
+  },
+  "workflow": {
+    "workflowName": "batman_stuff",
+    "genomeBuild": "GRCh38_hla_decoy_ebv",
+    "inputs": [
+      {
+        "analysisType": "sequencing_alignment",
+        "tumourAnalysisId": "00000000-0000-0000-0000-000000000000",
+        "normalAnalysisId": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+}
